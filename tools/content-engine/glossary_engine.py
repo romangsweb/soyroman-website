@@ -73,8 +73,14 @@ def none_if_na(s):
 
 def generate(term, slug, topic):
     candidates = ", ".join(t for t, _, _ in TERMS if t != term)
-    raw = ollama_call(SYSTEM, PROMPT.format(term=term, topic=topic, candidates=candidates), predict=1500, temperature=0.4)
-    p = parse_delimited(raw, ["FULL_NAME", "DEFINITION", "FORMULA", "EXAMPLE", "WHY", "RELATED"])
+    fields = ["FULL_NAME", "DEFINITION", "FORMULA", "EXAMPLE", "WHY", "RELATED"]
+    p = {}
+    for attempt in (1, 2):  # el modelo a veces ignora los delimitadores: un reintento
+        raw = ollama_call(SYSTEM, PROMPT.format(term=term, topic=topic, candidates=candidates), predict=1500, temperature=0.4)
+        p = parse_delimited(raw, fields)
+        if (p.get("definition") or "").strip():
+            break
+        log(f"  respuesta sin formato (intento {attempt}): {raw[:160]!r}")
     related = [r.strip().strip(".") for r in (p.get("related") or "").split(",") if r.strip()]
     by_name = {t.lower(): s for t, s, _ in TERMS}
     return {
@@ -130,7 +136,8 @@ class GlossaryCMS(CMS):
         r = requests.post(f"{self.url}/api/glossary", params={"draft": "true"}, json=data,
                           headers={**self.auth, "Content-Type": "application/json"}, timeout=30)
         if r.status_code >= 400:
-            raise RuntimeError(f"Payload {r.status_code}: {r.text[:300]}")
+            sent = {k: (v if k in ("categories", "relatedTerms", "slug") else f"<{len(str(v))} chars>") for k, v in data.items()}
+            raise RuntimeError(f"Payload {r.status_code}: {r.text[:300]} · enviado: {sent}")
         return r.json().get("doc", {})
 
 
@@ -167,8 +174,9 @@ def main():
                 log(json.dumps({**entry, "flags": flags}, ensure_ascii=False, indent=2))
                 continue
             if not entry["definition"]:
-                run.set_status("failed", error="sin definición")
+                run.set_status("failed", error="el modelo no respetó el formato (sin definición)")
                 skipped.append(term)
+                log("  saltado: el modelo no devolvió una definición con el formato pedido")
                 continue
             data = {k: v for k, v in entry.items() if k != "related_slugs" and v}
             data.update({"term": term, "slug": slug})
