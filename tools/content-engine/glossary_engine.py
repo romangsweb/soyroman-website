@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+"""
+Glossary Engine — soyroman.com
+
+Genera BORRADORES de términos del glosario (/glosario) a partir de glossary_terms.py.
+Solo crea los términos que todavía no existen en el CMS. El CMS obliga a que todo lo
+que escribe el bot quede en borrador: publicar lo hace Román.
+
+Uso:
+  python glossary_engine.py              # siguientes 5 términos pendientes
+  python glossary_engine.py --batch 10   # siguientes 10
+  python glossary_engine.py --term roas  # solo ese slug (aunque no sea el siguiente)
+  python glossary_engine.py --dry-run    # genera e imprime, no guarda
+"""
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+import requests
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from soyroman_engine import (  # noqa: E402  (reutiliza config, CMS, Ollama y reglas de marca)
+    BRAND_PATTERNS,
+    CMS,
+    CMS_PUBLIC,
+    VOICE,
+    log,
+    ollama_call,
+    parse_delimited,
+    qa,
+    send_telegram,
+    tel,
+)
+from glossary_terms import TERMS  # noqa: E402
+
+ENGINE_NAME = "soyroman-glossary"
+SLUGS = {s for _, s, _ in TERMS}
+
+SYSTEM = VOICE + """
+
+TAREA ESPECIAL: estás escribiendo una entrada de GLOSARIO, no un artículo. Tono didáctico y preciso.
+No uses primera persona ni marcadores [COMPLETAR]. Nada de introducciones ni cierres."""
+
+PROMPT = """Escribe la entrada de glosario para el término: {term}
+Contexto: marketing B2B y marketing digital. Tema: {topic}.
+
+Responde EXACTAMENTE con este formato:
+
+###FULL_NAME###
+nombre completo o significado de la sigla (si es sigla en inglés: "Nombre en inglés (traducción)"). Si no aplica, escribe N/A
+###DEFINITION###
+2 o 3 frases claras que definan el término. Sin jerga, sin "se refiere a", sin "es un concepto".
+###FORMULA###
+fórmula en una línea con palabras, por ejemplo "Ingresos atribuidos ÷ inversión en anuncios". Si no tiene fórmula, escribe N/A
+###EXAMPLE###
+un ejemplo concreto de 2 a 4 frases, con números ilustrativos cuando aplique
+###WHY###
+2 o 3 frases: por qué importa en marketing B2B y un error común al usarlo
+###RELATED###
+de 2 a 4 términos relacionados, separados por comas, elegidos SOLO de esta lista: {candidates}"""
+
+
+def none_if_na(s):
+    s = (s or "").strip()
+    return None if not s or s.upper().startswith("N/A") else s
+
+
+def generate(term, topic):
+    candidates = ", ".join(t for t, _, _ in TERMS if t != term)
+    raw = ollama_call(SYSTEM, PROMPT.format(term=term, topic=topic, candidates=candidates), predict=1500, temperature=0.4)
+    p = parse_delimited(raw, ["FULL_NAME", "DEFINITION", "FORMULA", "EXAMPLE", "WHY", "RELATED"])
+    related = [r.strip().strip(".") for r in (p.get("related") or "").split(",") if r.strip()]
+    by_name = {t.lower(): s for t, s, _ in TERMS}
+    return {
+        "fullName": none_if_na(p.get("full_name")),
+        "definition": (p.get("definition") or "").strip(),
+        "formula": none_if_na(p.get("formula")),
+        "example": none_if_na(p.get("example")),
+        "whyItMatters": none_if_na(p.get("why")),
+        "related_slugs": [by_name[r.lower()] for r in related if r.lower() in by_name][:4],
+    }
+
+
+def check(term, entry):
+    """Flags de calidad: definición genérica/corta, reglas de marca, campos vacíos."""
+    flags = []
+    d = entry["definition"]
+    if len(re.findall(r"[.!?](\s|$)", d)) < 1 or len(d) < 80:
+        flags.append("definicion_corta")
+    if any(p.search(d.lower()) for p in qa.GENERIC_PATTERNS):
+        flags.append("definicion_generica")
+    hay = " ".join(str(v) for v in entry.values() if isinstance(v, str))
+    if any(p.search(hay) for p in BRAND_PATTERNS):
+        flags.append("brand_rule_violation")
+    if not entry["example"]:
+        flags.append("sin_ejemplo")
+    return flags
+
+
+class GlossaryCMS(CMS):
+    def existing_slugs(self):
+        out, page = set(), 1
+        while True:
+            res = self.get("glossary", limit=100, page=page, depth=0, draft="true")
+            out |= {d["slug"] for d in res.get("docs", [])}
+            if not res.get("hasNextPage"):
+                return out
+            page += 1
+
+    def ids_for(self, slugs):
+        if not slugs:
+            return []
+        params = {"limit": 20, "depth": 0, "draft": "true"}
+        for i, s in enumerate(slugs):
+            params[f"where[slug][in][{i}]"] = s
+        return [d["id"] for d in self.get("glossary", **params).get("docs", [])]
+
+    def create(self, data):
+        r = requests.post(f"{self.url}/api/glossary", params={"draft": "true"}, json=data,
+                          headers={**self.auth, "Content-Type": "application/json"}, timeout=30)
+        if r.status_code >= 400:
+            raise RuntimeError(f"Payload {r.status_code}: {r.text[:300]}")
+        return r.json().get("doc", {})
+
+
+def main():
+    ap = argparse.ArgumentParser(description="Genera borradores del glosario de soyroman.com")
+    ap.add_argument("--batch", type=int, default=5)
+    ap.add_argument("--term", help="slug específico de glossary_terms.py")
+    ap.add_argument("--dry-run", action="store_true")
+    args = ap.parse_args()
+
+    cms = GlossaryCMS()
+    done = cms.existing_slugs()
+    if args.term:
+        queue = [t for t in TERMS if t[1] == args.term]
+        if not queue:
+            sys.exit(f"'{args.term}' no está en glossary_terms.py")
+    else:
+        queue = [t for t in TERMS if t[1] not in done][: args.batch]
+    if not queue:
+        log("Glosario completo: no hay términos pendientes.")
+        return
+
+    log(f"Pendientes: {len([t for t in TERMS if t[1] not in done])} · generando {len(queue)}")
+    created, skipped = [], []
+
+    for term, slug, topic in queue:
+        log(f"\n— {term}")
+        with tel.TelemetryRun(ENGINE_NAME, topic=term, triggered_by="manual" if args.term else "cron",
+                              metadata={"slug": slug, "category": topic}) as run:
+            entry = generate(term, topic)
+            flags = check(term, entry)
+            run.set_quality(max(0.0, 10.0 - 2 * len(flags)), flags=flags)
+            if args.dry_run:
+                log(json.dumps({**entry, "flags": flags}, ensure_ascii=False, indent=2))
+                continue
+            if not entry["definition"]:
+                run.set_status("failed", error="sin definición")
+                skipped.append(term)
+                continue
+            data = {k: v for k, v in entry.items() if k != "related_slugs" and v}
+            data.update({"term": term, "slug": slug})
+            cat = cms.category_id(topic)
+            if cat:
+                data["categories"] = [cat]
+            rel = cms.ids_for([s for s in entry["related_slugs"] if s in done or s in {c[1] for c in created}])
+            if rel:
+                data["relatedTerms"] = rel
+            try:
+                doc = cms.create(data)
+                run.set_output("glossary", doc.get("id"))
+                created.append((term, slug, flags))
+                log(f"  ok borrador {doc.get('id')} {flags or ''}")
+            except Exception as e:
+                run.set_status("failed", error=str(e))
+                skipped.append(term)
+                log(f"  error: {e}")
+
+    if created and not args.dry_run:
+        lines = "\n".join(f"• {t}{' 🚩 ' + ', '.join(f) if f else ''}" for t, _, f in created)
+        send_telegram(
+            f"📖 <b>soyroman: {len(created)} términos en borrador</b>\n{lines}\n"
+            f"{'⚠️ Fallaron: ' + ', '.join(skipped) if skipped else ''}\n"
+            f"🔗 {CMS_PUBLIC}/admin/collections/glossary?where[_status][equals]=draft"
+        )
+
+
+if __name__ == "__main__":
+    main()
