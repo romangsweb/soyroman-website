@@ -1,0 +1,16 @@
+# Secretos y datos locales: nunca dentro de la imagen
+.env
+.env.*
+!.env.example
+media/
+
+# Artefactos que se regeneran en el build
+node_modules/
+.next/
+tsconfig.tsbuildinfo
+
+# Repo y editor
+.git/
+.vscode/
+*.md
+!README.md
