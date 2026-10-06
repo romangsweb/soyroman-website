@@ -1,6 +1,5 @@
 import React from 'react'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { cms } from '@/lib/cms'
 import type { Metadata } from 'next'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { PageTransition } from '@/components/motion/PageTransition'
@@ -8,8 +7,7 @@ import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 
 export default async function AboutPage() {
-  const payload = await getPayload({ config: configPromise })
-  const profile = await payload.findGlobal({ slug: 'profile' })
+  const profile = await cms.findGlobal({ slug: 'profile' })
 
   return (
     <PageTransition>

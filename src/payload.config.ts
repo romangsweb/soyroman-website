@@ -25,12 +25,28 @@ import { Profile } from './globals/Profile'
 
 import { defaultLexical } from './fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { withFrontendRevalidation, withGlobalRevalidation } from './hooks/revalidateFrontend'
+import { migrations } from './migrations'
 
 import type { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import type { Page, Post, Project, Expertise as ExpertiseType } from './payload-types'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+// URL pública del CMS (Hall): https://cms.soyroman.com — hace absolutas las URLs de media.
+const CMS_PUBLIC_URL = process.env.PAYLOAD_PUBLIC_SERVER_URL
+// Frontend en Vercel: https://soyroman.com
+const FRONTEND_URL = process.env.FRONTEND_URL
+
+const isBuild = process.env.NEXT_PHASE === 'phase-production-build'
+if (process.env.CMS_ROLE === 'cms' && !isBuild && !process.env.PAYLOAD_SECRET) {
+  throw new Error('PAYLOAD_SECRET es obligatorio en el CMS de producción')
+}
+
+const allowedOrigins = [getServerSideURL(), CMS_PUBLIC_URL, FRONTEND_URL].filter(
+  (u): u is string => Boolean(u),
+)
 
 const generateTitle: GenerateTitle<Post | Page | Project | ExpertiseType> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Román García` : 'Román García — Director de Marketing B2B'
@@ -42,6 +58,7 @@ const generateURL: GenerateURL<Post | Page | Project | ExpertiseType> = ({ doc }
 }
 
 export default buildConfig({
+  serverURL: CMS_PUBLIC_URL || undefined,
   admin: {
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
@@ -96,21 +113,19 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI,
     },
+    migrationDir: path.resolve(dirname, 'migrations'),
+    // En producción aplica las migraciones pendientes al arrancar (Hall).
+    prodMigrations: migrations,
   }),
   collections: [
-    Posts,
-    Expertise,
-    Projects,
-    Lab,
-    Experience,
-    Tools,
-    Pages,
-    Media,
-    Categories,
+    ...[Posts, Expertise, Projects, Lab, Experience, Tools, Pages, Media, Categories].map(
+      withFrontendRevalidation,
+    ),
     Users,
   ],
-  cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, Profile],
+  cors: allowedOrigins,
+  csrf: allowedOrigins,
+  globals: [Header, Footer, Profile].map(withGlobalRevalidation),
   plugins: [
     seoPlugin({
       generateTitle,
@@ -127,7 +142,7 @@ export default buildConfig({
         ]
       : []),
   ],
-  secret: process.env.PAYLOAD_SECRET || 'dev-secret',
+  secret: process.env.PAYLOAD_SECRET || 'dev-secret-solo-local',
   sharp,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

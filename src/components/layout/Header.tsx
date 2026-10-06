@@ -1,11 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { cms } from '@/lib/cms'
 
 export async function HeaderComponent() {
-  const payload = await getPayload({ config: configPromise })
-  const header = await payload.findGlobal({ slug: 'header' })
+  const header = await cms.findGlobal({ slug: 'header' })
 
   return (
     <header className="sticky top-0 z-50 border-b border-black bg-[#f4f4f4]">

@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { cms } from '@/lib/cms'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
@@ -9,10 +8,9 @@ type Args = { params: Promise<{ tag: string }> }
 
 export default async function TagPage({ params }: Args) {
   const { tag } = await params
-  const payload = await getPayload({ config: configPromise })
 
   // Find the category
-  const catResult = await payload.find({
+  const catResult = await cms.find({
     collection: 'categories',
     where: { slug: { equals: tag } },
     limit: 1,
@@ -21,7 +19,7 @@ export default async function TagPage({ params }: Args) {
   if (!category) notFound()
 
   // Find posts with this category
-  const posts = await payload.find({
+  const posts = await cms.find({
     collection: 'posts',
     where: {
       categories: { contains: category.id },
@@ -80,8 +78,7 @@ export default async function TagPage({ params }: Args) {
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { tag } = await params
-  const payload = await getPayload({ config: configPromise })
-  const result = await payload.find({
+  const result = await cms.find({
     collection: 'categories',
     where: { slug: { equals: tag } },
     limit: 1,

@@ -1,14 +1,12 @@
 import React from 'react'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { cms } from '@/lib/cms'
 import type { Metadata } from 'next'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 
 export default async function UsesPage() {
-  const payload = await getPayload({ config: configPromise })
-  const tools = await payload.find({
+  const tools = await cms.find({
     collection: 'tools',
     limit: 100,
     depth: 1,

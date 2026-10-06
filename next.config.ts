@@ -11,7 +11,12 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   : process.env.__NEXT_PRIVATE_ORIGIN || 'http://localhost:3000'
 
+// Origen de las imágenes: Payload en Hall (cms.soyroman.com)
+const CMS_URL = process.env.CMS_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL
+
 const nextConfig: NextConfig = {
+  // Hall construye la imagen Docker con NEXT_OUTPUT=standalone; Vercel lo ignora.
+  output: process.env.NEXT_OUTPUT === 'standalone' ? 'standalone' : undefined,
   images: {
     localPatterns: [
       {
@@ -20,7 +25,7 @@ const nextConfig: NextConfig = {
     ],
     qualities: [100],
     remotePatterns: [
-      ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
+      ...[NEXT_PUBLIC_SERVER_URL, CMS_URL].filter((u): u is string => Boolean(u)).map((item) => {
         const url = new URL(item)
 
         return {

@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { cms } from '@/lib/cms'
 import type { Metadata } from 'next'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
@@ -9,8 +8,7 @@ import { SplitText } from '@/components/motion/SplitText'
 import { ArrowUpRight } from '@/components/icons'
 
 export default async function ProjectsPage() {
-  const payload = await getPayload({ config: configPromise })
-  const projects = await payload.find({
+  const projects = await cms.find({
     collection: 'projects',
     sort: '-year',
     limit: 50,

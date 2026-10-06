@@ -1,12 +1,10 @@
 import React from 'react'
 import Link from 'next/link'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { cms } from '@/lib/cms'
 
 export async function FooterComponent() {
-  const payload = await getPayload({ config: configPromise })
-  const footer = await payload.findGlobal({ slug: 'footer' })
-  const profile = await payload.findGlobal({ slug: 'profile' })
+  const footer = await cms.findGlobal({ slug: 'footer' })
+  const profile = await cms.findGlobal({ slug: 'profile' })
 
   return (
     <footer className="bg-[#f4f4f4] border-t border-black mt-auto max-w-[1920px] mx-auto w-full">

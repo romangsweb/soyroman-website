@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { cms } from '@/lib/cms'
 import type { Metadata } from 'next'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
@@ -9,9 +8,8 @@ import { SplitText } from '@/components/motion/SplitText'
 import { ArrowUpRight } from '@/components/icons'
 
 export default async function CVPage() {
-  const payload = await getPayload({ config: configPromise })
-  const profile = await payload.findGlobal({ slug: 'profile' })
-  const experiences = await payload.find({
+  const profile = await cms.findGlobal({ slug: 'profile' })
+  const experiences = await cms.find({
     collection: 'experience',
     sort: 'order',
     limit: 50,

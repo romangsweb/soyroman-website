@@ -1,16 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { cms } from '@/lib/cms'
 import type { Metadata } from 'next'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 
 export default async function BlogPage() {
-  const payload = await getPayload({ config: configPromise })
-
-  const posts = await payload.find({
+  const posts = await cms.find({
     collection: 'posts',
     sort: '-publishedAt',
     limit: 20,
@@ -18,7 +15,7 @@ export default async function BlogPage() {
     depth: 1,
   })
 
-  const categories = await payload.find({
+  const categories = await cms.find({
     collection: 'categories',
     limit: 50,
   })

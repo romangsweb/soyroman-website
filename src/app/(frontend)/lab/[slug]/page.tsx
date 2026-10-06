@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { cms } from '@/lib/cms'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { RichText } from '@payloadcms/richtext-lexical/react'
@@ -14,8 +13,7 @@ type Args = { params: Promise<{ slug: string }> }
 
 export default async function LabDetailPage({ params }: Args) {
   const { slug } = await params
-  const payload = await getPayload({ config: configPromise })
-  const result = await payload.find({
+  const result = await cms.find({
     collection: 'lab',
     where: { slug: { equals: slug } },
     limit: 1,
@@ -92,8 +90,7 @@ export default async function LabDetailPage({ params }: Args) {
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug } = await params
-  const payload = await getPayload({ config: configPromise })
-  const result = await payload.find({
+  const result = await cms.find({
     collection: 'lab',
     where: { slug: { equals: slug } },
     limit: 1,

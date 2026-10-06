@@ -1,15 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { cms } from '@/lib/cms'
 import type { Metadata } from 'next'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 
 export default async function LabPage() {
-  const payload = await getPayload({ config: configPromise })
-  const labs = await payload.find({ collection: 'lab', limit: 50, depth: 1 })
+  const labs = await cms.find({ collection: 'lab', limit: 50, depth: 1 })
 
   const statusLabels: Record<string, string> = {
     idea: 'IDEA',

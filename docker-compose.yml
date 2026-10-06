@@ -1,31 +1,46 @@
-version: '3'
-
+# CMS de soyroman.com en Hall.
+#   docker compose --env-file .env.hall up -d --build
+# Cloudflare Tunnel: cms.soyroman.com → http://localhost:3010
 services:
-  payload:
-    image: node:18-alpine
+  cms:
+    build:
+      context: .
+      args:
+        # URL pública del sitio (SEO/metadata apuntan a soyroman.com, no al CMS)
+        NEXT_PUBLIC_SERVER_URL: ${FRONTEND_URL}
+        PAYLOAD_PUBLIC_SERVER_URL: ${PAYLOAD_PUBLIC_SERVER_URL}
+        FRONTEND_URL: ${FRONTEND_URL}
+    image: soyroman-cms:latest
+    container_name: soyroman-cms
+    restart: unless-stopped
+    env_file: .env.hall
+    environment:
+      CMS_ROLE: cms
+      CMS_URL: http://localhost:3000
+      DATABASE_URI: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     ports:
-      - '3000:3000'
+      - '127.0.0.1:3010:3000' # solo local; lo expone el túnel
     volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "yarn install && yarn dev"
+      - ./media:/app/media
     depends_on:
-      - mongo
-    env_file:
-      - .env
+      db:
+        condition: service_healthy
 
-  mongo:
-    image: mongo:latest
-    ports:
-      - '27017:27017'
-    command:
-      - --storageEngine=wiredTiger
+  db:
+    image: postgres:16-alpine
+    container_name: soyroman-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en .env.hall}
     volumes:
-      - data:/data/db
-    logging:
-      driver: none
+      - soyroman-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  data:
-  node_modules:
+  soyroman-pg:

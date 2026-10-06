@@ -1,15 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { cms } from '@/lib/cms'
 import type { Metadata } from 'next'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 
 export default async function ExpertisePage() {
-  const payload = await getPayload({ config: configPromise })
-  const expertises = await payload.find({
+  const expertises = await cms.find({
     collection: 'expertise',
     sort: 'order',
     limit: 20,
