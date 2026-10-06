@@ -7,8 +7,8 @@ import { MobileMenu, type NavItem } from './MobileMenu'
 const DEFAULT_NAV: NavItem[] = [
   { href: '/expertise', label: 'Expertise' },
   { href: '/proyectos', label: 'Proyectos' },
-  { href: '/lab', label: 'Lab' },
   { href: '/blog', label: 'Blog' },
+  { href: '/glosario', label: 'Glosario' },
   { href: '/consultoria', label: 'Consultoría' },
   { href: '/cv', label: 'CV' },
   { href: '/contacto', label: 'Contacto' },
@@ -42,7 +42,7 @@ export async function HeaderComponent() {
             SOY_ROMAN
           </Link>
 
-          <nav className="hidden md:flex items-center">
+          <nav className="hidden lg:flex items-center">
             {items.map((item, i) => (
               <Link
                 key={`${item.href}-${i}`}

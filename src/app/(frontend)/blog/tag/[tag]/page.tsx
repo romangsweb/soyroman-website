@@ -1,92 +1,120 @@
 import React from 'react'
 import Link from 'next/link'
-import { cms } from '@/lib/cms'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
+import { cms } from '@/lib/cms'
+import { ArrowUpRight } from '@/components/icons'
+import { PostCover, hasCover } from '@/components/PostCover'
+import { Reveal } from '@/components/motion/Reveal'
+
 type Args = { params: Promise<{ tag: string }> }
+
+async function getCategory(tag: string) {
+  const res = await cms.find({ collection: 'categories', where: { slug: { equals: tag } }, limit: 1 })
+  return res.docs[0] as any
+}
 
 export default async function TagPage({ params }: Args) {
   const { tag } = await params
-
-  // Find the category
-  const catResult = await cms.find({
-    collection: 'categories',
-    where: { slug: { equals: tag } },
-    limit: 1,
-  })
-  const category = catResult.docs[0]
+  const category = await getCategory(tag)
   if (!category) notFound()
 
-  // Find posts with this category
-  const posts = await cms.find({
-    collection: 'posts',
-    where: {
-      categories: { contains: category.id },
-      _status: { equals: 'published' },
-    },
-    sort: '-publishedAt',
-    limit: 50,
-  })
+  const [posts, terms] = await Promise.all([
+    cms.find({
+      collection: 'posts',
+      where: { and: [{ categories: { contains: category.id } }, { _status: { equals: 'published' } }] },
+      sort: '-publishedAt',
+      limit: 50,
+      depth: 1,
+    }),
+    cms.find({
+      collection: 'glossary',
+      where: { categories: { contains: category.id } },
+      sort: 'term',
+      limit: 30,
+      depth: 0,
+    }),
+  ])
 
   return (
-    <div className="container py-24">
-      <div className="max-w-2xl mb-16">
-        <Link
-          href="/blog"
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors font-mono mb-4 inline-block"
-        >
-          ← Blog
-        </Link>
-        <h1 className="text-4xl font-semibold mb-4">#{category.title}</h1>
-        <p className="text-lg text-muted-foreground">
-          {posts.totalDocs} artículo{posts.totalDocs !== 1 ? 's' : ''}
-        </p>
-      </div>
-
-      <div className="space-y-6">
-        {posts.docs.map((post: any) => (
+    <div className="bg-[#f4f4f4] text-black font-sans min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <section className="border-b border-black bg-[#e5e5e5]">
+        <div className="p-8 md:p-16">
           <Link
-            key={post.id}
-            href={`/blog/${post.slug}`}
-            className="group flex flex-col md:flex-row md:items-center gap-4 p-6 border border-border rounded-lg hover:border-[var(--accent)]/30 transition-colors"
+            href="/blog"
+            className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-12 hover:text-[#ff3300] transition-colors border border-black px-4 py-2 bg-white"
           >
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold group-hover:text-[var(--accent)] transition-colors">
-                {post.title}
-              </h2>
-              {post.excerpt && (
-                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{post.excerpt}</p>
-              )}
-            </div>
-            <div className="flex items-center gap-4 shrink-0 font-mono text-xs text-muted-foreground">
-              {post.publishedAt && (
-                <time>
-                  {new Date(post.publishedAt).toLocaleDateString('es-ES', {
-                    year: 'numeric',
-                    month: 'short',
-                  })}
-                </time>
-              )}
-            </div>
+            <ArrowUpRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
+            Volver al blog
           </Link>
-        ))}
-      </div>
+          <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60 mb-6">// Tema</p>
+          <h1 className="text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] tracking-tighter font-semibold">{category.title}</h1>
+          <p className="mt-6 font-mono text-sm opacity-70">
+            {posts.totalDocs} artículo{posts.totalDocs !== 1 ? 's' : ''}
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-white">
+        {posts.docs.length === 0 ? (
+          <p className="p-8 md:p-16 font-mono text-sm opacity-70">Todavía no hay artículos publicados en este tema.</p>
+        ) : (
+          <div className="flex flex-col divide-y divide-black">
+            {posts.docs.map((post: any, index: number) => (
+              <Reveal key={post.id} delay={0.05}>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className={`group p-8 md:p-16 hover:bg-[#111] hover:text-white transition-colors duration-300 ${hasCover(post.cover) ? 'grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,360px)] md:items-center' : 'block'}`}
+                >
+                  <div>
+                    {post.publishedAt && (
+                      <time className="inline-block font-mono text-[10px] uppercase tracking-widest font-bold bg-black text-white px-2 py-1 mb-6 group-hover:bg-[#ff3300]">
+                        {new Date(post.publishedAt).toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                      </time>
+                    )}
+                    <h2 className="text-3xl md:text-4xl font-semibold tracking-tight group-hover:text-[#ff3300] mb-4">{post.title}</h2>
+                    {post.excerpt && <p className="font-mono text-sm leading-relaxed opacity-80 max-w-3xl">{post.excerpt}</p>}
+                  </div>
+                  <PostCover
+                    cover={post.cover}
+                    className="aspect-[16/9] w-full border border-black group-hover:border-white transition-colors"
+                    sizes="(max-width: 768px) 100vw, 360px"
+                    priority={index === 0}
+                  />
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {terms.docs.length > 0 && (
+        <section className="border-t border-black bg-[#f4f4f4] p-8 md:p-16">
+          <h2 className="font-mono text-[10px] font-bold uppercase tracking-widest opacity-50 mb-6">// Términos del glosario</h2>
+          <div className="flex flex-wrap gap-2">
+            {terms.docs.map((t: any) => (
+              <Link
+                key={t.id}
+                href={`/glosario/${t.slug}`}
+                className="px-3 py-1.5 border border-black bg-white font-mono text-xs font-bold hover:bg-[#ff3300] hover:text-white hover:border-[#ff3300]"
+              >
+                {t.term}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   )
 }
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { tag } = await params
-  const result = await cms.find({
-    collection: 'categories',
-    where: { slug: { equals: tag } },
-    limit: 1,
-  })
-  const category = result.docs[0]
+  const category = await getCategory(tag)
   if (!category) return {}
   return {
     title: `${category.title} — Blog`,
-    description: `Artículos sobre ${category.title}`,
+    description: `Artículos y términos de marketing B2B sobre ${category.title.toLowerCase()}.`,
   }
 }

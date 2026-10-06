@@ -11,8 +11,10 @@ import { en } from '@payloadcms/translations/languages/en'
 import { Categories } from './collections/Categories'
 import { Experience } from './collections/Experience'
 import { Expertise } from './collections/Expertise'
+import { Glossary } from './collections/Glossary'
 import { Lab } from './collections/Lab'
 import { Media } from './collections/Media'
+import { Notes } from './collections/Notes'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Projects } from './collections/Projects'
@@ -118,7 +120,7 @@ export default buildConfig({
     prodMigrations: migrations,
   }),
   collections: [
-    ...[Posts, Expertise, Projects, Lab, Experience, Tools, Pages, Media, Categories].map(
+    ...[Posts, Glossary, Notes, Expertise, Projects, Lab, Experience, Tools, Pages, Media, Categories].map(
       withFrontendRevalidation,
     ),
     Users,

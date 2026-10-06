@@ -57,3 +57,32 @@ SATELLITES = [
 ]
 
 ALL_TOPICS = PILLARS + SATELLITES
+
+
+# ───────────── Tema (categoría del CMS) de cada artículo ─────────────
+# Por defecto se deriva de la Expertise; algunos temas tienen uno más preciso.
+EXPERTISE_TO_CATEGORY = {
+    "generacion-demanda-b2b": "generacion-demanda",
+    "seo-aeo-geo": "seo-aeo",
+    "paid-media": "paid-media",
+    "crm-revops": "crm-revops",
+    "web-herramientas": "sitios-web",
+    "liderazgo-equipos": "liderazgo",
+    "motores-ia": "ia-aplicada",
+}
+
+TOPIC_CATEGORY_OVERRIDES = {
+    "Email marketing B2B: secuencias que la gente sí lee": "contenido-email",
+    "Contenido B2B que genera pipeline: del blog al caso de estudio": "contenido-email",
+    "LinkedIn orgánico para directivos B2B: publicar sin convertirse en influencer": "contenido-email",
+    "Nurturing para ciclos de venta B2B de 6 a 12 meses": "contenido-email",
+    "GA4 para marketing B2B: los eventos y conversiones que sí importan": "analitica",
+    "Search Console para equipos de marketing: tres reportes para revisar cada semana": "analitica",
+    "Atribuir paid media cuando el ciclo de venta dura meses": "analitica",
+    "Eventos B2B: cómo medir su impacto real en el pipeline": "analitica",
+    "CRO en B2B: experimentos que se pueden correr con poco tráfico": "sitios-web",
+}
+
+
+def category_for(topic: str, expertise: str) -> str | None:
+    return TOPIC_CATEGORY_OVERRIDES.get(topic) or EXPERTISE_TO_CATEGORY.get(expertise)

@@ -16,10 +16,15 @@ export default async function BlogPage() {
     depth: 1,
   })
 
-  const categories = await cms.find({
-    collection: 'categories',
-    limit: 50,
-  })
+  const [allCategories, usage] = await Promise.all([
+    cms.find({ collection: 'categories', limit: 50, sort: 'title' }),
+    // Solo para saber qué temas tienen artículos publicados
+    cms.find({ collection: 'posts', where: { _status: { equals: 'published' } }, limit: 500, depth: 0 }),
+  ])
+  const used = new Set(
+    usage.docs.flatMap((p: any) => (p.categories || []).map((c: any) => (typeof c === 'object' ? c.id : c))),
+  )
+  const categories = { docs: allCategories.docs.filter((c: any) => used.has(c.id)) }
 
   return (
     <PageTransition>
@@ -56,7 +61,7 @@ export default async function BlogPage() {
             <div className="lg:col-span-3 bg-[#f4f4f4] p-8 md:p-16">
               <div className="sticky top-32">
                 <h3 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-8 opacity-50">
-                  // Filtrar por tema
+                  // Temas
                 </h3>
                 {categories.docs.length > 0 && (
                   <div className="flex flex-col gap-2">
@@ -79,6 +84,15 @@ export default async function BlogPage() {
                     ))}
                   </div>
                 )}
+                <h3 className="font-mono font-bold uppercase tracking-widest text-[10px] mt-12 mb-4 opacity-50">// También</h3>
+                <div className="flex flex-col gap-2">
+                  <Link href="/glosario" className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black">
+                    <span className="font-mono text-sm uppercase font-bold group-hover:text-[#ff3300]">Glosario</span>
+                  </Link>
+                  <Link href="/notas" className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black">
+                    <span className="font-mono text-sm uppercase font-bold group-hover:text-[#ff3300]">Notas de campo</span>
+                  </Link>
+                </div>
               </div>
             </div>
 

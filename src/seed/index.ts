@@ -79,7 +79,7 @@ const richText = (nodes: Record<string, unknown>[]) =>
     },
   }) as any
 
-type Slugged = 'expertise' | 'projects'
+type Slugged = 'expertise' | 'projects' | 'categories'
 
 /**
  * Seed idempotente: crea o ACTUALIZA por clave natural (slug, nombre, puesto).
@@ -150,7 +150,7 @@ async function seed() {
         {
           title: 'Implementación',
           description:
-            'Despliegue de los motores en infraestructura propia del cliente (PostgreSQL, Qdrant, Ollama, n8n), sin SaaS de por medio.',
+            'CRM listo para usarse, medición (GA4, Tag Manager, UTMs), sitio conectado al CRM y arranque de campañas, con el equipo capacitado.',
           engine: 'Ambos',
         },
         {
@@ -238,6 +238,21 @@ async function seed() {
   ]
 
   for (const exp of expertiseData) await bySlug('expertise', exp)
+
+  // ─── Temas (taxonomía compartida de blog, glosario y notas) ───
+  console.log('  categories')
+  const categoriesData = [
+    { title: 'Generación de demanda', slug: 'generacion-demanda' },
+    { title: 'CRM y RevOps', slug: 'crm-revops' },
+    { title: 'SEO y AEO', slug: 'seo-aeo' },
+    { title: 'Paid media', slug: 'paid-media' },
+    { title: 'Contenido y email', slug: 'contenido-email' },
+    { title: 'Analítica y medición', slug: 'analitica' },
+    { title: 'Sitios web y conversión', slug: 'sitios-web' },
+    { title: 'Liderazgo de equipos', slug: 'liderazgo' },
+    { title: 'IA aplicada', slug: 'ia-aplicada' },
+  ]
+  for (const cat of categoriesData) await bySlug('categories', cat)
 
   // ─── Projects (5 casos) ───
   console.log('  projects')
@@ -569,6 +584,7 @@ async function seed() {
         ['/proyectos', 'Proyectos'],
         ['/consultoria', 'Consultoría'],
         ['/blog', 'Blog'],
+        ['/glosario', 'Glosario'],
         ['/about', 'Sobre mí'],
         ['/cv', 'CV'],
         ['/contacto', 'Contacto'],
@@ -584,7 +600,10 @@ async function seed() {
         ['/expertise', 'Expertise'],
         ['/proyectos', 'Proyectos'],
         ['/consultoria', 'Consultoría'],
-        ['/uses', 'Uses'],
+        ['/blog', 'Blog'],
+        ['/glosario', 'Glosario'],
+        ['/notas', 'Notas de campo'],
+        ['/uses', 'Herramientas'],
         ['/cv', 'CV'],
         ['/contacto', 'Contacto'],
       ]),

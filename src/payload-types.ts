@@ -68,6 +68,8 @@ export interface Config {
   blocks: {};
   collections: {
     posts: Post;
+    glossary: Glossary;
+    notes: Note;
     expertise: Expertise;
     projects: Project;
     lab: Lab;
@@ -86,6 +88,8 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     posts: PostsSelect<false> | PostsSelect<true>;
+    glossary: GlossarySelect<false> | GlossarySelect<true>;
+    notes: NotesSelect<false> | NotesSelect<true>;
     expertise: ExpertiseSelect<false> | ExpertiseSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     lab: LabSelect<false> | LabSelect<true>;
@@ -317,6 +321,72 @@ export interface Category {
   slug: string;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "glossary".
+ */
+export interface Glossary {
+  id: number;
+  term: string;
+  slug: string;
+  /**
+   * Ej.: Return on Ad Spend (retorno de la inversión publicitaria)
+   */
+  fullName?: string | null;
+  /**
+   * 2 o 3 frases claras, sin jerga.
+   */
+  definition: string;
+  /**
+   * Opcional. Ej.: Ingresos atribuidos ÷ inversión en anuncios
+   */
+  formula?: string | null;
+  /**
+   * Con números cuando aplique.
+   */
+  example?: string | null;
+  whyItMatters?: string | null;
+  relatedTerms?: (number | Glossary)[] | null;
+  categories?: (number | Category)[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "notes".
+ */
+export interface Note {
+  id: number;
+  title: string;
+  slug: string;
+  stage: 'idea' | 'drafted';
+  date?: string | null;
+  /**
+   * En bruto: qué pasó, qué aprendiste, un dato. El motor redacta la nota solo a partir de esto. No se publica.
+   */
+  notes?: string | null;
+  markdownSource?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  categories?: (number | Category)[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -755,6 +825,14 @@ export interface PayloadLockedDocument {
         value: number | Post;
       } | null)
     | ({
+        relationTo: 'glossary';
+        value: number | Glossary;
+      } | null)
+    | ({
+        relationTo: 'notes';
+        value: number | Note;
+      } | null)
+    | ({
         relationTo: 'expertise';
         value: number | Expertise;
       } | null)
@@ -854,6 +932,41 @@ export interface PostsSelect<T extends boolean = true> {
       };
   publishedAt?: T;
   readingTime?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "glossary_select".
+ */
+export interface GlossarySelect<T extends boolean = true> {
+  term?: T;
+  slug?: T;
+  fullName?: T;
+  definition?: T;
+  formula?: T;
+  example?: T;
+  whyItMatters?: T;
+  relatedTerms?: T;
+  categories?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "notes_select".
+ */
+export interface NotesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  stage?: T;
+  date?: T;
+  notes?: T;
+  markdownSource?: T;
+  content?: T;
+  categories?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

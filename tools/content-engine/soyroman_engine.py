@@ -45,7 +45,7 @@ from buildations_engines import engine_dedup as dedup  # noqa: E402
 from buildations_engines import engine_quality as qa  # noqa: E402
 from buildations_engines import engine_telemetry as tel  # noqa: E402
 
-from topics import ALL_TOPICS  # noqa: E402
+from topics import ALL_TOPICS, category_for  # noqa: E402
 
 ENGINE_NAME = "soyroman-posts"
 CMS_PUBLIC = "https://cms.soyroman.com"
@@ -243,6 +243,16 @@ class CMS:
             return docs[0]["id"] if docs else None
         except Exception as e:
             log(f"  expertise '{slug}' no disponible: {e}")
+            return None
+
+    def category_id(self, slug):
+        if not slug:
+            return None
+        try:
+            docs = self.get("categories", **{"where[slug][equals]": slug, "limit": 1, "depth": 0}).get("docs", [])
+            return docs[0]["id"] if docs else None
+        except Exception as e:
+            log(f"  tema '{slug}' no disponible: {e}")
             return None
 
     def unique_slug(self, base):
@@ -480,6 +490,11 @@ def main():
         exp_id = cms.expertise_id(expertise)
         if exp_id:
             data["expertises"] = [exp_id]
+        cat_slug = category_for(topic, expertise)
+        cat_id = cms.category_id(cat_slug)
+        if cat_id:
+            data["categories"] = [cat_id]
+        run.add_metadata(category=cat_slug)
         if cover_id:
             data["cover"] = cover_id
             data["meta"]["image"] = cover_id

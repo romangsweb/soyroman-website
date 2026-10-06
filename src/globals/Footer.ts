@@ -17,7 +17,7 @@ export const Footer: GlobalConfig = {
           appearances: false,
         }),
       ],
-      maxRows: 8,
+      maxRows: 12,
     },
     {
       name: 'copyright',
