@@ -173,7 +173,12 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const projects = await payload.find({ collection: 'projects', limit: 100 })
-  return projects.docs.map((p: any) => ({ slug: p.slug }))
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const projects = await payload.find({ collection: 'projects', limit: 100 })
+    return projects.docs.map((p: any) => ({ slug: p.slug }))
+  } catch (error) {
+    console.error('Failed to generate static params for projects:', error)
+    return []
+  }
 }
