@@ -79,56 +79,62 @@ const richText = (nodes: Record<string, unknown>[]) =>
     },
   }) as any
 
+type Slugged = 'expertise' | 'projects'
+
+/**
+ * Seed idempotente: crea o ACTUALIZA por clave natural (slug, nombre, puesto).
+ * No borra nada: conserva IDs, así no se rompen relaciones con posts del blog.
+ * No toca usuarios, posts ni media.
+ */
 async function seed() {
   const payload = await getPayload({ config })
+  const ctx = { disableRevalidate: true }
+
+  const upsert = async (collection: any, where: Record<string, unknown>, data: any) => {
+    const found = await payload.find({ collection, where: where as any, limit: 1, depth: 0 })
+    if (found.docs[0]) {
+      return payload.update({ collection, id: found.docs[0].id, data, context: ctx })
+    }
+    return payload.create({ collection, data, context: ctx })
+  }
+  const bySlug = (collection: Slugged, data: any) => upsert(collection, { slug: { equals: data.slug } }, data)
 
   console.log('🌱 Seeding database...')
 
-  // ─── Clean existing data ───
-  console.log('  Cleaning existing data...')
-  const collections = ['expertise', 'projects', 'experience', 'tools'] as const
-  for (const slug of collections) {
-    const existing = await payload.find({ collection: slug, limit: 100 })
-    for (const doc of existing.docs) {
-      await payload.delete({ collection: slug, id: doc.id })
-    }
-  }
-
   // ─── Profile (Global) ───
-  console.log('  Seeding profile...')
+  console.log('  profile')
   await payload.updateGlobal({
     slug: 'profile',
-    context: { disableRevalidate: true },
+    context: ctx,
     data: {
       name: 'Román García',
-      role: 'Director de Marketing B2B',
-      tagline: 'Marketing B2B que se construye, no solo se planea.',
+      role: 'Director de marketing B2B',
+      tagline: 'Marketing B2B: campañas, datos y la tecnología que los conecta.',
       shortBio:
-        'Llevo más de 10 años generando demanda B2B para empresas de tecnología. Diseño la estrategia y también construyo los sistemas que la hacen funcionar: CRM, datos, web y motores de IA propios.',
+        'Dirijo campañas de generación de demanda en medios digitales y construyo lo que las hace funcionar: sitios, analítica, CRM y posicionamiento SEO y AEO. Desde 2017 llevo leads de MQL a SQL y a venta en empresas de tecnología B2B.',
       longBio: richText([
         paragraph(
-          'Soy Román García, mercadólogo con especialidad en publicidad y más de 10 años en generación de demanda B2B para empresas de tecnología. Hoy dirijo el marketing de una consultora de ERP enterprise: demanda, CRM, operación del pipeline y web.',
+          'Estudié marketing con especialidad en publicidad. Muy pronto me di cuenta de que lo técnico era el freno: el servidor de la página, la arquitectura para posicionar, las etiquetas de medición. Si dependía de otros para cada una de esas piezas, las campañas no avanzaban.',
         ),
         paragraph(
-          'Mi forma de trabajar parte de una convicción: la estrategia de marketing vale lo que vale el sistema que la ejecuta. Por eso no me quedo en el plan. Modelo pipelines en el CRM, escribo los scripts que lo conectan, construyo los sitios y monto la infraestructura de datos donde todo se mide.',
+          'Así que aprendí lo técnico y a gestionar la operación. Hoy puedo instalar un servidor, montar un sitio, configurar la analítica y diseñar cómo se mide cada etapa del embudo. Participé en migraciones de CRM, de Dynamics a HubSpot y entre portales de HubSpot, y ahí entendí el valor que tiene un CRM bien estructurado y cuidado para marketing y ventas. De esa convicción nació mi trabajo en RevOps. El posicionamiento orgánico siguió el mismo camino: el SEO evolucionó a una estrategia de SEO y AEO para aparecer también en las respuestas de los motores de IA.',
         ),
         paragraph(
-          'Esa misma idea me llevó a fundar [Buildations](https://buildations.com), un laboratorio de IA en la Ciudad de México. Ahí desarrollo motores propios para RevOps y para visibilidad en buscadores y en motores de IA. Corren en infraestructura del cliente, sin rentar el stack.',
-        ),
-        paragraph(
-          'Fuera del trabajo leo sobre teoría social, psicología y arquitectura. Me interesa entender cómo deciden las personas y cómo los espacios y los sistemas moldean esas decisiones, lo cual resulta útil cuando el oficio consiste en provocar una conversación de compra.',
+          'Soy un director de marketing que sabe de tecnología e infraestructura, para que el área digital opere como debe. Fundé y dirijo [Buildations](https://buildations.com), un laboratorio de IA donde construyo motores para revenue intelligence y presencia en buscadores.',
         ),
       ]),
       email: 'contacto@soyroman.com',
       buildationsUrl: 'https://buildations.com',
       metrics: [
-        { label: 'años en generación de demanda B2B', value: '+10' },
-        { label: 'personas en equipos liderados', value: '6' },
-        { label: 'contactos depurados en CRM (de ~76k)', value: '~68k' },
-        { label: 'de infraestructura de IA propia en producción', value: '+1 año' },
+        { label: 'en generación de demanda B2B', value: 'Desde 2017' },
+        { label: 'sitios web lanzados', value: '15+' },
+        { label: 'leads al mes', value: '120+' },
+        { label: 'facturación anual generada por marketing', value: 'USD 1.5M' },
       ],
-      // Redes: por definir
-      socialLinks: [{ platform: 'website', url: 'https://buildations.com' }],
+      socialLinks: [
+        { platform: 'linkedin', url: 'https://www.linkedin.com/in/román-garcía/' },
+        { platform: 'github', url: 'https://github.com/romangsweb' },
+      ],
       services: [
         {
           title: 'Consultoría RevOps',
@@ -138,8 +144,7 @@ async function seed() {
         },
         {
           title: 'Consultoría SEO + AEO/GEO',
-          description:
-            'Visibilidad en Google y en motores de IA desde un mismo pipeline.',
+          description: 'Visibilidad en Google y en motores de IA desde un mismo pipeline.',
           engine: 'Search & Presence',
         },
         {
@@ -149,16 +154,16 @@ async function seed() {
           engine: 'Ambos',
         },
         {
-          title: 'Adopción y operación',
+          title: 'Mentoría',
           description:
-            'Acompañamiento hasta que el equipo opera los motores de forma autónoma.',
+            'Acompañamiento a líderes y equipos de marketing B2B en generación de demanda, CRM y operación digital.',
           engine: 'Ambos',
         },
       ],
     },
   })
 
-  // ─── Expertise (7 areas) ───
+  // ─── Expertise (7 áreas) ───
   console.log('  Seeding expertise...')
   const expertiseData = [
     {
@@ -168,7 +173,7 @@ async function seed() {
       thesis: 'Estrategia de captación para ciclos de venta largos y tickets altos.',
       level: 'advanced' as const,
       summary:
-        'Diseño e implemento estrategias de generación de demanda que conectan marketing con ventas a través de contenido, eventos, outbound y nurturing — todo medido contra pipeline, no contra vanity metrics.',
+        'Diseño e implemento estrategias de generación de demanda que conectan marketing con ventas a través de contenido, eventos, outbound y nurturing medidas contra pipeline y no contra métricas de vanidad.',
     },
     {
       title: 'SEO, AEO y GEO',
@@ -195,10 +200,10 @@ async function seed() {
       slug: 'crm-revops',
       order: 4,
       thesis:
-        'Implementación, depuración y modelado de HubSpot; pipelines MEDDIC; atribución.',
+        'Implementación, migración, depuración y modelado de HubSpot; pipelines MEDDIC; atribución.',
       level: 'advanced' as const,
       summary:
-        'El CRM es el sistema nervioso del revenue. Lo implemento, depuro y modelo para que marketing y ventas trabajen con los mismos datos, en el mismo pipeline, con la misma definición de éxito.',
+        'El CRM es el sistema nervioso del revenue. Lo implemento, migro, depuro y modelo para que marketing y ventas trabajen con los mismos datos, en el mismo pipeline, con la misma definición de éxito.',
     },
     {
       title: 'Web y herramientas',
@@ -232,343 +237,357 @@ async function seed() {
     },
   ]
 
-  for (const exp of expertiseData) {
-    await payload.create({ collection: 'expertise', data: exp })
-  }
+  for (const exp of expertiseData) await bySlug('expertise', exp)
 
-  // ─── Projects (4 cases) ───
-  console.log('  Seeding projects...')
+  // ─── Projects (5 casos) ───
+  console.log('  projects')
   const projectsData = [
     {
-      title: 'Sitio B2B visible para buscadores y motores de IA',
+      title: 'Sitio corporativo B2B preparado para buscadores e IA',
       slug: 'sitio-b2b-visible',
       featured: true,
       year: 2025,
       color: '#5B8DEF',
       client: 'Consultora de ERP enterprise',
+      context:
+        'El sitio estaba en HubSpot CMS, con una narrativa genérica, sin visibilidad orgánica y sin presencia en las respuestas de los motores de IA.',
+      problem:
+        'Sin visibilidad en buscadores ni en AI Overviews, ChatGPT o Perplexity, el sitio no generaba leads calificados.',
       approach: richText([
         bulletList([
           'Migración a WordPress en Kinsta.',
           'Home rediseñado con narrativa B2B estructurada.',
-          'Landing pages interactivas: simulador fiscal en Vercel y cotizador.',
+          'Landing pages interactivas: simulador en Vercel y cotizador.',
           'Traducción masiva con un LLM local.',
-          'Un motor GEO sobre Cloudflare Workers.',
+          'Motor GEO sobre Cloudflare Workers.',
           'Endurecimiento de seguridad y DNSSEC.',
         ]),
       ]),
-      context:
-        'El sitio de una consultora de ERP enterprise estaba en HubSpot CMS, tenía una narrativa genérica y no aparecía en las respuestas de los motores de IA.',
-      problem:
-        'Sin visibilidad orgánica ni presencia en AI Overviews, ChatGPT o Perplexity. El sitio no generaba leads calificados.',
       learnings:
-        'El motor GEO se desactivó porque contaminaba los datos de GA4; medir bien vale más que publicar más rápido.',
+        'El motor GEO se desactivó porque contaminaba los datos de GA4: medir bien vale más que publicar más rápido.',
       results: [
-        {
-          metric: 'Presencia en IA',
-          value: '↑',
-          description: 'Más menciones en motores de IA',
-        },
-        {
-          metric: 'Leads orgánicos',
-          value: '↑',
-          description: 'Crecimiento de leads orgánicos',
-        },
+        { metric: 'Plataforma', value: 'WordPress + Kinsta', description: 'Migración completa desde HubSpot CMS' },
+        { metric: 'Captación', value: 'Simulador y cotizador', description: 'Landing pages interactivas para generar leads' },
       ],
-      stackTags: [
-        { tag: 'WordPress' },
-        { tag: 'Divi 5' },
-        { tag: 'Kinsta' },
-        { tag: 'Cloudflare' },
-        { tag: 'Vercel' },
-        { tag: 'Ollama' },
-        { tag: 'GA4' },
-      ],
+      stackTags: [{ tag: 'WordPress' }, { tag: 'Kinsta' }, { tag: 'Cloudflare' }, { tag: 'Vercel' }, { tag: 'Ollama' }, { tag: 'GA4' }],
     },
     {
-      title: 'De cinco pipelines a un forecast confiable',
+      title: 'Migración entre portales de HubSpot y un solo modelo de pipeline',
       slug: 'forecast-confiable',
       featured: true,
       year: 2024,
       color: '#F59E0B',
       client: 'Confidencial',
+      context:
+        'Un portal de HubSpot con unos 76 mil contactos, cinco pipelines comerciales sin un modelo común y una licencia por vencer que obligaba a migrar.',
+      problem:
+        'Sin un modelo unificado, la dirección no podía confiar en el forecast: los datos estaban dispersos en pipelines con criterios distintos.',
       approach: richText([
         bulletList([
-          'Migración completa por API entre portales: contactos, empresas, deals, actividades y propiedades personalizadas.',
-          'Depuración en varias rondas hasta unos 68k contactos.',
-          'Análisis histórico de MQLs (2022–2026).',
+          'Migración completa por API entre portales: contactos, empresas, negocios, actividades y propiedades personalizadas.',
+          'Depuración en varias rondas hasta unos 68 mil contactos.',
+          'Análisis histórico de MQL.',
           'Unificación de los pipelines en un modelo MEDDIC de 9 etapas.',
         ]),
       ]),
-      context:
-        'Un portal de HubSpot con unos 76k contactos, cinco pipelines comerciales sin un modelo común y un portal por vencer que había que migrar.',
-      problem:
-        'Sin un modelo unificado, la dirección no podía confiar en el forecast. Los datos estaban dispersos en múltiples pipelines con criterios diferentes.',
       learnings:
-        'La migración API-to-API entre portales de HubSpot requiere mapear cada propiedad personalizada. La depuración es iterativa, no lineal.',
+        'Migrar entre portales de HubSpot exige mapear cada propiedad personalizada, y la depuración es iterativa, no lineal.',
       results: [
-        {
-          metric: 'Contactos depurados',
-          value: '~68k',
-          description: 'De 76k a 68k contactos limpios',
-        },
-        {
-          metric: 'Pipeline unificado',
-          value: 'MEDDIC',
-          description: 'Modelo de 9 etapas',
-        },
-        {
-          metric: 'Forecast',
-          value: 'Confiable',
-          description: 'La dirección puede tomar decisiones',
-        },
+        { metric: 'Contactos depurados', value: '~68k', description: 'De ~76k a ~68k contactos limpios' },
+        { metric: 'Pipelines', value: '5 → 1', description: 'Un modelo MEDDIC de 9 etapas' },
       ],
-      stackTags: [
-        { tag: 'HubSpot' },
-        { tag: 'API de HubSpot' },
-        { tag: 'Python' },
-      ],
+      stackTags: [{ tag: 'HubSpot' }, { tag: 'API de HubSpot' }, { tag: 'Python' }],
     },
     {
-      title: 'Rescate de una plataforma de cursos en línea',
+      title: 'Migración de Dynamics CRM a HubSpot',
+      slug: 'migracion-dynamics-hubspot',
+      featured: false,
+      year: 2020,
+      color: '#22C55E',
+      client: 'Empresa de desarrollo de inteligencia artificial',
+      context: 'Los datos comerciales vivían en Dynamics CRM y marketing no tenía forma de conectarlos con sus campañas.',
+      problem: 'Sin un CRM compartido, marketing no podía atribuir leads ni dar seguimiento al embudo hasta la venta.',
+      approach: richText([
+        bulletList([
+          'Mapeo de entidades y campos de Dynamics a HubSpot.',
+          'Limpieza de datos antes de migrar.',
+          'Modelo de ciclo de vida y pipeline en HubSpot.',
+          'Integración con formularios y campañas.',
+        ]),
+      ]),
+      learnings: 'Una migración de CRM es la oportunidad de redefinir el embudo, no solo de mover datos.',
+      results: [{ metric: 'CRM', value: 'Dynamics → HubSpot', description: 'Marketing y ventas sobre la misma plataforma' }],
+      stackTags: [{ tag: 'Dynamics CRM' }, { tag: 'HubSpot' }],
+    },
+    {
+      title: 'Seguridad web: recuperación de una tienda WooCommerce',
       slug: 'rescate-plataforma-cursos',
-      featured: true,
+      featured: false,
       year: 2024,
       color: '#EF4444',
       client: 'Confidencial',
+      context: 'Una tienda de cursos en WordPress y WooCommerce llevaba meses comprometida por malware.',
+      problem: 'Webshells activos, cuentas comprometidas y riesgo de exposición de datos de usuarios.',
       approach: richText([
         bulletList([
           'Análisis forense por SSH.',
           'Eliminación de webshells.',
-          'Recuperación de la cuenta y rotación de credenciales.',
+          'Recuperación de cuentas y rotación de credenciales.',
           'Endurecimiento posterior al incidente.',
         ]),
       ]),
-      context:
-        'Una tienda de cursos en WordPress/WooCommerce llevaba meses comprometida por malware antes de mi intervención.',
-      problem:
-        'Webshells activos, cuentas comprometidas, y riesgo de exposición de datos de usuarios.',
-      learnings:
-        'La seguridad web en hosting compartido requiere un enfoque forense: no basta con eliminar archivos, hay que rastrear el vector de entrada.',
+      learnings: 'En hosting compartido no basta con borrar archivos: hay que rastrear el vector de entrada.',
       results: [
-        {
-          metric: 'Vulnerabilidades',
-          value: 'Cerradas',
-          description: 'Se cerraron todas las vulnerabilidades',
-        },
-        {
-          metric: 'Datos de usuarios',
-          value: 'Protegidos',
-          description: 'No se expusieron datos',
-        },
-        {
-          metric: 'Operación',
-          value: 'Restaurada',
-          description: 'Cliente volvió a operar su tienda',
-        },
+        { metric: 'Vulnerabilidades', value: 'Cerradas', description: 'Se cerraron los accesos comprometidos' },
+        { metric: 'Operación', value: 'Restaurada', description: 'La tienda volvió a vender sin exponer datos de usuarios' },
       ],
-      stackTags: [
-        { tag: 'SSH' },
-        { tag: 'WordPress' },
-        { tag: 'WooCommerce' },
-        { tag: 'Hosting compartido' },
-      ],
+      stackTags: [{ tag: 'SSH' }, { tag: 'WordPress' }, { tag: 'WooCommerce' }],
     },
     {
-      title: 'Buildations: infraestructura de IA propia',
+      title: 'Buildations: laboratorio de IA con infraestructura propia',
       slug: 'buildations-ia',
       featured: true,
       year: 2024,
       color: '#7CF5C8',
       client: 'Buildations',
+      context: 'Construir IA seria sin rentar el stack.',
+      problem: 'Las plataformas SaaS de IA tienen costos recurrentes altos y no dan control total sobre los datos ni los modelos.',
       approach: richText([
         bulletList([
-          'Servidor de producción propio con Docker: n8n, Qdrant, Ollama, PostgreSQL y GTM Server-Side.',
+          'Servidor de producción propio con Docker: PostgreSQL, Qdrant, Ollama y n8n.',
           'Acceso por Tailscale.',
-          'Capa de seguridad: Wazuh, Suricata, CrowdSec y Fail2ban.',
+          'Seguridad: Wazuh, Suricata, CrowdSec y Fail2ban.',
           'Monitoreo con Grafana, Prometheus y Loki.',
           'Respaldos con Restic.',
         ]),
       ]),
-      context: 'Construir IA seria sin rentar el stack.',
-      problem:
-        'Las plataformas SaaS de IA tienen costos recurrentes altos y no permiten control total sobre los datos y modelos.',
-      learnings:
-        'Es una inversión única en lugar de una suscripción, siempre que se cuente con la infraestructura para montarla.',
+      learnings: 'Es una inversión única en lugar de una suscripción, siempre que se cuente con la infraestructura para operarla.',
       results: [
-        {
-          metric: 'Tiempo en producción',
-          value: '+1 año',
-          description: 'En producción continua',
-        },
-        {
-          metric: 'Servicios activos',
-          value: '3',
-          description: 'Revenue Intelligence, Search & Presence, Adaptive Security',
-        },
+        { metric: 'En producción', value: '+1 año', description: 'Operación continua' },
+        { metric: 'Motores', value: '2', description: 'Revenue Intelligence y Search & Presence' },
       ],
-      stackTags: [
-        { tag: 'Docker' },
-        { tag: 'PostgreSQL' },
-        { tag: 'Qdrant' },
-        { tag: 'Ollama' },
-        { tag: 'n8n' },
-        { tag: 'Tailscale' },
-      ],
+      stackTags: [{ tag: 'Docker' }, { tag: 'PostgreSQL' }, { tag: 'Qdrant' }, { tag: 'Ollama' }, { tag: 'n8n' }, { tag: 'Tailscale' }],
     },
   ]
-
-  for (const project of projectsData) {
-    await payload.create({ collection: 'projects', data: project })
-  }
+  for (const project of projectsData) await bySlug('projects', project)
 
   // ─── Experience ───
-  console.log('  Seeding experience...')
+  console.log('  experience')
+  const grow = { text: 'Incremento en la generación de demanda digital.' }
   const experienceData = [
     {
       company: 'Buildations',
       type: 'work' as const,
-      position: 'Fundador y Director',
+      position: 'Fundador y director',
       startDate: '2024-01-01T00:00:00.000Z',
       order: 1,
       achievements: [
-        {
-          text: 'Laboratorio de IA: motores Revenue Intelligence y Search & Presence.',
-        },
-        {
-          text: 'Infraestructura propia con Docker, PostgreSQL, Qdrant, Ollama, n8n y Tailscale.',
-        },
-        { text: 'Más de un año en producción con 3 servicios activos.' },
+        { text: 'Laboratorio de IA con motores Revenue Intelligence y Search & Presence.' },
+        { text: 'Infraestructura propia con Docker, PostgreSQL, Qdrant, Ollama, n8n y Tailscale.' },
       ],
     },
     {
-      company: 'Consultora de ERP enterprise',
+      company: 'Partner de ERP enterprise',
       type: 'work' as const,
-      position: 'Director de Marketing',
-      startDate: '2020-01-01T00:00:00.000Z',
+      position: 'Director de marketing',
+      startDate: '2023-01-01T00:00:00.000Z',
       order: 2,
       achievements: [
-        {
-          text: 'Demanda B2B, RevOps, CRM, web; equipo de hasta 6 personas.',
-        },
-        {
-          text: 'Migración y depuración de CRM: de 76k a 68k contactos.',
-        },
-        {
-          text: 'Unificación de 5 pipelines en un modelo MEDDIC de 9 etapas.',
-        },
+        { text: 'Generación de demanda con capacidad de 120+ leads al mes.' },
+        { text: 'USD 1.5M de facturación anual generada por marketing.' },
+        { text: 'Migración entre portales de HubSpot y unificación de 5 pipelines en un modelo MEDDIC de 9 etapas.' },
+        { text: 'Liderazgo de un equipo de hasta 6 personas: diseño, contenido, SDR y marketing digital.' },
       ],
     },
     {
-      company: 'Empresas de tecnología',
+      company: 'Empresa de desarrollo de inteligencia artificial',
       type: 'work' as const,
-      position: 'Gerencias de Marketing',
-      startDate: '2014-01-01T00:00:00.000Z',
-      endDate: '2020-01-01T00:00:00.000Z',
+      position: 'Gerente de marketing',
+      startDate: '2020-01-01T00:00:00.000Z',
+      endDate: '2023-01-01T00:00:00.000Z',
       order: 3,
-      achievements: [{ text: 'Generación de demanda B2B para múltiples empresas de tecnología.' }],
+      achievements: [{ text: 'Migración de Dynamics CRM a HubSpot.' }, grow],
+    },
+    {
+      company: 'Empresa de soluciones RFID',
+      type: 'work' as const,
+      position: 'Gerente de marketing',
+      startDate: '2019-01-01T00:00:00.000Z',
+      endDate: '2020-01-01T00:00:00.000Z',
+      order: 4,
+      achievements: [grow],
+    },
+    {
+      company: 'Empresa de servicios de nube en AWS',
+      type: 'work' as const,
+      position: 'Gerente de marketing',
+      startDate: '2018-01-01T00:00:00.000Z',
+      endDate: '2019-01-01T00:00:00.000Z',
+      order: 5,
+      achievements: [grow],
+    },
+    {
+      company: 'Empresa de desarrollo de cursos digitales',
+      type: 'work' as const,
+      position: 'Gerente de marketing',
+      startDate: '2017-01-01T00:00:00.000Z',
+      endDate: '2018-01-01T00:00:00.000Z',
+      order: 6,
+      achievements: [grow],
     },
     {
       company: 'Formación académica',
       type: 'education' as const,
       position: 'Licenciatura en Marketing, especialidad en Publicidad',
-      startDate: '2010-01-01T00:00:00.000Z',
-      endDate: '2014-01-01T00:00:00.000Z',
-      order: 4,
+      startDate: '2012-01-01T00:00:00.000Z',
+      endDate: '2017-01-01T00:00:00.000Z',
+      order: 7,
       achievements: [
-        { text: 'Certificaciones HubSpot.' },
-        { text: 'Certificaciones Google.' },
-        {
-          text: 'Universidad de Helsinki: Elements of AI, Building AI, Ethics of AI.',
-        },
+        { text: 'Certificaciones de HubSpot.' },
+        { text: 'Certificaciones de Google.' },
+        { text: 'Universidad de Helsinki: Elements of AI, Building AI, Ethics of AI.' },
       ],
     },
   ]
-
   for (const exp of experienceData) {
-    await payload.create({ collection: 'experience', data: exp })
+    await upsert('experience', { and: [{ company: { equals: exp.company } }, { position: { equals: exp.position } }] }, exp)
+  }
+
+  // Entradas del seed anterior que ya no existen (otra clave company/position)
+  const oldExperience: [string, string][] = [
+    ['Buildations', 'Fundador y Director'],
+    ['Consultora de ERP enterprise', 'Director de Marketing'],
+    ['Empresas de tecnología', 'Gerencias de Marketing'],
+  ]
+  for (const [company, position] of oldExperience) {
+    const found = await payload.find({
+      collection: 'experience',
+      where: { and: [{ company: { equals: company } }, { position: { equals: position } }] },
+      limit: 5,
+      depth: 0,
+    })
+    for (const doc of found.docs) await payload.delete({ collection: 'experience', id: doc.id, context: ctx })
   }
 
   // ─── Tools ───
-  console.log('  Seeding tools...')
+  console.log('  tools')
+  type Level = 'beginner' | 'intermediate' | 'advanced' | 'expert'
+  type Cat = 'crm-revops' | 'analytics' | 'web' | 'ia-data' | 'infrastructure' | 'design' | 'ads' | 'workspace'
+  const t = (name: string, category: Cat, level: Level = 'intermediate') => ({ name, category, level })
   const toolsData = [
     // CRM y RevOps
-    { name: 'HubSpot', category: 'crm-revops' as const, level: 'expert' as const },
-    { name: 'HubSpot API + Python', category: 'crm-revops' as const, level: 'advanced' as const },
-    { name: 'Modelo MEDDIC', category: 'crm-revops' as const, level: 'advanced' as const },
-    // Analítica
-    { name: 'GA4', category: 'analytics' as const, level: 'advanced' as const },
-    { name: 'GTM Server-Side', category: 'analytics' as const, level: 'advanced' as const },
-    { name: 'Search Console', category: 'analytics' as const, level: 'advanced' as const },
+    t('HubSpot', 'crm-revops', 'expert'),
+    t('HubSpot API + Python', 'crm-revops', 'advanced'),
+    t('Modelo MEDDIC', 'crm-revops', 'advanced'),
+    t('Dynamics 365 / Dynamics CRM', 'crm-revops'),
+    t('LinkedIn Sales Navigator', 'crm-revops'),
+    t('Apollo', 'crm-revops'),
+    t('Zapier', 'crm-revops'),
+    t('Make', 'crm-revops'),
+    // Analítica y SEO
+    t('GA4', 'analytics', 'advanced'),
+    t('Google Tag Manager (web y server-side)', 'analytics', 'advanced'),
+    t('Search Console', 'analytics', 'advanced'),
+    t('Semrush', 'analytics'),
+    t('Ahrefs', 'analytics'),
+    t('Screaming Frog', 'analytics'),
+    t('PageSpeed Insights', 'analytics'),
+    t('Microsoft Clarity', 'analytics'),
+    t('Hotjar', 'analytics'),
+    t('BigQuery', 'analytics'),
+    t('Metabase', 'analytics'),
     // Web
-    { name: 'WordPress + Divi 5', category: 'web' as const, level: 'advanced' as const },
-    { name: 'Kinsta', category: 'web' as const, level: 'advanced' as const },
-    { name: 'Cloudflare (Workers, DNS)', category: 'web' as const, level: 'advanced' as const },
-    { name: 'Vercel', category: 'web' as const, level: 'advanced' as const },
-    { name: 'Payload CMS', category: 'web' as const, level: 'intermediate' as const },
+    t('WordPress + Divi 5', 'web', 'advanced'),
+    t('Kinsta', 'web', 'advanced'),
+    t('Cloudflare (DNS, Workers, Tunnel)', 'web', 'advanced'),
+    t('Vercel', 'web', 'advanced'),
+    t('Next.js + Payload CMS', 'web'),
+    t('nginx', 'web'),
     // IA y datos
-    { name: 'Ollama', category: 'ia-data' as const, level: 'advanced' as const },
-    { name: 'Qdrant', category: 'ia-data' as const, level: 'advanced' as const },
-    { name: 'PostgreSQL', category: 'ia-data' as const, level: 'advanced' as const },
-    { name: 'n8n', category: 'ia-data' as const, level: 'advanced' as const },
-    { name: 'Claude', category: 'ia-data' as const, level: 'advanced' as const },
-    { name: 'Obsidian', category: 'ia-data' as const, level: 'advanced' as const },
-    // Infraestructura
-    { name: 'Docker', category: 'infrastructure' as const, level: 'advanced' as const },
-    { name: 'Tailscale', category: 'infrastructure' as const, level: 'advanced' as const },
-    { name: 'Grafana / Prometheus / Loki', category: 'infrastructure' as const, level: 'advanced' as const },
-    { name: 'Wazuh', category: 'infrastructure' as const, level: 'intermediate' as const },
-    { name: 'CrowdSec', category: 'infrastructure' as const, level: 'intermediate' as const },
-    { name: 'Restic', category: 'infrastructure' as const, level: 'intermediate' as const },
+    t('PostgreSQL / SQL', 'ia-data', 'advanced'),
+    t('Redis', 'ia-data'),
+    t('Neo4j', 'ia-data'),
+    t('MinIO', 'ia-data'),
+    t('Ollama', 'ia-data', 'advanced'),
+    t('Qdrant', 'ia-data', 'advanced'),
+    t('n8n', 'ia-data', 'advanced'),
+    t('ComfyUI', 'ia-data'),
+    t('Langfuse', 'ia-data'),
+    t('Open WebUI', 'ia-data'),
+    t('Claude', 'ia-data', 'advanced'),
+    t('Obsidian', 'ia-data', 'advanced'),
+    // Infraestructura y seguridad
+    t('Docker', 'infrastructure', 'advanced'),
+    t('Tailscale', 'infrastructure', 'advanced'),
+    t('Grafana / Prometheus / Loki', 'infrastructure', 'advanced'),
+    t('HashiCorp Vault', 'infrastructure'),
+    t('Authelia', 'infrastructure'),
+    t('Uptime Kuma', 'infrastructure'),
+    t('Wazuh', 'infrastructure'),
+    t('Suricata', 'infrastructure'),
+    t('CrowdSec + Fail2ban', 'infrastructure'),
+    t('Restic', 'infrastructure'),
     // Diseño
-    { name: 'Adobe', category: 'design' as const, level: 'advanced' as const },
-    { name: 'Figma', category: 'design' as const, level: 'intermediate' as const },
-    { name: 'Affinity', category: 'design' as const, level: 'intermediate' as const },
+    t('Adobe', 'design', 'advanced'),
+    t('Figma', 'design'),
+    t('Affinity', 'design'),
+    t('Canva', 'design'),
     // Ads
-    { name: 'Google Ads', category: 'ads' as const, level: 'advanced' as const },
-    { name: 'LinkedIn Ads', category: 'ads' as const, level: 'advanced' as const },
+    t('Estrategia de paid media B2B', 'ads', 'advanced'),
+    t('Google Ads (operación)', 'ads'),
+    t('LinkedIn Ads (operación)', 'ads'),
+    t('Meta Ads', 'ads'),
     // Entorno de trabajo
-    { name: 'MacBook Pro M1 Pro', category: 'workspace' as const, level: 'expert' as const },
-    { name: 'nix-darwin + home-manager', category: 'workspace' as const, level: 'advanced' as const },
-    { name: 'WezTerm', category: 'workspace' as const, level: 'advanced' as const },
-    { name: 'Helix', category: 'workspace' as const, level: 'advanced' as const },
-    { name: 'Hammerspoon + Karabiner', category: 'workspace' as const, level: 'advanced' as const },
-    { name: 'YubiKey', category: 'workspace' as const, level: 'advanced' as const },
+    t('Notion', 'workspace'),
+    t('Asana', 'workspace'),
+    t('Monday', 'workspace'),
+    t('Slack', 'workspace'),
+    t('MacBook Pro M1 Pro', 'workspace', 'expert'),
+    t('nix-darwin + home-manager', 'workspace', 'advanced'),
+    t('WezTerm', 'workspace', 'advanced'),
+    t('Helix', 'workspace', 'advanced'),
+    t('Hammerspoon + Karabiner', 'workspace', 'advanced'),
+    t('YubiKey', 'workspace', 'advanced'),
   ]
+  for (const tool of toolsData) await upsert('tools', { name: { equals: tool.name } }, tool)
 
-  for (const tool of toolsData) {
-    await payload.create({ collection: 'tools', data: tool })
+  // Herramientas viejas del seed anterior que cambiaron de nombre
+  for (const old of ['GTM Server-Side', 'Cloudflare (Workers, DNS)', 'Payload CMS', 'PostgreSQL', 'Google Ads', 'LinkedIn Ads', 'CrowdSec']) {
+    const found = await payload.find({ collection: 'tools', where: { name: { equals: old } }, limit: 1, depth: 0 })
+    if (found.docs[0]) await payload.delete({ collection: 'tools', id: found.docs[0].id, context: ctx })
   }
 
-  // ─── Header Navigation ───
-  console.log('  Seeding header...')
+  // ─── Header / Footer ───
+  console.log('  header / footer')
+  const nav = (items: [string, string][]) => items.map(([url, label]) => ({ link: { type: 'custom' as const, url, label } }))
   await payload.updateGlobal({
     slug: 'header',
-    context: { disableRevalidate: true },
+    context: ctx,
     data: {
-      navItems: [
-        { link: { type: 'custom', url: '/about', label: 'Sobre mí' } },
-        { link: { type: 'custom', url: '/expertise', label: 'Expertise' } },
-        { link: { type: 'custom', url: '/proyectos', label: 'Proyectos' } },
-        { link: { type: 'custom', url: '/blog', label: 'Blog' } },
-        { link: { type: 'custom', url: '/contacto', label: 'Contacto' } },
-      ],
+      navItems: nav([
+        ['/expertise', 'Expertise'],
+        ['/proyectos', 'Proyectos'],
+        ['/consultoria', 'Consultoría'],
+        ['/blog', 'Blog'],
+        ['/about', 'Sobre mí'],
+        ['/cv', 'CV'],
+        ['/contacto', 'Contacto'],
+      ]),
     },
   })
-
-  // ─── Footer ───
-  console.log('  Seeding footer...')
   await payload.updateGlobal({
     slug: 'footer',
-    context: { disableRevalidate: true },
+    context: ctx,
     data: {
-      navItems: [
-        { link: { type: 'custom', url: '/about', label: 'Sobre mí' } },
-        { link: { type: 'custom', url: '/expertise', label: 'Expertise' } },
-        { link: { type: 'custom', url: '/proyectos', label: 'Proyectos' } },
-        { link: { type: 'custom', url: '/uses', label: 'Uses' } },
-        { link: { type: 'custom', url: '/cv', label: 'CV' } },
-        { link: { type: 'custom', url: '/contacto', label: 'Contacto' } },
-      ],
+      navItems: nav([
+        ['/about', 'Sobre mí'],
+        ['/expertise', 'Expertise'],
+        ['/proyectos', 'Proyectos'],
+        ['/consultoria', 'Consultoría'],
+        ['/uses', 'Uses'],
+        ['/cv', 'CV'],
+        ['/contacto', 'Contacto'],
+      ]),
       copyright: `© ${new Date().getFullYear()} Román García`,
     },
   })
