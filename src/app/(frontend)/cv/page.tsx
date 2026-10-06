@@ -119,6 +119,6 @@ export default async function CVPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Trayectoria | Román García',
+  title: 'Trayectoria',
   description: 'Trayectoria profesional de Román García — Director de Marketing B2B.',
 }

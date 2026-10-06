@@ -164,7 +164,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const project = result.docs[0]
   if (!project) return {}
   return {
-    title: `${project.title} | Román García`,
+    title: project.title,
     description: project.context || undefined,
   }
 }

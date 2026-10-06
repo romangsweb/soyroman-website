@@ -116,6 +116,6 @@ export default async function LabPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Lab | Román García',
+  title: 'Lab',
   description: 'Proyectos personales, experimentos y herramientas de Román García.',
 }

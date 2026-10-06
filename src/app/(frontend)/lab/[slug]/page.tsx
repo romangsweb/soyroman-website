@@ -97,5 +97,5 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   })
   const lab = result.docs[0]
   if (!lab) return {}
-  return { title: `${lab.title} | Román García` }
+  return { title: lab.title }
 }

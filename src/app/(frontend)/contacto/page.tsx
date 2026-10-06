@@ -45,13 +45,16 @@ export default function ContactoPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 border-t border-black pt-16 mt-auto">
                   <div>
                     <h3 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-4 opacity-50">Base_Location</h3>
-                    <p className="font-mono text-sm font-bold uppercase tracking-widest">Madrid, España</p>
+                    <p className="font-mono text-sm font-bold uppercase tracking-widest">CDMX, México</p>
                   </div>
                   <div>
                     <h3 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-4 opacity-50">Direct_Link</h3>
-                    <p className="font-mono text-sm font-bold uppercase tracking-widest hover:text-[#ff3300] transition-colors cursor-pointer">
-                      hello@soyroman.com
-                    </p>
+                    <a
+                      href="mailto:contacto@soyroman.com"
+                      className="font-mono text-sm font-bold uppercase tracking-widest hover:text-[#ff3300] transition-colors"
+                    >
+                      contacto@soyroman.com
+                    </a>
                   </div>
                 </div>
               </Reveal>
@@ -145,6 +148,6 @@ export default function ContactoPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Contacto | Román García',
+  title: 'Contacto',
   description: 'Contacta con Román García para proyectos de marketing B2B.',
 }

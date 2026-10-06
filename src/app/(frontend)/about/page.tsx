@@ -123,6 +123,6 @@ export default async function AboutPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Sobre mí | Román García',
-  description: 'Conoce más sobre Román García — Director de Marketing B2B, programador y maker.',
+  title: 'Sobre mí',
+  description: 'Román García: director de marketing B2B que también construye la infraestructura (CRM, datos y web).',
 }

@@ -43,11 +43,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   title: {
-    default: 'Román García — Director de Marketing B2B',
+    default: 'Román García — Director de marketing B2B',
     template: '%s | Román García',
   },
   description:
-    'Director de Marketing B2B especializado en el ecosistema SAP. SEO, Paid Media, RevOps, MarTech y liderazgo de equipos.',
+    'Director de marketing B2B: generación de demanda digital, CRM y RevOps, SEO y AEO, y la infraestructura técnica que los sostiene.',
   openGraph: mergeOpenGraph(),
   twitter: {
     card: 'summary_large_image',

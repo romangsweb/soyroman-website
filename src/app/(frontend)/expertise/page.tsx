@@ -93,6 +93,6 @@ export default async function ExpertisePage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Expertise | Román García',
+  title: 'Expertise',
   description: 'Áreas de especialización: SEO, Paid Media, RevOps, MarTech, liderazgo B2B y más.',
 }

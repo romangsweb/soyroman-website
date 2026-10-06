@@ -109,6 +109,6 @@ export default async function ProjectsPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Proyectos | Román García',
-  description: 'Proyectos de marketing B2B con resultados medibles en el ecosistema SAP.',
+  title: 'Proyectos',
+  description: 'Casos de marketing B2B: sitios, migraciones de CRM, RevOps e infraestructura, con lo que se hizo y lo que se aprendió.',
 }

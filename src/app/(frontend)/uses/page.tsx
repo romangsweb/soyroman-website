@@ -114,6 +114,6 @@ export default async function UsesPage() {
 }
 
 export const metadata: Metadata = {
-  title: '/uses | Román García',
+  title: 'Herramientas (/uses)',
   description: 'Herramientas, software y hardware que uso — Román García.',
 }

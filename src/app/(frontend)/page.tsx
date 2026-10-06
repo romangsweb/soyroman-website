@@ -58,7 +58,7 @@ export default async function HomePage() {
 
               <Reveal delay={0.4}>
                 <p className="text-xl text-black/80 leading-relaxed font-light max-w-2xl font-mono">
-                  {profile?.shortBio || 'Especializado en el ecosistema SAP, RevOps y MarTech. Diseño operaciones que conectan ventas, producto y tecnología con precisión absoluta.'}
+                  {profile?.shortBio || 'Dirijo campañas de generación de demanda en medios digitales y construyo lo que las hace funcionar: sitios, analítica, CRM y posicionamiento SEO y AEO.'}
                 </p>
               </Reveal>
             </div>
@@ -292,7 +292,7 @@ export default async function HomePage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Román García — Director de Marketing B2B',
+  title: { absolute: 'Román García — Director de marketing B2B' },
   description:
-    'Director de Marketing B2B especializado en el ecosistema SAP. SEO, Paid Media, RevOps, MarTech y liderazgo de equipos.',
+    'Director de marketing B2B: generación de demanda digital, CRM y RevOps, SEO y AEO, y la infraestructura técnica que los sostiene.',
 }

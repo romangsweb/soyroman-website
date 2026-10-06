@@ -207,7 +207,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   if (!expertise) return {}
 
   return {
-    title: `${expertise.title} | Román García`,
+    title: expertise.title,
     description: expertise.thesis || expertise.summary || undefined,
   }
 }

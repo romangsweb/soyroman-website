@@ -11,7 +11,7 @@ export default function ConsultoriaPage() {
     {
       id: 'martech',
       title: 'Auditoría MarTech & RevOps',
-      desc: 'Analizamos tu stack tecnológico actual (HubSpot, Salesforce, SAP, etc.) para detectar cuellos de botella en la alineación entre Marketing y Ventas. Entregamos un roadmap de optimización de datos y procesos.',
+      desc: 'Analizamos tu stack tecnológico actual (CRM, analítica, sitio web y automatizaciones) para detectar cuellos de botella en la alineación entre Marketing y Ventas. Entregamos un roadmap de optimización de datos y procesos.',
       color: '#E12229', // bauhaus red
       shape: 'square'
     },
@@ -145,6 +145,6 @@ export default function ConsultoriaPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Consultoría | Román García',
+  title: 'Consultoría',
   description: 'Servicios de consultoría en Marketing B2B, RevOps y MarTech.',
 }

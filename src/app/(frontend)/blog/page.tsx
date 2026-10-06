@@ -140,6 +140,6 @@ export default async function BlogPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Blog | Román García',
+  title: 'Blog',
   description: 'Artículos sobre marketing B2B, SEO, Paid Media, RevOps y tecnología.',
 }
