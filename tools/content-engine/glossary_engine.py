@@ -34,7 +34,7 @@ from soyroman_engine import (  # noqa: E402  (reutiliza config, CMS, Ollama y re
     tel,
     tidy,
 )
-from glossary_terms import TERMS  # noqa: E402
+from glossary_terms import FULL_NAMES, TERMS  # noqa: E402
 
 ENGINE_NAME = "soyroman-glossary"
 SLUGS = {s for _, s, _ in TERMS}
@@ -71,14 +71,14 @@ def none_if_na(s):
     return None if not s or s.upper().startswith("N/A") else s
 
 
-def generate(term, topic):
+def generate(term, slug, topic):
     candidates = ", ".join(t for t, _, _ in TERMS if t != term)
     raw = ollama_call(SYSTEM, PROMPT.format(term=term, topic=topic, candidates=candidates), predict=1500, temperature=0.4)
     p = parse_delimited(raw, ["FULL_NAME", "DEFINITION", "FORMULA", "EXAMPLE", "WHY", "RELATED"])
     related = [r.strip().strip(".") for r in (p.get("related") or "").split(",") if r.strip()]
     by_name = {t.lower(): s for t, s, _ in TERMS}
     return {
-        "fullName": none_if_na(p.get("full_name")),
+        "fullName": FULL_NAMES.get(slug) or none_if_na(p.get("full_name")),
         "definition": tidy((p.get("definition") or "").strip()),
         "formula": none_if_na(p.get("formula")),
         "example": none_if_na(p.get("example")),
@@ -160,7 +160,7 @@ def main():
         log(f"\n— {term}")
         with tel.TelemetryRun(ENGINE_NAME, topic=term, triggered_by="manual" if args.term else "cron",
                               metadata={"slug": slug, "category": topic}) as run:
-            entry = generate(term, topic)
+            entry = generate(term, slug, topic)
             flags = check(term, entry)
             run.set_quality(max(0.0, 10.0 - 2 * len(flags)), flags=flags)
             if args.dry_run:

@@ -75,3 +75,42 @@ TERMS = [
 ]
 
 assert len({s for _, s, _ in TERMS}) == len(TERMS), "slugs duplicados"
+
+# Nombre completo de las siglas (se usa tal cual; el modelo no tiene que deducirlo)
+FULL_NAMES = {
+    "kpi": "Key Performance Indicator (indicador clave de desempeño)",
+    "roi": "Return on Investment (retorno de la inversión)",
+    "romi": "Return on Marketing Investment (retorno de la inversión en marketing)",
+    "roas": "Return on Ad Spend (retorno de la inversión publicitaria)",
+    "cac": "Customer Acquisition Cost (costo de adquisición de clientes)",
+    "ltv": "Lifetime Value (valor del cliente durante toda la relación)",
+    "ltv-cac": "Lifetime Value ÷ Customer Acquisition Cost",
+    "nps": "Net Promoter Score (índice de recomendación neta)",
+    "ctr": "Click-Through Rate (tasa de clics)",
+    "cpc": "Cost per Click (costo por clic)",
+    "cpm": "Cost per Mille (costo por mil impresiones)",
+    "cpl": "Cost per Lead (costo por lead)",
+    "cpa": "Cost per Acquisition (costo por adquisición)",
+    "mql": "Marketing Qualified Lead (lead calificado por marketing)",
+    "sql": "Sales Qualified Lead (lead calificado por ventas)",
+    "sal": "Sales Accepted Lead (lead aceptado por ventas)",
+    "icp": "Ideal Customer Profile (perfil de cliente ideal)",
+    "abm": "Account-Based Marketing (marketing basado en cuentas)",
+    "crm": "Customer Relationship Management (gestión de la relación con clientes)",
+    "revops": "Revenue Operations (operaciones de ingresos)",
+    "meddic": "Metrics, Economic buyer, Decision criteria, Decision process, Identify pain, Champion",
+    "bant": "Budget, Authority, Need, Timeline (presupuesto, autoridad, necesidad y tiempo)",
+    "sdr": "Sales Development Representative (representante de desarrollo de ventas)",
+    "bdr": "Business Development Representative (representante de desarrollo de negocio)",
+    "sla-marketing-ventas": "Service Level Agreement (acuerdo de nivel de servicio)",
+    "utm": "Urchin Tracking Module (parámetros de seguimiento de campañas)",
+    "seo": "Search Engine Optimization (optimización para motores de búsqueda)",
+    "aeo": "Answer Engine Optimization (optimización para motores de respuesta)",
+    "geo": "Generative Engine Optimization (optimización para motores generativos)",
+    "serp": "Search Engine Results Page (página de resultados del buscador)",
+    "cta": "Call to Action (llamada a la acción)",
+    "cro": "Conversion Rate Optimization (optimización de la tasa de conversión)",
+    "quality-score": "Nivel de calidad de Google Ads",
+}
+
+assert set(FULL_NAMES) <= {s for _, s, _ in TERMS}, "FULL_NAMES con slugs que no están en TERMS"
