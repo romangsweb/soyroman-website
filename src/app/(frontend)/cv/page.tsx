@@ -21,14 +21,14 @@ export default async function CVPage() {
       <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
-        <section className="pt-32 border-b border-black relative bg-[#e5e5e5]">
-          <div className="border-t border-black p-8 md:p-16 relative">
+        <section className="border-b border-black relative bg-[#e5e5e5]">
+          <div className="p-8 md:p-16 relative">
             <Reveal duration={1.2}>
               <div className="flex items-center justify-between mb-16">
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 bg-[#ff3300]"></div>
                   <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
-                    SYS.05 // Work Log
+                    SYS.05 // Trayectoria
                   </p>
                 </div>
                 {profile?.cvFile && (
@@ -38,7 +38,7 @@ export default async function CVPage() {
                     rel="noopener noreferrer"
                     className="group inline-flex items-center gap-2 border border-black bg-white px-4 py-2 hover:bg-black hover:text-white transition-colors font-mono uppercase tracking-widest text-[10px] font-bold"
                   >
-                    Download_PDF
+                    Descargar PDF
                     <ArrowUpRight className="w-3 h-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                   </a>
                 )}
@@ -79,7 +79,7 @@ export default async function CVPage() {
                         </p>
                         <div className={`w-3 h-3 border border-black ${!exp.endDate ? 'bg-[#ff3300] animate-pulse' : 'bg-transparent'}`}></div>
                       </div>
-                      <span className="font-mono text-[10px] uppercase font-bold text-black/40">Log_Entry: {String(index + 1).padStart(3, '0')}</span>
+                      <span className="font-mono text-[10px] uppercase font-bold text-black/40">Registro {String(index + 1).padStart(3, '0')}</span>
                     </div>
 
                     {/* Right: Info */}

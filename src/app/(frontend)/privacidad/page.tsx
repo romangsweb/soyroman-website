@@ -8,8 +8,8 @@ import type { Metadata } from 'next'
 export default function PrivacidadPage() {
   return (
     <div className="bg-[#f4f4f4] text-black font-sans min-h-screen border-x border-black max-w-[1920px] mx-auto">
-      <section className="pt-32 border-b border-black bg-[#e5e5e5]">
-        <div className="border-t border-black p-8 md:p-16">
+      <section className="border-b border-black bg-[#e5e5e5]">
+        <div className="p-8 md:p-16">
           <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60 mb-8">Legal</p>
           <h1 className="text-[clamp(2.5rem,6vw,5rem)] leading-[1] tracking-tight font-semibold">Aviso de privacidad</h1>
         </div>

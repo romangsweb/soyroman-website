@@ -41,15 +41,15 @@ export default async function ExpertiseDetailPage({ params }: Args) {
       <article className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
-        <header className="pt-32 border-b border-black relative bg-[#e5e5e5]">
-          <div className="border-t border-black p-8 md:p-16 relative">
+        <header className="border-b border-black relative bg-[#e5e5e5]">
+          <div className="p-8 md:p-16 relative">
             <Reveal duration={1.2}>
               <Link
                 href="/consultoria"
                 className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-16 hover:text-[#ff3300] transition-colors border border-black bg-white px-4 py-2"
               >
                 <ArrowUpRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
-                Return_To_Consulting
+                Volver a expertise
               </Link>
             </Reveal>
 
@@ -80,7 +80,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
                 {expertise.metrics && expertise.metrics.length > 0 && (
                   <div className="p-8 md:p-16 bg-white">
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-8 border-b border-black/10 pb-4">
-                      // Expected_Impact
+                      // Impacto esperado
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-black border border-black">
                       {expertise.metrics.map((m: any, i: number) => (
@@ -100,7 +100,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
                 {expertise.tools && (expertise.tools as any[]).length > 0 && (
                   <div className="p-8 md:p-16 border-t border-black bg-[#f4f4f4]">
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-6">
-                      // Tech_Stack
+                      // Tecnologías
                     </h2>
                     <div className="flex flex-wrap gap-2">
                       {(expertise.tools as any[]).map((tool: any) => {
@@ -122,7 +122,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
                 {expertise.framework && expertise.framework.length > 0 && (
                   <div className="p-8 md:p-16 border-t border-black bg-white flex-1">
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-8 border-b border-black/10 pb-4">
-                      // Implementation_Steps
+                      // Pasos
                     </h2>
                     <div className="space-y-0 divide-y divide-black/10">
                       {expertise.framework.map((step: any, i: number) => (
@@ -166,7 +166,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
                 {relatedPosts.docs.length > 0 && (
                   <div className="pt-16 mt-16 border-t border-black">
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-8 border-b border-black/10 pb-4">
-                      // Related_Reading
+                      // Lecturas relacionadas
                     </h2>
                     <div className="grid grid-cols-1 divide-y divide-black border-y border-black">
                       {relatedPosts.docs.map((post: any) => (

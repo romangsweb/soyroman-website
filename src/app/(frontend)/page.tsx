@@ -7,6 +7,7 @@ import { PageTransition, Morph } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { PostCover } from '@/components/PostCover'
+import { IconTile } from '@/components/IconTile'
 
 export default async function HomePage() {
   const profile = await cms.findGlobal({ slug: 'profile' })
@@ -14,7 +15,7 @@ export default async function HomePage() {
   const expertises = await cms.find({
     collection: 'expertise',
     sort: 'order',
-    limit: 5,
+    limit: 7,
   })
 
   const featuredProjects = await cms.find({
@@ -35,8 +36,8 @@ export default async function HomePage() {
       <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white overflow-hidden min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Hero */}
-        <section className="pt-32 border-b border-black relative bg-[#e5e5e5]">
-          <div className="grid grid-cols-1 md:grid-cols-12 border-t border-black">
+        <section className="border-b border-black relative bg-[#e5e5e5]">
+          <div className="grid grid-cols-1 md:grid-cols-12">
             
             {/* Main Title Area */}
             <div className="md:col-span-8 p-8 md:p-16 border-b md:border-b-0 md:border-r border-black bg-[#f4f4f4] relative">
@@ -66,18 +67,21 @@ export default async function HomePage() {
             {/* Right Action Area */}
             <div className="md:col-span-4 flex flex-col bg-white">
               <Reveal className="flex-1 flex flex-col" delay={0.5}>
-                <div className="p-8 border-b border-black flex-1 flex flex-col justify-center items-center text-center">
-                  <span className="font-mono uppercase tracking-widest text-xs font-bold text-black/50 mb-6 block">Status</span>
+                <Link href="/consultoria" className="group p-8 border-b border-black flex-1 flex flex-col justify-center items-center text-center hover:bg-[#f4f4f4] transition-colors">
+                  <span className="font-mono uppercase tracking-widest text-xs font-bold text-black/50 mb-6 block">Estado</span>
                   <div className="w-16 h-16 bg-[#ff3300] border border-black mb-6 animate-pulse"></div>
-                  <p className="font-mono text-sm uppercase tracking-widest font-bold">Aceptando Proyectos</p>
-                </div>
+                  <p className="font-mono text-sm uppercase tracking-widest font-bold">Aceptando proyectos</p>
+                  <span className="mt-4 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest font-bold text-black/60 group-hover:text-[#ff3300]">
+                    Ver servicios <ArrowUpRight className="w-3 h-3" />
+                  </span>
+                </Link>
                 <div className="grid grid-cols-2 divide-x divide-black border-b border-black">
                   <Link href="/contacto" className="p-6 text-center hover:bg-[#ff3300] hover:text-white transition-colors group flex flex-col items-center justify-center gap-2">
-                    <span className="font-mono uppercase tracking-widest text-[10px] font-bold">Contact</span>
+                    <span className="font-mono uppercase tracking-widest text-[10px] font-bold">Contacto</span>
                     <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                   </Link>
                   <Link href="/cv" className="p-6 text-center hover:bg-black hover:text-white transition-colors group flex flex-col items-center justify-center gap-2">
-                    <span className="font-mono uppercase tracking-widest text-[10px] font-bold">Download CV</span>
+                    <span className="font-mono uppercase tracking-widest text-[10px] font-bold">Ver CV</span>
                     <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                   </Link>
                 </div>
@@ -112,10 +116,10 @@ export default async function HomePage() {
             <div className="md:col-span-4 p-8 md:p-16 bg-[#e5e5e5]">
               <Reveal>
                 <h2 className="font-mono uppercase tracking-widest text-xs font-bold text-black/50 mb-16">
-                  SYS.01 // Modules
+                  SYS.01 // Especialidades
                 </h2>
                 <h3 className="text-4xl md:text-5xl font-semibold tracking-tight leading-tight">
-                  Líneas de Actuación
+                  Líneas de actuación
                 </h3>
               </Reveal>
             </div>
@@ -125,9 +129,9 @@ export default async function HomePage() {
                 <Reveal delay={i * 0.1} key={exp.id} className="group">
                   <Morph name={`expertise-${exp.slug}`}>
                     <Link href={`/expertise/${exp.slug}`} className="block p-10 h-full hover:bg-black hover:text-white transition-colors duration-300 relative">
-                      <div className="flex justify-between items-start mb-16">
+                      <div className="flex justify-between items-start mb-12">
+                        <IconTile name={exp.slug} />
                         <span className="font-mono text-sm opacity-50 block">{(i + 1).toString().padStart(2, '0')}</span>
-                        <div className="w-3 h-3 bg-black group-hover:bg-[#ff3300] transition-colors"></div>
                       </div>
                       <h4 className="text-2xl font-semibold mb-4 tracking-tight">
                         {exp.title}
@@ -139,6 +143,17 @@ export default async function HomePage() {
                   </Morph>
                 </Reveal>
               ))}
+              {expertises.docs.length % 2 === 1 && (
+                <Link
+                  href="/expertise"
+                  className="group flex flex-col justify-between p-10 bg-[#f4f4f4] hover:bg-[#ff3300] hover:text-white transition-colors duration-300"
+                >
+                  <span className="font-mono text-[10px] uppercase tracking-widest font-bold opacity-60">Expertise</span>
+                  <span className="mt-12 inline-flex items-center gap-3 text-2xl font-semibold tracking-tight">
+                    Ver todas <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  </span>
+                </Link>
+              )}
             </div>
 
           </div>
@@ -152,14 +167,14 @@ export default async function HomePage() {
               <Reveal>
                 <div className="flex justify-between items-start mb-16">
                   <h2 className="font-mono uppercase tracking-widest text-xs font-bold text-white/50">
-                    SYS.02 // Cases
+                    SYS.02 // Casos
                   </h2>
                   <Link href="/proyectos" className="font-mono uppercase tracking-widest text-[10px] text-white hover:text-[#ff3300] transition-colors border border-white/20 px-3 py-1">
-                    View All
+                    Ver todos
                   </Link>
                 </div>
                 <h3 className="text-4xl md:text-5xl font-semibold tracking-tight leading-tight mb-8">
-                  Casos de Estudio
+                  Casos de estudio
                 </h3>
                 <div className="w-full h-32 border border-white/20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjMDAwIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDBMOCA4Wk04IDBMMCA4WiIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjEiPjwvcGF0aD4KPC9zdmc+')] opacity-50"></div>
               </Reveal>
@@ -209,7 +224,7 @@ export default async function HomePage() {
           <div className="p-8 md:p-16 border-b border-black bg-[#f4f4f4] flex flex-col md:flex-row md:items-end justify-between gap-8">
             <Reveal>
               <h2 className="font-mono uppercase tracking-widest text-xs font-bold text-black/50 mb-4">
-                SYS.03 // Index
+                SYS.03 // Blog
               </h2>
               <h3 className="text-4xl md:text-5xl font-semibold tracking-tight leading-tight">
                 Reflexiones
@@ -217,7 +232,7 @@ export default async function HomePage() {
             </Reveal>
             <Reveal delay={0.2}>
               <Link href="/blog" className="font-mono uppercase tracking-widest text-[10px] text-black border border-black hover:bg-black hover:text-white transition-colors px-4 py-2">
-                View Archive
+                Ver todo el blog
               </Link>
             </Reveal>
           </div>
@@ -229,6 +244,7 @@ export default async function HomePage() {
                   <Link href={`/blog/${post.slug}`} className="flex flex-col h-full p-8 hover:bg-[#f4f4f4] transition-colors">
                     <PostCover
                       cover={post.cover}
+                      fallback
                       className="aspect-[16/9] w-full border border-black mb-8"
                       sizes="(max-width: 768px) 100vw, 33vw"
                     />
@@ -274,11 +290,11 @@ export default async function HomePage() {
                 <h2 className="text-5xl md:text-7xl font-semibold tracking-tighter mb-6">
                   Hablemos
                 </h2>
-                <p className="font-mono text-sm uppercase tracking-widest opacity-80 mb-12 max-w-sm">
-                  Diseñando los motores b2b de la próxima década
+                <p className="font-mono text-sm opacity-90 mb-12 max-w-sm leading-relaxed">
+                  ¿Necesitas un sistema de generación de demanda que se pueda medir? Cuéntame en qué punto estás.
                 </p>
                 <Link href="/contacto" className="font-mono text-sm font-bold uppercase tracking-widest bg-white text-black px-8 py-4 border border-black hover:bg-black hover:text-white hover:border-black transition-all flex items-center gap-4">
-                  Init_Comm <ArrowUpRight className="w-4 h-4" />
+                  Escríbeme <ArrowUpRight className="w-4 h-4" />
                 </Link>
               </Reveal>
             </div>

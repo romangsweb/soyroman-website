@@ -11,13 +11,13 @@ export default function ContactoPage() {
       <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
-        <section className="pt-32 border-b border-black relative bg-[#e5e5e5]">
-          <div className="border-t border-black p-8 md:p-16 relative">
+        <section className="border-b border-black relative bg-[#e5e5e5]">
+          <div className="p-8 md:p-16 relative">
             <Reveal duration={1.2}>
               <div className="flex items-center gap-3 mb-16">
                 <div className="w-3 h-3 bg-[#ff3300] animate-pulse"></div>
                 <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
-                  SYS.06 // Init_Comm
+                  SYS.06 // Contacto
                 </p>
               </div>
             </Reveal>
@@ -44,11 +44,11 @@ export default function ContactoPage() {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 border-t border-black pt-16 mt-auto">
                   <div>
-                    <h3 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-4 opacity-50">Base_Location</h3>
+                    <h3 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-4 opacity-50">Ubicación</h3>
                     <p className="font-mono text-sm font-bold uppercase tracking-widest">CDMX, México</p>
                   </div>
                   <div>
-                    <h3 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-4 opacity-50">Direct_Link</h3>
+                    <h3 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-4 opacity-50">Correo</h3>
                     <a
                       href="mailto:contacto@soyroman.com"
                       className="font-mono text-sm font-bold uppercase tracking-widest hover:text-[#ff3300] transition-colors"

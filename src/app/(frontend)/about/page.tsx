@@ -14,13 +14,13 @@ export default async function AboutPage() {
       <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
-        <section className="pt-32 border-b border-black relative bg-[#e5e5e5]">
-          <div className="border-t border-black p-8 md:p-16 relative container mx-auto">
+        <section className="border-b border-black relative bg-[#e5e5e5]">
+          <div className="p-8 md:p-16 relative container mx-auto">
             <Reveal duration={1.2}>
               <div className="flex items-center gap-3 mb-16">
                 <div className="w-3 h-3 bg-[#ff3300]"></div>
                 <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
-                  SYS.04 // Profile Data
+                  SYS.04 // Perfil
                 </p>
               </div>
             </Reveal>
@@ -42,7 +42,7 @@ export default async function AboutPage() {
                   <div className="aspect-[3/4] bg-[#e5e5e5] border border-black relative group flex flex-col shadow-[8px_8px_0_0_#000]">
                     {/* Top Bar of the photo frame */}
                     <div className="h-8 border-b border-black flex items-center px-4 justify-between bg-white">
-                      <span className="font-mono text-[10px] uppercase font-bold">IMG_REC.01</span>
+                      <span className="font-mono text-[10px] uppercase font-bold">FOTO.01</span>
                       <div className="w-2 h-2 bg-[#ff3300] animate-pulse"></div>
                     </div>
                     {/* Photo content placeholder */}
@@ -86,17 +86,18 @@ export default async function AboutPage() {
                 <div className="border-t border-black p-8 md:p-16 bg-[#f4f4f4]">
                   <Reveal delay={0.3}>
                     <h3 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-8 text-black/50">
-                      // Intereses_Y_Especialidades
+                      // Especialidades
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {[
-                        'Programación',
-                        'Diseño industrial',
-                        'Impresión 3D',
-                        'Acuarismo',
-                        'Teoría social',
-                        'Psicología',
-                        'Arquitectura',
+                        'Generación de demanda',
+                        'CRM y RevOps',
+                        'SEO y AEO',
+                        'Paid media',
+                        'Analítica y medición',
+                        'Sitios web',
+                        'Infraestructura',
+                        'IA aplicada',
                       ].map((interest, i) => {
                         return (
                           <span

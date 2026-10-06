@@ -31,7 +31,7 @@ export async function FooterComponent() {
           {/* Nav */}
           <div className="md:col-span-4 p-8 md:p-12 bg-[#f4f4f4]">
             <h4 className="font-mono text-[10px] uppercase font-bold tracking-widest opacity-50 mb-6 border-b border-black/10 pb-2">
-              // Navigation
+              // Navegación
             </h4>
             <nav className="flex flex-col gap-0 divide-y divide-black/10">
               {footer?.navItems?.map((item: any, i: number) => {
@@ -57,7 +57,7 @@ export async function FooterComponent() {
           {/* Social */}
           <div className="md:col-span-3 p-8 md:p-12">
             <h4 className="font-mono text-[10px] uppercase font-bold tracking-widest opacity-50 mb-6 border-b border-black/10 pb-2">
-              // Outbound_Links
+              // Redes
             </h4>
             <div className="flex flex-col gap-0 divide-y divide-black/10">
               {profile?.socialLinks?.map((social: any, i: number) => (

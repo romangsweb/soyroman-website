@@ -26,13 +26,13 @@ export default async function BlogPage() {
       <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
-        <section className="pt-32 border-b border-black relative bg-[#e5e5e5]">
-          <div className="border-t border-black p-8 md:p-16 relative">
+        <section className="border-b border-black relative bg-[#e5e5e5]">
+          <div className="p-8 md:p-16 relative">
             <Reveal duration={1.2}>
               <div className="flex items-center gap-3 mb-16">
                 <div className="w-3 h-3 bg-[#ff3300] animate-pulse"></div>
                 <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
-                  SYS.08 // Data Stream
+                  SYS.08 // Blog
                 </p>
               </div>
             </Reveal>
@@ -56,7 +56,7 @@ export default async function BlogPage() {
             <div className="lg:col-span-3 bg-[#f4f4f4] p-8 md:p-16">
               <div className="sticky top-32">
                 <h3 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-8 opacity-50">
-                  // Filter_By_Tag
+                  // Filtrar por tema
                 </h3>
                 {categories.docs.length > 0 && (
                   <div className="flex flex-col gap-2">

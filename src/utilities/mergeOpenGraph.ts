@@ -1,22 +1,16 @@
 import type { Metadata } from 'next'
-import { getServerSideURL } from './getURL'
 
+// La imagen por defecto la genera app/(frontend)/opengraph-image.tsx
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
-  description: 'An open-source website built with Payload and Next.js.',
-  images: [
-    {
-      url: `${getServerSideURL()}/website-template-OG.webp`,
-    },
-  ],
-  siteName: 'Payload Website Template',
-  title: 'Payload Website Template',
+  locale: 'es_MX',
+  siteName: 'Román García',
+  title: 'Román García — Director de marketing B2B',
+  description:
+    'Director de marketing B2B: generación de demanda digital, CRM y RevOps, SEO y AEO, y la infraestructura técnica que los sostiene.',
 }
 
-export const mergeOpenGraph = (og?: Metadata['openGraph']): Metadata['openGraph'] => {
-  return {
-    ...defaultOpenGraph,
-    ...og,
-    images: og?.images ? og.images : defaultOpenGraph.images,
-  }
-}
+export const mergeOpenGraph = (og?: Metadata['openGraph']): Metadata['openGraph'] => ({
+  ...defaultOpenGraph,
+  ...og,
+})

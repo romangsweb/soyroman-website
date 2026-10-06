@@ -5,6 +5,7 @@ import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { ArrowUpRight } from '@/components/icons'
 import { ContactForm } from '@/components/ContactForm'
+import { IconTile } from '@/components/IconTile'
 import { AUDIENCE, SERVICES } from '@/data/services'
 
 export default function ConsultoriaPage() {
@@ -12,8 +13,8 @@ export default function ConsultoriaPage() {
     <PageTransition>
       <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         {/* Encabezado */}
-        <section className="pt-32 border-b border-black relative bg-[#e5e5e5]">
-          <div className="border-t border-black p-8 md:p-16 relative">
+        <section className="border-b border-black relative bg-[#e5e5e5]">
+          <div className="p-8 md:p-16 relative">
             <Reveal duration={1.2}>
               <div className="flex items-center gap-3 mb-16">
                 <div className="w-3 h-3 bg-[#ff3300]" />
@@ -38,7 +39,10 @@ export default function ConsultoriaPage() {
               <Reveal delay={i * 0.08} key={s.id}>
                 <article id={s.id} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 p-8 md:p-16">
                   <div className="lg:col-span-4 flex flex-col gap-6">
-                    <span className="font-mono font-bold text-lg text-[#ff3300]">{String(i + 1).padStart(2, '0')}</span>
+                    <div className="flex items-center gap-4">
+                      <IconTile name={s.id} size="lg" />
+                      <span className="font-mono font-bold text-lg text-[#ff3300]">{String(i + 1).padStart(2, '0')}</span>
+                    </div>
                     <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">{s.title}</h2>
                     <span className="self-start font-mono text-[10px] font-bold uppercase tracking-widest border border-black px-3 py-1">
                       {s.duration}

@@ -26,13 +26,13 @@ export default async function LabPage() {
       <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
-        <section className="pt-32 border-b border-black relative bg-[#e5e5e5]">
-          <div className="border-t border-black p-8 md:p-16 relative container mx-auto">
+        <section className="border-b border-black relative bg-[#e5e5e5]">
+          <div className="p-8 md:p-16 relative container mx-auto">
             <Reveal duration={1.2}>
               <div className="flex items-center gap-3 mb-16">
                 <div className="w-3 h-3 bg-[#E12229]"></div>
                 <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
-                  SYS.05 // Laboratory
+                  SYS.05 // Laboratorio
                 </p>
               </div>
             </Reveal>

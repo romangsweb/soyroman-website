@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
+import { IconTile } from '@/components/IconTile'
 
 export default async function ExpertisePage() {
   const expertises = await cms.find({
@@ -18,13 +19,13 @@ export default async function ExpertisePage() {
       <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
-        <section className="pt-32 border-b border-black relative bg-[#e5e5e5]">
-          <div className="border-t border-black p-8 md:p-16 relative container mx-auto">
+        <section className="border-b border-black relative bg-[#e5e5e5]">
+          <div className="p-8 md:p-16 relative container mx-auto">
             <Reveal duration={1.2}>
               <div className="flex items-center gap-3 mb-16">
                 <div className="w-3 h-3 bg-[#0A32B8]"></div>
                 <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
-                  SYS.02 // Core_Competencies
+                  SYS.02 // Especialidades
                 </p>
               </div>
             </Reveal>
@@ -50,17 +51,14 @@ export default async function ExpertisePage() {
                     href={`/expertise/${exp.slug}`}
                     className="block bg-[#f4f4f4] p-8 h-full group hover:bg-black hover:text-white transition-colors duration-300 relative overflow-hidden"
                   >
-                    <div className="absolute top-0 right-0 w-2 h-full bg-[#0A32B8] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="absolute top-0 right-0 w-2 h-full bg-[#ff3300] opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     
                     <div className="flex items-center justify-between mb-8 border-b border-black/10 pb-4 group-hover:border-white/20">
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-[#0A32B8]"></span>
-                        MOD_{index + 1}
-                      </span>
-                      <span className="text-[10px] font-mono opacity-50 uppercase">→ ENTER</span>
+                      <IconTile name={exp.slug} />
+                      <span className="text-[10px] font-mono opacity-50 uppercase">{String(index + 1).padStart(2, '0')} →</span>
                     </div>
 
-                    <h2 className="text-3xl font-semibold mb-4 tracking-tight group-hover:text-[#0A32B8] transition-colors">
+                    <h2 className="text-3xl font-semibold mb-4 tracking-tight group-hover:text-[#ff3300] transition-colors">
                       {exp.title}
                     </h2>
                     

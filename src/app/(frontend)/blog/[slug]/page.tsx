@@ -31,15 +31,15 @@ export default async function BlogPostPage({ params }: Args) {
       <article className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
-        <header className="pt-32 border-b border-black relative bg-[#e5e5e5]">
-          <div className="border-t border-black p-8 md:p-16 relative">
+        <header className="border-b border-black relative bg-[#e5e5e5]">
+          <div className="p-8 md:p-16 relative">
             <Reveal duration={1.2}>
               <Link
                 href="/blog"
                 className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-16 hover:text-[#ff3300] transition-colors border border-black px-4 py-2 bg-white"
               >
                 <ArrowUpRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
-                Return_To_Stream
+                Volver al blog
               </Link>
             </Reveal>
 
@@ -61,7 +61,7 @@ export default async function BlogPostPage({ params }: Args) {
                 {post.readingTime && (
                   <span className="opacity-60 flex items-center gap-2 border border-black/20 px-3 py-1">
                     <span className="w-1.5 h-1.5 bg-[#ff3300] animate-pulse"></span>
-                    {post.readingTime} MIN_READ
+                    {post.readingTime} MIN DE LECTURA
                   </span>
                 )}
               </div>

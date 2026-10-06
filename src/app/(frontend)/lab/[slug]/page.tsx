@@ -27,15 +27,15 @@ export default async function LabDetailPage({ params }: Args) {
       <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
-        <section className="pt-32 border-b border-black relative bg-[#e5e5e5]">
-          <div className="border-t border-black p-8 md:p-16 relative container mx-auto">
+        <section className="border-b border-black relative bg-[#e5e5e5]">
+          <div className="p-8 md:p-16 relative container mx-auto">
             <Reveal duration={1.2}>
               <Link
                 href="/lab"
                 className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-16 hover:text-[#ff3300] transition-colors border border-black px-4 py-2 bg-white"
               >
                 <ArrowUpRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
-                Return_To_Lab
+                Volver al laboratorio
               </Link>
             </Reveal>
 

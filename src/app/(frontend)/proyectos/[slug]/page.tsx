@@ -26,7 +26,7 @@ export default async function ProjectDetailPage({ params }: Args) {
       <div className="bg-black text-white font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-white/20 max-w-[1920px] mx-auto">
         
         {/* Navigation & Header */}
-        <section className="pt-32 border-b border-white/20 relative bg-[#111]">
+        <section className="border-b border-white/20 relative bg-[#111]">
           <div className="border-t border-white/20 p-8 md:p-16 relative">
             <Reveal duration={1.2}>
               <div className="flex flex-col md:flex-row md:items-center justify-between mb-16 gap-8">
@@ -35,7 +35,7 @@ export default async function ProjectDetailPage({ params }: Args) {
                   className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold hover:text-[#ff3300] transition-colors border border-white/20 px-4 py-2 self-start"
                 >
                   <ArrowUpRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
-                  Return_To_Archive
+                  Volver a proyectos
                 </Link>
                 
                 <div className="flex items-center gap-4">
@@ -67,7 +67,7 @@ export default async function ProjectDetailPage({ params }: Args) {
                   <div className="relative">
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-6 flex items-center gap-2">
                       <span className="w-1.5 h-1.5 bg-[#ff3300]"></span>
-                      // Operation_Context
+                      // Contexto
                     </h2>
                     <p className="font-mono text-sm leading-relaxed opacity-90">
                       {project.context}
@@ -79,7 +79,7 @@ export default async function ProjectDetailPage({ params }: Args) {
                   <div className="relative mt-16">
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-6 flex items-center gap-2">
                       <span className="w-1.5 h-1.5 bg-white"></span>
-                      // Core_Challenge
+                      // Reto
                     </h2>
                     <p className="font-mono text-sm leading-relaxed opacity-90 text-[#ff3300]">
                       {project.problem}
@@ -95,7 +95,7 @@ export default async function ProjectDetailPage({ params }: Args) {
                 {project.approach && (
                   <div>
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-8 border-b border-white/20 pb-4">
-                      // Strategy_&_Execution
+                      // Estrategia y ejecución
                     </h2>
                     <div className="prose prose-lg prose-invert prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-a:text-[#ff3300] prose-a:border-b prose-a:border-[#ff3300] prose-a:no-underline hover:prose-a:bg-[#ff3300] hover:prose-a:text-white max-w-none">
                       <RichText data={project.approach} />
@@ -106,7 +106,7 @@ export default async function ProjectDetailPage({ params }: Args) {
                 {project.results && project.results.length > 0 && (
                   <div className="mt-16">
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-8 border-b border-white/20 pb-4">
-                      // Impact_Metrics
+                      // Resultados
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/20 border border-white/20">
                       {project.results.map((r: any, i: number) => {
@@ -131,7 +131,7 @@ export default async function ProjectDetailPage({ params }: Args) {
                 {project.stack && (project.stack as any[]).length > 0 && (
                   <div className="pt-16 mt-16 border-t border-white/20">
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-8">
-                      // Applied_Technologies
+                      // Tecnologías aplicadas
                     </h2>
                     <div className="flex flex-wrap gap-2">
                       {(project.stack as any[]).map((tool: any) => (
