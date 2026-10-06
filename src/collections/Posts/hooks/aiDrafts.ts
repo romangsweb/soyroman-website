@@ -1,13 +1,17 @@
 import type { CollectionBeforeChangeHook, CollectionBeforeValidateHook } from 'payload'
 
 import {
+  BlockquoteFeature,
   BlocksFeature,
   convertMarkdownToLexical,
   editorConfigFactory,
   FixedToolbarFeature,
   HeadingFeature,
   HorizontalRuleFeature,
+  InlineCodeFeature,
   InlineToolbarFeature,
+  OrderedListFeature,
+  UnorderedListFeature,
   type FeatureProviderServer,
 } from '@payloadcms/richtext-lexical'
 
@@ -23,6 +27,11 @@ export const postContentFeatures = ({
 }) => [
   ...rootFeatures,
   HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
+  // Formato de artículo: listas, citas y código en línea (el editor raíz solo trae párrafo, negrita, cursiva, subrayado y liga)
+  UnorderedListFeature(),
+  OrderedListFeature(),
+  BlockquoteFeature(),
+  InlineCodeFeature(),
   BlocksFeature({ blocks: [Banner, MediaBlock] }),
   FixedToolbarFeature(),
   InlineToolbarFeature(),
