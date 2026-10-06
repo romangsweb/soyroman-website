@@ -1,0 +1,53 @@
+import React from 'react'
+import type { Metadata } from 'next'
+
+/*
+ * Aviso de privacidad simplificado (LFPDPPP, México).
+ * BORRADOR: debe revisarlo un abogado antes de considerarse definitivo.
+ */
+export default function PrivacidadPage() {
+  return (
+    <div className="bg-[#f4f4f4] text-black font-sans min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <section className="pt-32 border-b border-black bg-[#e5e5e5]">
+        <div className="border-t border-black p-8 md:p-16">
+          <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60 mb-8">Legal</p>
+          <h1 className="text-[clamp(2.5rem,6vw,5rem)] leading-[1] tracking-tight font-semibold">Aviso de privacidad</h1>
+        </div>
+      </section>
+      <section className="bg-white">
+        <div className="max-w-3xl p-8 md:p-16 font-mono text-sm leading-relaxed space-y-6">
+          <p>
+            <strong>Responsable.</strong> Román García, con domicilio en la Ciudad de México, es responsable del tratamiento
+            de los datos personales que proporcionas en este sitio. Contacto: contacto@soyroman.com.
+          </p>
+          <p>
+            <strong>Datos que recabo.</strong> Nombre, correo electrónico, empresa y el contenido de tu mensaje, cuando llenas
+            un formulario. Además, datos técnicos de navegación (página de origen, dirección IP y cookies de analítica).
+          </p>
+          <p>
+            <strong>Finalidades.</strong> Responder tu solicitud, enviarte la información o propuesta que pediste y dar
+            seguimiento comercial a esa solicitud. No vendo ni cedo tus datos.
+          </p>
+          <p>
+            <strong>Encargados.</strong> Los datos de los formularios se almacenan en HubSpot, que actúa como proveedor de
+            CRM, y el sitio se aloja en Vercel. Ambos pueden procesar datos fuera de México bajo sus propias políticas de
+            protección.
+          </p>
+          <p>
+            <strong>Derechos ARCO.</strong> Puedes acceder, rectificar, cancelar u oponerte al tratamiento de tus datos, así
+            como revocar tu consentimiento, escribiendo a contacto@soyroman.com con el asunto &quot;Derechos ARCO&quot;.
+          </p>
+          <p>
+            <strong>Cambios.</strong> Cualquier cambio a este aviso se publicará en esta página.
+          </p>
+          <p className="opacity-60">Última actualización: octubre de 2026.</p>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+export const metadata: Metadata = {
+  title: 'Aviso de privacidad',
+  description: 'Aviso de privacidad de soyroman.com.',
+}

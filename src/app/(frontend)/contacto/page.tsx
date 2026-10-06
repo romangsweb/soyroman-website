@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
-import { ArrowUpRight } from '@/components/icons'
+import { ContactForm } from '@/components/ContactForm'
 
 export default function ContactoPage() {
   return (
@@ -39,7 +39,7 @@ export default function ContactoPage() {
                   ¿Tienes un sistema B2B que reparar o construir?
                 </h2>
                 <p className="font-mono text-sm leading-relaxed mb-16 opacity-80 max-w-md">
-                  Completa el formulario y evaluaremos tu caso. Si hacemos "fit", agendaremos una llamada técnica de 30 minutos sin compromiso.
+                  Completa el formulario y reviso tu caso. Si puedo ayudarte, agendamos una llamada de 30 minutos sin compromiso.
                 </p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 border-t border-black pt-16 mt-auto">
@@ -71,72 +71,9 @@ export default function ContactoPage() {
                     <div className="w-2 h-2 border border-black rounded-full"></div>
                   </div>
 
-                  <form className="space-y-8 mt-8 relative z-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div>
-                        <label htmlFor="name" className="block text-[10px] font-mono font-bold uppercase tracking-widest mb-3 opacity-60">
-                          // Input.Name
-                        </label>
-                        <input
-                          id="name"
-                          name="name"
-                          type="text"
-                          required
-                          className="w-full px-4 py-4 bg-[#f4f4f4] border border-black text-sm font-mono focus:outline-none focus:bg-white focus:border-[#ff3300] transition-all"
-                          placeholder="YOUR NAME"
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="company" className="block text-[10px] font-mono font-bold uppercase tracking-widest mb-3 opacity-60">
-                          // Input.Company
-                        </label>
-                        <input
-                          id="company"
-                          name="company"
-                          type="text"
-                          className="w-full px-4 py-4 bg-[#f4f4f4] border border-black text-sm font-mono focus:outline-none focus:bg-white focus:border-[#ff3300] transition-all"
-                          placeholder="COMPANY NAME"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label htmlFor="email" className="block text-[10px] font-mono font-bold uppercase tracking-widest mb-3 opacity-60">
-                        // Input.Email
-                      </label>
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        className="w-full px-4 py-4 bg-[#f4f4f4] border border-black text-sm font-mono focus:outline-none focus:bg-white focus:border-[#ff3300] transition-all"
-                        placeholder="EMAIL@ADDRESS.COM"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="message" className="block text-[10px] font-mono font-bold uppercase tracking-widest mb-3 opacity-60">
-                        // Input.Message
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        rows={4}
-                        required
-                        className="w-full px-4 py-4 bg-[#f4f4f4] border border-black text-sm font-mono focus:outline-none focus:bg-white focus:border-[#ff3300] transition-all resize-none"
-                        placeholder="PROJECT CONTEXT..."
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full group/btn flex items-center justify-between px-8 py-6 bg-black text-white font-mono font-bold uppercase tracking-widest text-xs hover:bg-[#ff3300] transition-colors border border-black"
-                    >
-                      <span>Transmit</span>
-                      <ArrowUpRight className="w-5 h-5 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-                    </button>
-                  </form>
+                  <div className="mt-8">
+                    <ContactForm origin="Contacto" />
+                  </div>
                 </div>
               </Reveal>
             </div>
