@@ -50,11 +50,8 @@ No uses primera persona ni marcadores [COMPLETAR]. Nada de introducciones ni cie
 PROMPT = """Escribe la entrada de glosario para el término: {term}
 Contexto: marketing B2B y marketing digital. Tema: {topic}.
 
-Responde EXACTAMENTE con este formato:
-
-###FULL_NAME###
-si es sigla: su nombre completo, y si está en inglés agrega la traducción entre paréntesis, por ejemplo "Return on Ad Spend (retorno de la inversión publicitaria)". Solo si NO es sigla ni tiene otro nombre, escribe N/A
-###DEFINITION###
+Responde EXACTAMENTE con este formato (copia los delimitadores tal cual, en mayúsculas, cada uno en su propia línea):
+{full_name_block}###DEFINITION###
 2 o 3 frases claras que definan el término. Sin jerga, sin "se refiere a", sin "es un concepto".
 ###FORMULA###
 fórmula en una línea con palabras, por ejemplo "Ingresos atribuidos ÷ inversión en anuncios". Si no tiene fórmula, escribe N/A
@@ -66,6 +63,20 @@ un ejemplo concreto de 2 o 3 frases con números en USD que cuadren con la fórm
 de 2 a 4 términos relacionados, separados por comas, elegidos SOLO de esta lista: {candidates}"""
 
 
+FULL_NAME_BLOCK = """
+###FULL_NAME###
+si es sigla: su nombre completo, y si está en inglés agrega la traducción entre paréntesis. Si no aplica, escribe N/A
+"""
+
+
+def parse_positional(raw, fields):
+    """Respaldo: si el modelo cambió el texto de los delimitadores, toma las secciones por orden."""
+    import re as _re
+    parts = [x.strip() for x in _re.split(r"(?m)^\s*###[^\n#]*###\s*$", raw)]
+    parts = [x for x in parts[1:]] if len(parts) > 1 else []
+    return {f.lower(): parts[i] if i < len(parts) else "" for i, f in enumerate(fields)}
+
+
 def none_if_na(s):
     s = tidy((s or "").strip())
     return None if not s or s.upper().startswith("N/A") else s
@@ -73,18 +84,23 @@ def none_if_na(s):
 
 def generate(term, slug, topic):
     candidates = ", ".join(t for t, _, _ in TERMS if t != term)
-    fields = ["FULL_NAME", "DEFINITION", "FORMULA", "EXAMPLE", "WHY", "RELATED"]
+    known = FULL_NAMES.get(slug)
+    fields = (["FULL_NAME"] if not known else []) + ["DEFINITION", "FORMULA", "EXAMPLE", "WHY", "RELATED"]
+    prompt = PROMPT.format(term=term, topic=topic, candidates=candidates,
+                           full_name_block="" if known else FULL_NAME_BLOCK.lstrip("\n"))
     p = {}
-    for attempt in (1, 2):  # el modelo a veces ignora los delimitadores: un reintento
-        raw = ollama_call(SYSTEM, PROMPT.format(term=term, topic=topic, candidates=candidates), predict=1500, temperature=0.4)
+    for attempt in (1, 2):  # el modelo a veces altera los delimitadores: respaldo por posición + un reintento
+        raw = ollama_call(SYSTEM, prompt, predict=1500, temperature=0.4)
         p = parse_delimited(raw, fields)
+        if not (p.get("definition") or "").strip():
+            p = parse_positional(raw, fields)
         if (p.get("definition") or "").strip():
             break
         log(f"  respuesta sin formato (intento {attempt}): {raw[:160]!r}")
     related = [r.strip().strip(".") for r in (p.get("related") or "").split(",") if r.strip()]
     by_name = {t.lower(): s for t, s, _ in TERMS}
     return {
-        "fullName": FULL_NAMES.get(slug) or none_if_na(p.get("full_name")),
+        "fullName": known or none_if_na(p.get("full_name")),
         "definition": tidy((p.get("definition") or "").strip()),
         "formula": none_if_na(p.get("formula")),
         "example": none_if_na(p.get("example")),
