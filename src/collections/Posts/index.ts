@@ -1,19 +1,13 @@
 import type { CollectionConfig } from 'payload'
 
 import {
-  BlocksFeature,
-  FixedToolbarFeature,
-  HeadingFeature,
-  HorizontalRuleFeature,
-  InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-import { authenticated } from '../../access/authenticated'
+import { adminOrBot, authenticated, isBot } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { Banner } from '../../blocks/Banner/config'
-import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
+import { botDraftsOnly, markdownToContent, postContentFeatures } from './hooks/aiDrafts'
 
 import {
   MetaDescriptionField,
@@ -26,10 +20,15 @@ import {
 export const Posts: CollectionConfig = {
   slug: 'posts',
   access: {
-    create: authenticated,
+    create: adminOrBot,
     delete: authenticated,
     read: authenticatedOrPublished,
-    update: authenticated,
+    // El bot solo puede tocar borradores; lo publicado es exclusivo del admin
+    update: ({ req: { user } }) => {
+      if (!user) return false
+      if (isBot(user)) return { _status: { equals: 'draft' } }
+      return true
+    },
   },
   defaultPopulate: {
     title: true,
@@ -78,6 +77,16 @@ export const Posts: CollectionConfig = {
               maxLength: 200,
             },
             {
+              name: 'markdownSource',
+              type: 'textarea',
+              virtual: true, // no se guarda: el hook lo convierte a `content`
+              admin: {
+                description:
+                  'Para el generador de IA: Markdown que se convierte al contenido al guardar. Se descarta después.',
+                condition: (_, __, { user }) => isBot(user),
+              },
+            },
+            {
               name: 'cover',
               type: 'upload',
               relationTo: 'media',
@@ -86,18 +95,7 @@ export const Posts: CollectionConfig = {
               name: 'content',
               type: 'richText',
               localized: true,
-              editor: lexicalEditor({
-                features: ({ rootFeatures }) => {
-                  return [
-                    ...rootFeatures,
-                    HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [Banner, MediaBlock] }),
-                    FixedToolbarFeature(),
-                    InlineToolbarFeature(),
-                    HorizontalRuleFeature(),
-                  ]
-                },
-              }),
+              editor: lexicalEditor({ features: postContentFeatures }),
               label: false,
               required: true,
             },
@@ -179,9 +177,11 @@ export const Posts: CollectionConfig = {
     },
   ],
   hooks: {
+    beforeValidate: [markdownToContent],
     afterChange: [revalidatePost],
     afterDelete: [revalidateDelete],
     beforeChange: [
+      botDraftsOnly,
       ({ data }) => {
         // Calculate reading time from content (rough estimate)
         if (data?.content) {

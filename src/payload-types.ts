@@ -158,6 +158,10 @@ export interface Post {
   title: string;
   slug: string;
   excerpt?: string | null;
+  /**
+   * Para el generador de IA: Markdown que se convierte al contenido al guardar. Se descarta después.
+   */
+  markdownSource?: string | null;
   cover?: (number | null) | Media;
   content: {
     root: {
@@ -602,8 +606,16 @@ export interface MediaBlock {
 export interface User {
   id: number;
   name?: string | null;
+  /**
+   * Bot: solo puede crear/editar borradores de Posts y subir medios. Nunca publica.
+   */
+  role: 'admin' | 'bot';
   updatedAt: string;
   createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
+  hasAPIKey?: boolean | null;
   email: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -828,6 +840,7 @@ export interface PostsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   excerpt?: T;
+  markdownSource?: T;
   cover?: T;
   content?: T;
   expertises?: T;
@@ -1136,8 +1149,13 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
+  enableAPIKey?: T;
+  apiKey?: T;
+  apiKeyIndex?: T;
+  hasAPIKey?: T;
   email?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
