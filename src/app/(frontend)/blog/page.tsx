@@ -1,0 +1,139 @@
+import React from 'react'
+import Link from 'next/link'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import type { Metadata } from 'next'
+import { PageTransition } from '@/components/motion/PageTransition'
+import { Reveal } from '@/components/motion/Reveal'
+import { SplitText } from '@/components/motion/SplitText'
+
+export default async function BlogPage() {
+  const payload = await getPayload({ config: configPromise })
+
+  const posts = await payload.find({
+    collection: 'posts',
+    sort: '-publishedAt',
+    limit: 20,
+    where: { _status: { equals: 'published' } },
+    depth: 1,
+  })
+
+  const categories = await payload.find({
+    collection: 'categories',
+    limit: 50,
+  })
+
+  return (
+    <PageTransition>
+      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
+        
+        {/* TE Header */}
+        <section className="pt-32 border-b border-black relative bg-[#e5e5e5]">
+          <div className="border-t border-black p-8 md:p-16 relative">
+            <Reveal duration={1.2}>
+              <div className="flex items-center gap-3 mb-16">
+                <div className="w-3 h-3 bg-[#ff3300] animate-pulse"></div>
+                <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
+                  SYS.08 // Data Stream
+                </p>
+              </div>
+            </Reveal>
+            <h1 className="text-[clamp(3rem,8vw,8rem)] leading-[0.9] tracking-tighter font-semibold mb-8 max-w-4xl">
+              <SplitText text="Publicaciones" delay={50} />
+            </h1>
+            <Reveal delay={0.3}>
+              <p className="font-mono text-sm md:text-base opacity-70 leading-relaxed max-w-2xl mt-8 mb-8">
+                Ideas, frameworks y ensayos sobre marketing B2B, diseño y tecnología.
+              </p>
+            </Reveal>
+            <div className="w-full h-8 border border-black/20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjMDAwIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDBMOCA4Wk04IDBMMCA4WiIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjEiPjwvcGF0aD4KPC9zdmc+')] opacity-20"></div>
+          </div>
+        </section>
+
+        {/* Blog Content Layout */}
+        <section className="border-b border-black">
+          <div className="grid grid-cols-1 lg:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-black bg-white">
+            
+            {/* Sidebar: Categories */}
+            <div className="lg:col-span-3 bg-[#f4f4f4] p-8 md:p-16">
+              <div className="sticky top-32">
+                <h3 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-8 opacity-50">
+                  // Filter_By_Tag
+                </h3>
+                {categories.docs.length > 0 && (
+                  <div className="flex flex-col gap-2">
+                    <Link
+                      href="/blog"
+                      className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black transition-colors"
+                    >
+                      <span className="font-mono text-sm uppercase font-bold group-hover:text-[#ff3300] transition-colors">Todos</span>
+                      <span className="w-1.5 h-1.5 bg-[#ff3300] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                    </Link>
+                    {categories.docs.map((cat: any) => (
+                      <Link
+                        key={cat.id}
+                        href={`/blog/tag/${cat.slug}`}
+                        className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black transition-colors"
+                      >
+                        <span className="font-mono text-sm uppercase font-bold group-hover:text-[#ff3300] transition-colors">{cat.title}</span>
+                        <span className="w-1.5 h-1.5 bg-black opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Main Content: Posts */}
+            <div className="lg:col-span-9 flex flex-col divide-y divide-black">
+              {posts.docs.map((post: any, index: number) => {
+                return (
+                  <Reveal key={post.id} delay={0.1}>
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="group block p-8 md:p-16 hover:bg-[#111] hover:text-white transition-colors duration-300 relative"
+                    >
+                      <div className="flex items-center gap-6 font-mono text-[10px] uppercase tracking-widest font-bold opacity-60 mb-6 group-hover:text-white">
+                        {post.publishedAt && (
+                          <time className="bg-black text-white px-2 py-1 group-hover:bg-[#ff3300] transition-colors">
+                            {new Date(post.publishedAt).toLocaleDateString('es-ES', {
+                              year: 'numeric',
+                              month: '2-digit',
+                              day: '2-digit'
+                            })}
+                          </time>
+                        )}
+                        {post.readingTime && (
+                          <span className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 bg-[#ff3300]"></span>
+                            {post.readingTime} MIN
+                          </span>
+                        )}
+                      </div>
+
+                      <h2 className="text-3xl md:text-5xl font-semibold tracking-tight group-hover:text-[#ff3300] transition-colors mb-6">
+                        {post.title}
+                      </h2>
+                      
+                      {post.excerpt && (
+                        <p className="font-mono text-sm leading-relaxed opacity-80 max-w-3xl">
+                          {post.excerpt}
+                        </p>
+                      )}
+                    </Link>
+                  </Reveal>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </PageTransition>
+  )
+}
+
+export const metadata: Metadata = {
+  title: 'Blog | Román García',
+  description: 'Artículos sobre marketing B2B, SEO, Paid Media, RevOps y tecnología.',
+}
