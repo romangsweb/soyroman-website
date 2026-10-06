@@ -1,9 +1,37 @@
 import React from 'react'
 import Link from 'next/link'
 import { cms } from '@/lib/cms'
+import { MobileMenu, type NavItem } from './MobileMenu'
+
+// Respaldo mientras el global "Header" del CMS esté vacío
+const DEFAULT_NAV: NavItem[] = [
+  { href: '/expertise', label: 'Expertise' },
+  { href: '/proyectos', label: 'Proyectos' },
+  { href: '/lab', label: 'Lab' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/consultoria', label: 'Consultoría' },
+  { href: '/cv', label: 'CV' },
+  { href: '/contacto', label: 'Contacto' },
+]
+
+function toNavItems(navItems: any[] | null | undefined): NavItem[] {
+  const items = (navItems || [])
+    .map((item: any): NavItem | null => {
+      const link = item?.link
+      if (!link?.label) return null
+      const href =
+        link.type === 'reference' && link.reference?.value
+          ? `/${(link.reference.value as any).slug || ''}`
+          : link.url || '#'
+      return { href, label: link.label, newTab: Boolean(link.newTab) }
+    })
+    .filter((i): i is NavItem => i !== null)
+  return items.length > 0 ? items : DEFAULT_NAV
+}
 
 export async function HeaderComponent() {
   const header = await cms.findGlobal({ slug: 'header' })
+  const items = toNavItems(header?.navItems)
 
   return (
     <header className="sticky top-0 z-50 border-b border-black bg-[#f4f4f4]">
@@ -15,34 +43,19 @@ export async function HeaderComponent() {
           </Link>
 
           <nav className="hidden md:flex items-center">
-            {header?.navItems?.map((item: any, i: number) => {
-              const link = item?.link
-              if (!link) return null
-              const href =
-                link.type === 'reference' && link.reference?.value
-                  ? `/${(link.reference.value as any).slug || ''}`
-                  : link.url || '#'
-
-              return (
-                <Link
-                  key={i}
-                  href={href}
-                  className="font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-12 flex items-center border-l border-black hover:bg-[#ff3300] hover:text-white transition-colors"
-                  {...(link.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                >
-                  {link.label}
-                </Link>
-              )
-            })}
+            {items.map((item, i) => (
+              <Link
+                key={`${item.href}-${i}`}
+                href={item.href}
+                className="font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-12 flex items-center border-l border-black hover:bg-[#ff3300] hover:text-white transition-colors"
+                {...(item.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
+                {item.label}
+              </Link>
+            ))}
           </nav>
 
-          {/* Mobile menu placeholder */}
-          <button
-            className="md:hidden font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-12 flex items-center border-l border-black hover:bg-[#ff3300] hover:text-white transition-colors"
-            aria-label="Menú"
-          >
-            [MENU]
-          </button>
+          <MobileMenu items={items} />
         </div>
       </div>
     </header>

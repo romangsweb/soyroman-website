@@ -3,7 +3,7 @@ import type { NextConfig } from 'next'
 /**
  * Mismo código, dos papeles:
  *  - Vercel (frontend): /admin se manda al CMS en Hall.
- *  - Hall (CMS_ROLE=cms): todo lo que no sea admin/API se manda al frontend.
+ *  - Hall (CMS_ROLE=cms): / abre /admin; lo demás que no sea admin/API va al frontend.
  */
 export const redirects: NextConfig['redirects'] = async () => {
   const CMS_URL = process.env.CMS_URL?.replace(/\/$/, '')
@@ -12,7 +12,8 @@ export const redirects: NextConfig['redirects'] = async () => {
   if (process.env.CMS_ROLE === 'cms') {
     if (!FRONTEND_URL) return []
     return [
-      { source: '/', destination: FRONTEND_URL, permanent: false },
+      // La raíz del CMS lleva directo al panel de Payload
+      { source: '/', destination: '/admin', permanent: false },
       {
         source: '/:path((?!admin|api|next|_next|favicon).*)',
         destination: `${FRONTEND_URL}/:path`,
