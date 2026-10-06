@@ -2,6 +2,7 @@ import React from 'react'
 import { cms } from '@/lib/cms'
 import type { Metadata } from 'next'
 import { RichText } from '@payloadcms/richtext-lexical/react'
+import { Media } from '@/components/Media'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
@@ -45,22 +46,31 @@ export default async function AboutPage() {
                       <span className="font-mono text-[10px] uppercase font-bold">FOTO.01</span>
                       <div className="w-2 h-2 bg-[#ff3300] animate-pulse"></div>
                     </div>
-                    {/* Photo content placeholder */}
+                    {/* Foto (Profile → Photo en el CMS); si no hay, marcador */}
                     <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden bg-white">
-                       {/* This is where the actual photo will go if added */}
-                       <div className="absolute inset-0 bg-[#e5e5e5] opacity-50"></div>
-                       <div className="w-16 h-16 border-2 border-black flex items-center justify-center mb-4 group-hover:scale-110 transition-transform relative z-10 bg-white">
-                          <div className="w-4 h-4 bg-black"></div>
-                       </div>
-                       <p className="font-mono uppercase tracking-widest text-black text-xs font-bold px-2 text-center relative z-10">
-                         [ INSERT VISUAL DATA ]
-                       </p>
-                       
+                       {profile?.photo && typeof profile.photo === 'object' ? (
+                         <Media
+                           resource={profile.photo}
+                           fill
+                           htmlElement={null}
+                           imgClassName="object-cover grayscale group-hover:grayscale-0 transition-[filter] duration-500"
+                           priority
+                           size="(max-width: 768px) 100vw, 400px"
+                         />
+                       ) : (
+                         <>
+                           <div className="absolute inset-0 bg-[#e5e5e5] opacity-50"></div>
+                           <div className="w-16 h-16 border-2 border-black flex items-center justify-center relative z-10 bg-white">
+                             <div className="w-4 h-4 bg-black"></div>
+                           </div>
+                         </>
+                       )}
+
                        {/* Corner marks */}
-                       <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-black/30"></div>
-                       <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-black/30"></div>
-                       <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-black/30"></div>
-                       <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-black/30"></div>
+                       <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-white/80 mix-blend-difference z-10"></div>
+                       <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-white/80 mix-blend-difference z-10"></div>
+                       <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-white/80 mix-blend-difference z-10"></div>
+                       <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-white/80 mix-blend-difference z-10"></div>
                     </div>
                   </div>
                 </Reveal>
@@ -71,7 +81,7 @@ export default async function AboutPage() {
                 <div className="p-8 md:p-16 flex-1">
                   <Reveal delay={0.2}>
                     <h2 className="font-mono text-xl md:text-2xl font-bold tracking-tight mb-12 max-w-2xl leading-relaxed">
-                      "Operaciones, Estrategia y Diseño fusionados para escalar sistemas B2B."
+                      {profile?.tagline || 'Marketing B2B: campañas, datos y la tecnología que los conecta.'}
                     </h2>
                     
                     {profile?.longBio && (

@@ -30,10 +30,14 @@ export default async function UsesPage() {
     advanced: 'Avanzado',
     expert: 'Experto',
   }
+  const RANK: Record<string, number> = { expert: 0, advanced: 1, intermediate: 2, beginner: 3 }
   const groups = CATEGORIES.map(([key, label]) => ({
     key,
     label,
-    tools: tools.docs.filter((t: any) => t.category === key),
+    // Primero lo que más domino; dentro del mismo nivel, alfabético
+    tools: tools.docs
+      .filter((t: any) => t.category === key)
+      .sort((a: any, b: any) => (RANK[a.level] ?? 9) - (RANK[b.level] ?? 9) || a.name.localeCompare(b.name, 'es')),
   })).filter((g) => g.tools.length > 0)
 
   return (
@@ -69,7 +73,7 @@ export default async function UsesPage() {
             <div className="space-y-16">
               {groups.map(({ key, label, tools: categoryTools }, i) => (
                 <Reveal key={key} delay={i * 0.05}>
-                  <div className="border border-black bg-[#f4f4f4] relative">
+                  <div className="border border-black bg-white relative overflow-hidden">
                     <div className="bg-white border-b border-black p-4 flex items-center justify-between">
                       <h2 className="font-mono text-xs uppercase tracking-widest font-bold flex items-center gap-3">
                         <IconTile name={key} size="sm" />
@@ -78,11 +82,12 @@ export default async function UsesPage() {
                       <span className="font-mono text-[10px] opacity-50 uppercase">[{categoryTools.length}]</span>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-black">
+                    {/* Bordes por celda (no gap negro): las filas incompletas quedan en blanco */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 -mr-px -mb-px">
                       {categoryTools.map((tool: any) => (
                         <div
                           key={tool.id}
-                          className="flex items-center justify-between gap-3 p-4 bg-white hover:bg-black hover:text-white transition-colors group"
+                          className="flex items-center justify-between gap-3 p-4 bg-white border-r border-b border-black hover:bg-black hover:text-white transition-colors group"
                         >
                           <span className="font-semibold text-sm tracking-tight">{tool.name}</span>
                           {tool.level && (
