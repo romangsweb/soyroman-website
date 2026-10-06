@@ -7,6 +7,7 @@ import { RichText } from '@payloadcms/richtext-lexical/react'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
+import { PostCover, hasCover } from '@/components/PostCover'
 import { ArrowUpRight } from '@/components/icons'
 
 type Args = { params: Promise<{ slug: string }> }
@@ -83,6 +84,13 @@ export default async function BlogPostPage({ params }: Args) {
           </div>
         </header>
 
+        {/* Portada */}
+        {hasCover(post.cover) && (
+          <section className="border-b border-black bg-[#e5e5e5]">
+            <PostCover cover={post.cover} priority className="aspect-[1344/768] w-full" sizes="(max-width: 1920px) 100vw, 1920px" />
+          </section>
+        )}
+
         {/* Content */}
         <section className="bg-white">
           <div className="container max-w-4xl p-8 md:p-16 border-x border-black bg-white min-h-screen">
@@ -109,9 +117,22 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const post = result.docs[0]
   if (!post) return {}
 
+  const meta = (post.meta as any) || {}
+  const image = hasCover(meta.image) ? meta.image : hasCover(post.cover) ? post.cover : null
+  const description = meta.description || post.excerpt || undefined
+
+  // El layout ya agrega " | Román García" con su plantilla de título
   return {
-    title: `${post.title} | Román García`,
-    description: post.excerpt || (post.meta as any)?.description || undefined,
+    title: meta.title || post.title,
+    description,
+    openGraph: {
+      type: 'article',
+      title: meta.title || post.title,
+      description,
+      publishedTime: post.publishedAt || undefined,
+      images: image ? [{ url: image.url!, width: image.width ?? undefined, height: image.height ?? undefined, alt: image.alt || post.title }] : undefined,
+    },
+    twitter: { card: 'summary_large_image' },
   }
 }
 
