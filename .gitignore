@@ -25,3 +25,8 @@ node_modules/
 .env.hall
 /media/
 tsconfig.tsbuildinfo
+
+# Referencias locales (scripts de otros repos; pueden traer secretos)
+_ref/
+__pycache__/
+*.pyc
