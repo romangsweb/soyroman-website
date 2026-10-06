@@ -32,6 +32,7 @@ from soyroman_engine import (  # noqa: E402  (reutiliza config, CMS, Ollama y re
     qa,
     send_telegram,
     tel,
+    tidy,
 )
 from glossary_terms import TERMS  # noqa: E402
 
@@ -41,7 +42,10 @@ SLUGS = {s for _, s, _ in TERMS}
 SYSTEM = VOICE + """
 
 TAREA ESPECIAL: estás escribiendo una entrada de GLOSARIO, no un artículo. Tono didáctico y preciso.
-No uses primera persona ni marcadores [COMPLETAR]. Nada de introducciones ni cierres."""
+No uses primera persona ni marcadores [COMPLETAR]. Nada de introducciones ni cierres.
+- Si el término es una sigla, SIEMPRE da su nombre completo.
+- Montos siempre en USD (escribe "USD 2,000"), nunca mezcles dólares y pesos.
+- Sé exacto: no atribuyas al término alcances que no tiene. Sin frases de relleno ("es crucial", "es fundamental")."""
 
 PROMPT = """Escribe la entrada de glosario para el término: {term}
 Contexto: marketing B2B y marketing digital. Tema: {topic}.
@@ -49,13 +53,13 @@ Contexto: marketing B2B y marketing digital. Tema: {topic}.
 Responde EXACTAMENTE con este formato:
 
 ###FULL_NAME###
-nombre completo o significado de la sigla (si es sigla en inglés: "Nombre en inglés (traducción)"). Si no aplica, escribe N/A
+si es sigla: su nombre completo, y si está en inglés agrega la traducción entre paréntesis, por ejemplo "Return on Ad Spend (retorno de la inversión publicitaria)". Solo si NO es sigla ni tiene otro nombre, escribe N/A
 ###DEFINITION###
 2 o 3 frases claras que definan el término. Sin jerga, sin "se refiere a", sin "es un concepto".
 ###FORMULA###
 fórmula en una línea con palabras, por ejemplo "Ingresos atribuidos ÷ inversión en anuncios". Si no tiene fórmula, escribe N/A
 ###EXAMPLE###
-un ejemplo concreto de 2 a 4 frases, con números ilustrativos cuando aplique
+un ejemplo concreto de 2 o 3 frases con números en USD que cuadren con la fórmula. Solo el ejemplo, sin conclusiones genéricas
 ###WHY###
 2 o 3 frases: por qué importa en marketing B2B y un error común al usarlo
 ###RELATED###
@@ -63,7 +67,7 @@ de 2 a 4 términos relacionados, separados por comas, elegidos SOLO de esta list
 
 
 def none_if_na(s):
-    s = (s or "").strip()
+    s = tidy((s or "").strip())
     return None if not s or s.upper().startswith("N/A") else s
 
 
@@ -75,7 +79,7 @@ def generate(term, topic):
     by_name = {t.lower(): s for t, s, _ in TERMS}
     return {
         "fullName": none_if_na(p.get("full_name")),
-        "definition": (p.get("definition") or "").strip(),
+        "definition": tidy((p.get("definition") or "").strip()),
         "formula": none_if_na(p.get("formula")),
         "example": none_if_na(p.get("example")),
         "whyItMatters": none_if_na(p.get("why")),
@@ -96,6 +100,11 @@ def check(term, entry):
         flags.append("brand_rule_violation")
     if not entry["example"]:
         flags.append("sin_ejemplo")
+    is_acronym = bool(re.fullmatch(r"[A-Z]{2,6}", term.replace(":", "").replace(" ", "")))
+    if is_acronym and not entry["fullName"]:
+        flags.append("sigla_sin_nombre_completo")
+    if re.search(r"\bpesos?\b", hay, re.IGNORECASE):
+        flags.append("moneda_mezclada")
     return flags
 
 
