@@ -87,11 +87,16 @@ REGLAS OBLIGATORIAS:
 - Donde una experiencia personal real haría el texto más fuerte, deja un marcador [COMPLETAR: qué ejemplo real va aquí] para que Román lo llene al revisar.
 - Puedes mencionar Buildations (el laboratorio de IA que fundaste) solo si aporta al tema; no lo fuerces.
 - Herramientas concretas (HubSpot, Search Console, GA4, LinkedIn Ads) sí, cuando sean relevantes.
+ESTILO:
+- Mayúsculas como en español: solo la primera palabra, nombres propios y siglas (MQL, SDR, CRM). Nunca "Title Case" en títulos ni en encabezados.
+- Empieza por la tesis o el criterio, no por obviedades ("X es un paso importante", "en el mundo actual").
+- Sin preguntas retóricas en el título ni en el extracto. Sin promesas tipo "éxito garantizado".
+- Respeta la extensión pedida; si sobra, recorta ejemplos antes que ideas.
 Markdown limpio: secciones con ## y ###, listas cuando ayuden, sin H1."""
 
 LENGTH = {
     "pillar": ("Artículo pilar: 1500-2000 palabras, 5-7 secciones ##.", "800-1000", "800-1000"),
-    "satellite": ("Artículo satélite: 600-900 palabras, 3-4 secciones ##, cierre breve.", "350-450", "300-400"),
+    "satellite": ("Artículo satélite: 700-900 palabras EN TOTAL, 3-4 secciones ##, cierre breve.", "300-350", "300-350"),
 }
 
 PROMPT_PART1 = """Escribe la primera mitad de un artículo.
@@ -108,9 +113,9 @@ título claro y específico, máximo 90 caracteres
 ###SLUG###
 slug-kebab-case-sin-acentos
 ###EXCERPT###
-1-2 frases que capturan el ángulo del artículo, MÁXIMO 190 caracteres
+1-2 frases afirmativas con la tesis del artículo (sin preguntas), MÁXIMO 190 caracteres
 ###META_TITLE###
-máximo 60 caracteres
+descriptivo, sin promesas ni signos de exclamación, máximo 60 caracteres
 ###META_DESCRIPTION###
 máximo 155 caracteres
 ###CONTENT_INTRO###
@@ -168,6 +173,37 @@ def clip(text, limit):
         return text
     cut = text[: limit - 1].rsplit(" ", 1)[0]
     return cut.rstrip(",;:") + "…"
+
+
+ACRONYM = re.compile(r"^[A-Z0-9][A-Z0-9&/+.-]*[A-Z0-9]$|^[A-Z]$")
+# Nombres propios de herramientas que conservan mayúscula inicial
+PROPER = {
+    "Google", "Ads", "Search", "Console", "Analytics", "Tag", "Manager", "Looker", "Studio",
+    "LinkedIn", "HubSpot", "Salesforce", "Meta", "Microsoft", "Excel", "WordPress", "Webflow",
+    "ChatGPT", "Perplexity", "Gemini", "Claude", "Zapier", "Buildations", "Sales", "Navigator",
+}
+
+
+def sentence_case(text):
+    """'El Primer SDR: Métricas Clave' -> 'El primer SDR: métricas clave'. Respeta siglas y nombres de marca con mayúscula interna."""
+    words = (text or "").split(" ")
+    out = []
+    for i, w in enumerate(words):
+        core = w.strip("¿¡\"'()[]:;,.")
+        keep = i == 0 or core in PROPER or ACRONYM.match(core) or any(c.isupper() for c in core[1:])
+        out.append(w if keep else w[:1].lower() + w[1:])
+    return " ".join(out)
+
+
+def tidy(md):
+    """Normaliza espacios dobles y saltos excesivos sin tocar la indentación de listas."""
+    md = re.sub(r"(?<=\S) {2,}(?=\S)", " ", md)
+    md = re.sub(r"\n{3,}", "\n\n", md)
+    return md.strip()
+
+
+def heading_case(md):
+    return re.sub(r"(?m)^(#{2,4})\s+(.+)$", lambda m: f"{m.group(1)} {sentence_case(m.group(2))}", md)
 
 
 def parse_delimited(raw, fields):
@@ -264,7 +300,7 @@ def generate_article(topic, article_type, parent):
                                                length_rule=rule, intro_words=intro_w)),
         ["TITLE", "SLUG", "EXCERPT", "META_TITLE", "META_DESCRIPTION", "CONTENT_INTRO"],
     )
-    title = (p1.get("title") or topic).strip().strip('"')
+    title = sentence_case((p1.get("title") or topic).strip().strip('"'))
     log(f"  ok: {title[:70]}")
 
     log("[2/2] parte 2 (cuerpo)")
@@ -274,13 +310,14 @@ def generate_article(topic, article_type, parent):
     )
     content = (p1.get("content_intro", "") + "\n\n" + p2.get("content_body", "")).strip()
     content = re.sub(r"(?m)^#\s+", "## ", content)  # sin H1: el título va en su campo
+    content = heading_case(tidy(content))
     log(f"  ok: {len(content.split())} palabras")
 
     return {
         "title": title,
         "slug": slugify(p1.get("slug") or title),
         "excerpt": clip(p1.get("excerpt"), EXCERPT_MAX),
-        "metaTitle": clip(p1.get("meta_title") or title, 60),
+        "metaTitle": clip(sentence_case(p1.get("meta_title") or title), 60),
         "metaDescription": clip(p1.get("meta_description"), 155),
         "content": content,
     }
@@ -382,8 +419,8 @@ def main():
                        ensure_ascii=False, indent=2))
         return
 
+    cms = CMS()  # falla rápido si falta la API key, antes de avisar o generar
     send_telegram(f"🖊 <b>soyroman: generando borrador</b>\n{topic}\n<i>{article_type} | {expertise or '—'}</i>")
-    cms = CMS()
 
     with tel.TelemetryRun(ENGINE_NAME, topic=topic, triggered_by=trigger,
                           metadata={"article_type": article_type, "expertise": expertise}) as run:
