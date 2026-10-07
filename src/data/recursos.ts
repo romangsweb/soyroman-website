@@ -76,6 +76,18 @@ export const RECURSOS: Recurso[] = [
     expertise: ['paid-media', 'generacion-demanda-b2b', 'crm-revops'],
     categories: ['paid-media', 'analitica', 'generacion-demanda'],
   },
+  {
+    slug: 'auditor-aeo',
+    href: '/recursos/auditor-aeo',
+    code: 'SCAN',
+    name: 'Auditor AEO',
+    sub: 'radar de IA',
+    desc: '¿Pueden ChatGPT, Claude y Perplexity leer y citar tu sitio? Nueve pruebas y un plan de correcciones.',
+    preview: { label: 'Preparación IA', value: '—/100' },
+    glossary: ['aeo', 'geo', 'seo', 'schema-markup', 'serp'],
+    expertise: ['seo-aeo-geo', 'web-herramientas'],
+    categories: ['seo-aeo', 'sitios-web'],
+  },
 ]
 
 export const LIVE = RECURSOS.filter((r) => r.href)

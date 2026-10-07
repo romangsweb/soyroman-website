@@ -304,3 +304,44 @@
 .te-app .m-keys .btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 .te-app .m-gate{margin-top:16px;background:#fff;border:2px solid var(--ink);border-radius:8px}
 @media(max-width:520px){.te-app .m-strips{gap:4px}.te-app .m-strip .amt{display:none}.te-app .m-p{grid-template-columns:22px minmax(0,1fr) 92px}}
+
+/* ───────── Auditor AEO (radar + banco de pruebas): prefijo s- ───────── */
+.te-app .s-dev{background:var(--shell);border:2px solid var(--ink);border-radius:18px;box-shadow:8px 8px 0 var(--ink);padding:18px;display:grid;gap:18px;margin-top:8px}
+@media(min-width:900px){.te-app .s-dev{grid-template-columns:380px minmax(0,1fr)}}
+.te-app .s-brand{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.te-app .s-brand b{font-size:15px;letter-spacing:.06em;font-weight:400}
+.te-app .s-scope{position:relative;aspect-ratio:1;max-width:380px;background:#0b0d0c;border:2px solid var(--ink);border-radius:50%;overflow:hidden}
+.te-app .s-scope::before,.te-app .s-scope::after{content:"";position:absolute;inset:12%;border:1px solid #1f3a2c;border-radius:50%}
+.te-app .s-scope::after{inset:30%}
+.te-app .s-sweep{position:absolute;inset:0;background:conic-gradient(from 0deg,transparent 0deg,rgba(61,220,132,.32) 40deg,transparent 41deg);animation:s-spin 6s linear infinite}
+.te-app .s-scope.busy .s-sweep{animation-duration:1.2s}
+@keyframes s-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.te-app .s-sweep{animation:none}}
+.te-app .s-score{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#3ddc84;text-shadow:0 0 14px #3ddc8466}
+.te-app .s-score b{font-size:clamp(48px,9vw,66px);line-height:1;font-weight:400}
+.te-app .s-score span{font-size:10px;letter-spacing:.2em;color:#4f8f6a}
+.te-app .s-blip{position:absolute;width:9px;height:9px;margin:-4px 0 0 -4px;border-radius:50%}
+.te-app .s-blip.ok,.te-app .s-led.ok{background:#3ddc84}
+.te-app .s-blip.warn,.te-app .s-led.warn{background:#f2c14e}
+.te-app .s-blip.bad,.te-app .s-led.bad{background:var(--or)}
+.te-app .s-in{display:flex;gap:8px;margin-top:14px}
+.te-app .s-in input{flex:1;min-width:0;font:inherit;font-size:14px;border:2px solid var(--ink);border-radius:6px;padding:10px;background:#fff}
+.te-app .s-in input:focus{outline:2px solid var(--or);outline-offset:1px}
+.te-app .s-in button{font:inherit;font-size:12px;letter-spacing:.12em;border:2px solid var(--ink);border-radius:6px;background:var(--or);color:#fff;padding:0 16px;box-shadow:3px 3px 0 var(--ink);cursor:pointer}
+.te-app .s-in button:disabled{opacity:.5;cursor:not-allowed}
+.te-app .s-err{margin:10px 0 0;color:var(--or);font-size:12px}
+.te-app .s-help{margin:10px 0 0;font-size:10px;color:var(--grey);line-height:1.5;text-transform:uppercase;letter-spacing:.06em}
+.te-app .s-rig{background:var(--panel);border:2px solid var(--ink);border-radius:12px;padding:14px}
+.te-app .s-rig h3{margin:0 0 4px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:400}
+.te-app .s-rig .sub{font-size:10px;color:var(--grey);margin:0 0 12px;text-transform:uppercase;letter-spacing:.1em}
+.te-app .s-empty{font-size:12px;color:var(--grey);margin:18px 0}
+.te-app .s-grp{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);margin:12px 0 6px}
+.te-app .s-chk{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:10px;align-items:start;background:var(--shell);border:1.5px solid var(--ink);border-radius:6px;padding:8px 10px;margin-bottom:6px;font-size:12px;line-height:1.4}
+.te-app .s-led{width:12px;height:12px;border-radius:50%;margin-top:2px;border:1.5px solid var(--ink)}
+.te-app .s-chk small{display:block;color:var(--grey);font-size:10px;margin-top:2px}
+.te-app .s-chk .pts{font-size:11px;white-space:nowrap}
+.te-app .s-bots{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.te-app .s-bots span{font-size:9px;border:1px solid var(--ink);border-radius:3px;padding:2px 5px;background:#fff}
+.te-app .s-bots span.no{background:var(--or);color:#fff}
+.te-app .s-keys{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.te-app .s-gate{margin-top:14px;background:#fff;border:2px solid var(--ink);border-radius:8px}

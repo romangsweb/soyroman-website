@@ -23,6 +23,7 @@ const STATIC = [
   '/recursos/madurez-revops',
   '/recursos/icp',
   '/recursos/presupuesto-marketing',
+  '/recursos/auditor-aeo',
   '/about',
   '/cv',
   '/uses',
