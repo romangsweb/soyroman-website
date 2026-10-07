@@ -416,13 +416,16 @@ async function seed() {
     'sitio-b2b-visible': {
       summary:
         'Llevé el sitio corporativo de HubSpot CMS a WordPress y lo preparé para buscadores y motores de IA, con herramientas interactivas que convierten visitas en leads.',
-      role: C,
+      role: 'Líder técnico de la migración: contenido, instalación, configuración y endurecimiento; el equipo apoyó en la maquetación',
+      duration: '4 meses',
+      team: 'Yo + equipo interno de diseño',
       outcomes: [
-        { metric: 'Leads desde el sitio', before: C, after: C, impact: C },
-        { metric: 'Tráfico orgánico', before: C, after: C, impact: C },
+        { metric: 'Visibilidad en Google', before: 'Base', after: '+8% impresiones', impact: 'Cambio de CMS sin la caída de tráfico típica de una migración' },
+        { metric: 'Posición media', before: '11.7', after: '10.8', impact: 'La mejor posición promedio desde el cambio de plataforma' },
         { metric: 'Herramientas de captación', before: '', after: '2', impact: 'Simulador y cotizador como puntos de conversión' },
       ],
       highlights: [
+        { title: 'Dos migraciones en paralelo', text: 'El sitio salía de HubSpot CMS mientras el CRM se movía a un portal nuevo; ambas tenían que llegar juntas para no romper formularios ni atribución.' },
         { title: 'Medir antes que publicar', text: 'Apagué el motor GEO cuando vi que contaminaba los datos de GA4: un dato confiable vale más que publicar más rápido.' },
         { title: 'Herramientas que convierten', text: 'El simulador y el cotizador le dan al visitante algo útil a cambio de sus datos.' },
         { title: 'Traducción con LLM local', text: 'La traducción masiva del sitio se hizo con un modelo corriendo en infraestructura propia.' },
@@ -448,17 +451,21 @@ async function seed() {
     },
     'forecast-confiable': {
       summary:
-        'Migré un portal de HubSpot de ~76 mil contactos y unifiqué cinco pipelines en un modelo MEDDIC de 9 etapas para que la dirección pudiera confiar en el forecast.',
-      role: C,
+        'La dirección general no podía ver los números juntos: el negocio vivía en dos portales de HubSpot con cinco pipelines separados por unidad de negocio. Planeé y ejecuté la migración por API a un solo portal con un solo pipeline.',
+      role: 'Planeación y ejecución completa: mapa de datos, migración por API, pruebas y validación',
+      duration: '4 meses, en paralelo con el sitio',
+      team: 'Proyecto individual',
       outcomes: [
+        { metric: 'Portales de CRM', before: '2', after: '1', impact: 'Una sola fuente de verdad para contactos y negocios' },
+        { metric: 'Pipelines comerciales', before: '5', after: '1', impact: 'Las unidades de negocio pasan a ser un filtro, no un pipeline aparte' },
+        { metric: 'Vista de la dirección', before: 'Aislada', after: 'Consolidada', impact: 'Todo el negocio en un solo tablero' },
         { metric: 'Base de contactos', before: '~76k', after: '~68k', impact: 'Depurada en varias rondas: menos ruido en reportes y segmentaciones' },
-        { metric: 'Pipelines comerciales', before: '5', after: '1', impact: 'Un solo modelo MEDDIC de 9 etapas con criterios comunes' },
-        { metric: 'Confianza en el forecast', before: C, after: C, impact: C },
       ],
       highlights: [
+        { title: 'Probar antes de mover', text: 'Cada lote se validó por API antes de la carga definitiva.' },
         { title: 'Cada propiedad mapeada', text: 'Migrar entre portales exige mapear cada propiedad personalizada antes de mover un solo registro.' },
         { title: 'Depuración iterativa', text: 'La limpieza se hizo en rondas, no en una pasada: cada ronda revelaba el siguiente problema.' },
-        { title: 'Un criterio común', text: 'MEDDIC dio a ventas y dirección la misma definición de qué tan avanzado está un negocio.' },
+        { title: 'Un criterio común', text: 'Dirección comercial eligió MEDDIC; mi parte fue llevarlo a un pipeline de 9 etapas que ventas y dirección leen igual.' },
         { title: 'Fecha límite real', text: 'La licencia por vencer fijó el calendario y obligó a priorizar.' },
       ],
       phases: [
@@ -471,10 +478,10 @@ async function seed() {
       architecture: {
         caption: 'Migración entre portales y modelo único de pipeline',
         columns: [
-          col('Origen', ['Portal HubSpot', 'anterior · 5 pipelines']),
+          col('Origen', ['2 portales HubSpot', '5 pipelines por unidad']),
           col('Migración', ['API de HubSpot', 'objetos y actividades'], ['Python', 'scripts y depuración']),
           col('Destino', ['HubSpot', 'portal nuevo'], ['Pipeline MEDDIC', '9 etapas']),
-          col('Uso', ['Forecast', 'dirección comercial']),
+          col('Uso', ['Tablero único', 'dirección general'], ['Unidades de negocio', 'como filtro']),
         ],
       },
     },
@@ -568,11 +575,20 @@ async function seed() {
     },
   }
   const isEmpty = (v: any) => v == null || v === '' || (Array.isArray(v) && v.length === 0) || (typeof v === 'object' && !Array.isArray(v) && !(v.columns || []).length)
+  const hasPlaceholder = (v: any) => v != null && JSON.stringify(v).includes(C)
+  // Campos reescritos a propósito tras la entrevista (pisan lo que haya en el CMS)
+  const FORCE: Record<string, string[]> = {
+    'sitio-b2b-visible': ['outcomes', 'highlights'],
+    'forecast-confiable': ['summary', 'outcomes', 'highlights', 'architecture'],
+  }
   for (const [slug, data] of Object.entries(CASES)) {
     const found = await payload.find({ collection: 'projects', where: { slug: { equals: slug } }, limit: 1, depth: 0 })
     const doc = found.docs[0] as any
     if (!doc) continue
-    const patch = Object.fromEntries(Object.entries(data).filter(([k]) => isEmpty(doc[k])))
+    const force = FORCE[slug] || []
+    const patch = Object.fromEntries(
+      Object.entries(data).filter(([k]) => isEmpty(doc[k]) || hasPlaceholder(doc[k]) || force.includes(k)),
+    )
     if (Object.keys(patch).length) await payload.update({ collection: 'projects', id: doc.id, data: patch, context: ctx })
   }
 
