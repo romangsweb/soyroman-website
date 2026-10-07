@@ -1,4 +1,15 @@
+# Ajustes de pnpm aquí (no en package.json): pnpm 11 ignora el campo "pnpm"
+# de package.json y pnpm 10 (Vercel, Dockerfile) lee ambos.
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - unrs-resolver
 allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+overrides:
+  'undici@>=7.0.0 <7.29.1': '^7.29.1'
+  'source-map-js@>=1.0.0 <1.2.2': '^1.2.2'
+  'postcss-selector-parser@<7.1.6': '^7.1.6'
+  'dompurify@<3.4.16': '^3.4.16'

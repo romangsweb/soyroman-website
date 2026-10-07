@@ -23,7 +23,6 @@ ARG FRONTEND_URL
 ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL \
     PAYLOAD_PUBLIC_SERVER_URL=$PAYLOAD_PUBLIC_SERVER_URL \
     FRONTEND_URL=$FRONTEND_URL
-# Solo next build: next-sitemap (postbuild) es del frontend.
 RUN pnpm exec next build
 
 FROM base AS runner
