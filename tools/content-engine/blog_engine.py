@@ -108,6 +108,9 @@ CANON = {
     "tasa-de-conversion": "Tasa de conversión = conversiones ÷ registros de la etapa anterior.",
     "mql": "MQL: lead que cumple los criterios acordados con ventas (ajuste al ICP e interés) para pasar a seguimiento.",
     "sql": "SQL: lead que ventas aceptó y calificó como oportunidad potencial tras un primer contacto.",
+    "seo": "SEO: optimizar un sitio para aparecer y ganar clics en los resultados de los buscadores (Google, Bing).",
+    "aeo": "AEO (Answer Engine Optimization): optimizar contenido para que los motores de respuesta (asistentes y buscadores con IA) lo usen y lo citen como respuesta directa a una pregunta.",
+    "geo": "GEO (Generative Engine Optimization): optimizar la presencia de una marca y su contenido en las respuestas que generan los modelos de IA (ChatGPT, Claude, Perplexity, AI Overviews), incluidas sus fuentes citadas.",
 }
 
 # Frases de relleno que delatan texto genérico (se cuentan y se piden quitar en la edición)
@@ -220,7 +223,8 @@ EDITOR = """Eres el editor del blog. Edita este borrador para que suene a un pro
 LISTA DE VERIFICACIÓN:
 - Quita relleno y frases hechas (por ejemplo: {filler}).
 - Elimina repeticiones entre secciones; si dos párrafos dicen lo mismo, deja uno.
-- Cada afirmación general lleva un criterio, un ejemplo o un número presentado como rango típico. Si falta y requiere experiencia personal real, deja [COMPLETAR: qué ejemplo real va aquí].
+- Cada afirmación general lleva un criterio, un ejemplo o un número presentado como rango típico. Si falta y requiere experiencia personal real, deja [COMPLETAR: …] con una INSTRUCCIÓN de máximo 15 palabras sobre qué tipo de ejemplo falta (p. ej. "[COMPLETAR: un caso real donde repartiste presupuesto entre SEO y contenido]"). Nunca escribas el ejemplo dentro del marcador: sin cifras, sin porcentajes y sin verbos en pasado.
+- Varía cómo introduces tus criterios: ninguna fórmula ("cuando reviso", "lo que recomiendo") más de dos veces.
 - No inventes cifras, clientes ni anécdotas como reales.
 - Frases cortas y directas; voz activa; primera persona donde aporte.
 - Mantén TODOS los encabezados ## y ###, las listas y las tablas. Mantén la extensión (no recortes más de 10 %).
@@ -240,6 +244,7 @@ BORRADOR:
 ---"""
 
 SCORE = """Evalúa este artículo como editor exigente de un blog de marketing B2B. Sé estricto: un 10 es publicable sin tocar.
+Los marcadores [COMPLETAR: …] son intencionales (ahí Román agregará su experiencia real): no los cuentes como problema.
 
 Tesis esperada: {thesis}
 Lector: {reader}
@@ -401,10 +406,30 @@ def heuristics(md, t, n_sections):
                           "long_leads": len(long_leads)}
 
 
+INVENTED = re.compile(r"\d|%|\$|\b(prioricé|logré|aumenté|implementé|reduje|conseguí|obtuve|resultó|lancé|migré|hice|tuve)\b", re.I)
+
+
+def sanitize_completar(md):
+    """El texto de [COMPLETAR: …] es una instrucción para Román, nunca el ejemplo: sin cifras ni anécdotas."""
+    out, heading = [], "esta sección"
+    for line in md.split("\n"):
+        if line.startswith("## "):
+            heading = line[3:].strip()
+
+        def fix(m, heading=heading):
+            note = m.group(1).strip()
+            if INVENTED.search(note) or len(note) > 160:
+                return f"[COMPLETAR: un ejemplo real tuyo sobre «{heading[:60]}» (caso, decisión o cifra propia)]"
+            return m.group(0)
+
+        out.append(re.sub(r"\[COMPLETAR:\s*([^\]]+)\]", fix, line))
+    return "\n".join(out)
+
+
 def autofix(md):
     for pat, rep_ in AUTOFIX:
         md = re.sub(pat, rep_, md)
-    return scrub(md)
+    return sanitize_completar(scrub(md))
 
 
 def ensure_completar(md):
@@ -496,7 +521,7 @@ def write_article(t, glossary=None):
 
     draft = autofix(draft)
     log("[3/5] editor")
-    edited = ensure_completar(autofix(edit(draft, t, defs=defs)))
+    edited = sanitize_completar(ensure_completar(autofix(edit(draft, t, defs=defs))))
 
     faq = []
     if brief.get("faq"):
