@@ -14,6 +14,8 @@ import { HeaderComponent } from '@/components/layout/Header'
 import { FooterComponent } from '@/components/layout/Footer'
 import { SpotlightTracker } from '@/components/motion/SpotlightTracker'
 import { Analytics } from '@/components/analytics/Analytics'
+import { cms } from '@/lib/cms'
+import { SITE, PERSON_ID, ld, personLd } from '@/lib/seo'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -25,11 +27,25 @@ const poppins = Poppins({
 const aldrich = Aldrich({ subsets: ['latin'], weight: '400', variable: '--font-aldrich', display: 'swap' })
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const profile = await cms.findGlobal({ slug: 'profile' })
   return (
     <html className={cn(poppins.variable, aldrich.variable, 'font-sans light')} lang="es" suppressHydrationWarning>
       <head>
         <InitTheme />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: ld(personLd(profile), {
+              '@type': 'WebSite',
+              '@id': `${SITE}/#website`,
+              url: SITE,
+              name: 'Román García',
+              inLanguage: 'es-MX',
+              publisher: { '@id': PERSON_ID },
+            }),
+          }}
+        />
       </head>
       <body>
         <Providers>
@@ -46,6 +62,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
+  alternates: { types: { 'application/rss+xml': `${SITE}/blog/rss.xml` } },
   title: {
     default: 'Román García — Director de marketing B2B',
     template: '%s | Román García',

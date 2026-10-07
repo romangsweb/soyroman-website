@@ -5,6 +5,7 @@ import { ResourceStrip } from '@/components/ResourceTeaser'
 import { recursosFor } from '@/data/recursos'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import type { Where } from 'payload'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
@@ -12,6 +13,8 @@ import { SplitText } from '@/components/motion/SplitText'
 import { hasCover } from '@/components/PostCover'
 import { ScreenCover, postCategory } from '@/components/ScreenCover'
 import { ArrowUpRight } from '@/components/icons'
+import { AuthorBox, RelatedPosts } from '@/components/PostExtras'
+import { SITE, PERSON_ID, ld } from '@/lib/seo'
 
 type Args = { params: Promise<{ slug: string }> }
 
@@ -29,9 +32,60 @@ export default async function BlogPostPage({ params }: Args) {
   const post = result.docs[0]
   if (!post) notFound()
 
+  const url = `${SITE}/blog/${post.slug}`
+  const cats = ((post.categories as any[]) || []).filter((c) => typeof c === 'object' && c)
+  const jsonLd = ld(
+    {
+      '@type': 'BlogPosting',
+      '@id': `${url}#article`,
+      mainEntityOfPage: url,
+      headline: post.title,
+      description: post.excerpt || undefined,
+      datePublished: post.publishedAt || undefined,
+      dateModified: post.updatedAt || undefined,
+      inLanguage: 'es-MX',
+      image: `${url}/opengraph-image`,
+      author: { '@id': PERSON_ID },
+      publisher: { '@id': PERSON_ID },
+      ...(cats[0]?.title ? { articleSection: cats[0].title } : {}),
+      ...(post.readingTime ? { timeRequired: `PT${post.readingTime}M` } : {}),
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: SITE },
+        { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE}/blog` },
+        { '@type': 'ListItem', position: 3, name: post.title, item: url },
+      ],
+    },
+  )
+
+  // Relacionados: misma categoría primero, luego los más recientes
+  const base: Where[] = [{ id: { not_equals: post.id } }, { _status: { equals: 'published' } }]
+  const catIds = cats.map((c: any) => c.id)
+  const [sameCat, profile] = await Promise.all([
+    catIds.length
+      ? cms.find({ collection: 'posts', where: { and: [...base, { categories: { in: catIds } }] }, sort: '-publishedAt', limit: 3, depth: 1 })
+      : Promise.resolve({ docs: [] as any[] }),
+    cms.findGlobal({ slug: 'profile' }),
+  ])
+  let related: any[] = sameCat.docs
+  if (related.length < 3) {
+    const picked = related.map((p: any) => p.id)
+    const recent = await cms.find({
+      collection: 'posts',
+      where: { and: [...base, ...(picked.length ? [{ id: { not_in: picked } }] : [])] },
+      sort: '-publishedAt',
+      limit: 3 - related.length,
+      depth: 1,
+    })
+    related = [...related, ...recent.docs]
+  }
+
   return (
     <PageTransition>
       <article className="bg-[#f4f4f4] text-black font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
         
         {/* TE Header */}
         <header className="border-b border-black relative bg-[#e5e5e5]">
@@ -107,6 +161,9 @@ export default async function BlogPostPage({ params }: Args) {
           </div>
         </section>
 
+        <AuthorBox profile={profile} />
+        <RelatedPosts posts={related} />
+
         <ResourceStrip
           items={recursosFor('categories', ((post.categories as any[]) || []).map((c: any) => (typeof c === 'object' ? c?.slug : '')).filter(Boolean))}
         />
@@ -133,8 +190,10 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   return {
     title: meta.title || post.title,
     description,
+    alternates: { canonical: `${SITE}/blog/${slug}` },
     openGraph: {
       type: 'article',
+      url: `${SITE}/blog/${slug}`,
       title: meta.title || post.title,
       description,
       publishedTime: post.publishedAt || undefined,
