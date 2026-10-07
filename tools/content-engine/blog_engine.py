@@ -80,7 +80,9 @@ REGLAS DEL BLOG:
 - Donde una experiencia real haría el texto más creíble, deja [COMPLETAR: qué ejemplo real va aquí]. Entre 1 y 3 en todo el artículo; nunca inventes la anécdota.
 - Respeta las DEFINICIONES Y FÓRMULAS que se te dan: no las contradigas ni inventes otras.
 - Español de México sin anglicismos innecesarios: "dirección" (no C-suite), "embudo" (no funnel), "hallazgos" (no insights), "interacción" (no engagement), "desempeño" (no performance). El presupuesto se defiende ante dirección general o finanzas (CFO), no ante el CTO.
-- Nada de llamados de venta tipo "Descubre", "Conoce" o "No te pierdas"."""
+- Nada de llamados de venta tipo "Descubre", "Conoce" o "No te pierdas".
+- Varía cómo introduces tu criterio: la misma frase de arranque (por ejemplo "Cuando reviso…") no puede aparecer más de dos veces en el artículo.
+- Montos siempre en dólares: "USD 20,000". Nunca pesos."""
 
 # Anglicismos y muletillas que no deben aparecer (la calificación los penaliza)
 BANNED = {
@@ -115,7 +117,16 @@ FILLER = [
     "cabe destacar", "cabe mencionar", "no es ningún secreto", "el panorama actual", "clave del éxito", "potenciar",
     "sinergia", "de manera efectiva", "de forma efectiva", "a la hora de", "en definitiva", "llevar al siguiente nivel",
     "revolucionar", "un mundo cada vez más", "panorama competitivo", "en este artículo exploraremos", "vamos a explorar",
+    "en un mundo donde", "cada peso cuenta", "cada dólar cuenta", "es el momento ideal", "es clave", "en el entorno actual",
 ]
+# Arranques de relleno que se quitan solos: "En un mundo donde X, elegir…" → "Elegir…"
+FILLER_OPENERS = re.compile(
+    r"(?:(?<=^)|(?<=[.!?]\s)|(?<=\n))(?:En un mundo donde|En definitiva|En conclusión|Hoy en día|En el entorno actual|"
+    r"En la era digital|Sin lugar a dudas|Sin duda alguna)[^,.\n]{0,80},\s*(\w)", re.M)
+
+
+def scrub(text):
+    return FILLER_OPENERS.sub(lambda m: m.group(1).upper(), text)
 
 # ───────────────────────── Prompts ─────────────────────────
 BRIEF = """Vas a planear un artículo para el blog. No lo escribas todavía: arma el brief.
@@ -142,9 +153,9 @@ Responde SOLO con JSON válido con esta forma:
       "include": "el elemento concreto que lleva: ejemplo, criterio, tabla, pasos, cálculo o plantilla"}}
   ],
   "faq": ["3 preguntas reales que este lector se haría después de leer, en sus palabras"],
-  "scenario": "un caso hipotético con cifras concretas (marcado como ejemplo) que todas las secciones reutilizan; si el tema lleva fórmulas, el caso permite calcularlas todas con los mismos números"
+  "scenario": "un caso hipotético con cifras concretas (marcado como ejemplo) que todas las secciones reutilizan; montos en USD; si hay costos, desglósalos (inversión en medios, otros costos de marketing y costo total); si el tema lleva fórmulas, el caso permite calcularlas todas con los mismos números"
 }}
-Reglas del esquema: {n_sections} secciones; la primera no puede ser una definición obvia; cada sección avanza la tesis; ninguna se repite con otra; la última sección es accionable (qué hacer el lunes)."""
+Reglas del esquema: {n_sections} secciones; la primera no puede ser una definición obvia; cada sección avanza la tesis; ninguna se repite con otra; la última sección da pasos concretos que el lector puede aplicar esta semana (no menciones días de la semana)."""
 
 INTRO = """Escribe la INTRODUCCIÓN del artículo (sin encabezado, 90-140 palabras).
 
@@ -189,7 +200,18 @@ EL ARTÍCULO DICE (no lo contradigas):
 Preguntas:
 {questions}
 
+Sin muletillas ("es fundamental", "es clave", "en definitiva"); montos en USD.
 Responde SOLO con JSON: {{"faq": [{{"q": "pregunta", "a": "respuesta directa de 40-80 palabras, empieza por la respuesta, sin rodeos"}}]}}"""
+
+COMPLETAR = """Este artículo de Román no tiene ningún lugar marcado para una experiencia real suya, y es lo que más credibilidad le daría.
+Elige 1 o 2 frases del artículo después de las cuales iría un ejemplo real de su trabajo (un caso, una cifra propia, una decisión que tomó).
+
+Responde SOLO con JSON: {{"marcas": [{{"frase": "copia EXACTA de una frase del artículo", "completar": "qué ejemplo real debe escribir Román ahí, en pocas palabras"}}]}}
+
+ARTÍCULO:
+---
+{article}
+---"""
 
 EDITOR = """Eres el editor del blog. Edita este borrador para que suene a un profesional con criterio, no a texto generado.
 
@@ -354,18 +376,46 @@ def heuristics(md, t, n_sections):
     if banned:
         issues.append(f"anglicismos o muletillas: {', '.join(banned)}")
         hard = True
+    starts = Counter(m.group(1).lower() for m in re.finditer(
+        r"(?:^|[.!?]\s+)((?:Cuando|Lo que|Yo|En mi|Por eso|En mi experiencia)\s+\w+)", md, re.M))
+    rep_starts = [k for k, v in starts.items() if v > 2]
+    if rep_starts:
+        issues.append(f"arranque repetido más de dos veces: {', '.join(rep_starts)}; varía cómo introduces el criterio")
+    if re.search(r"\b(pesos|MXN)\b", md, re.I):
+        issues.append("montos en pesos: usa USD")
     comp = len(re.findall(r"\[COMPLETAR:", md))
     if comp == 0:
         issues.append("ningún [COMPLETAR]: marca 1-3 lugares donde va una experiencia real de Román")
     if any(x in CANON and "=" in CANON[x] for x in t["terms"][:3]) and not re.search(r"[=÷]", md):
         issues.append("faltan las fórmulas de los indicadores del tema")
         hard = True
-    return issues, hard, {"first_person": fp, "banned": banned, "completar": comp}
+    return issues, hard, {"first_person": fp, "banned": banned, "completar": comp,
+                          "repeated_starts": rep_starts, "currency_mxn": bool(re.search(r"\b(pesos|MXN)\b", md, re.I))}
 
 
 def autofix(md):
     for pat, rep_ in AUTOFIX:
         md = re.sub(pat, rep_, md)
+    return scrub(md)
+
+
+def ensure_completar(md):
+    """Si el modelo no dejó ningún [COMPLETAR], le pide 1-2 lugares y los inserta el código."""
+    if "[COMPLETAR:" in md:
+        return md
+    try:
+        marks = as_json(ollama_call(VOICE, COMPLETAR.format(article=md[:12000]), predict=500,
+                                    temperature=0.2, fmt="json", ctx=24576)).get("marcas", [])
+    except Exception as e:
+        log(f"  no se pudieron proponer [COMPLETAR]: {e}")
+        return md
+    n = 0
+    for m in marks[:2]:
+        frase, nota = (m.get("frase") or "").strip(), (m.get("completar") or "").strip()
+        if len(frase) > 20 and nota and frase in md:
+            md = md.replace(frase, f"{frase} [COMPLETAR: {nota}]", 1)
+            n += 1
+    log(f"  [COMPLETAR] insertados: {n}")
     return md
 
 
@@ -438,7 +488,7 @@ def write_article(t, glossary=None):
 
     draft = autofix(draft)
     log("[3/5] editor")
-    edited = autofix(edit(draft, t, defs=defs))
+    edited = ensure_completar(autofix(edit(draft, t, defs=defs)))
 
     faq = []
     if brief.get("faq"):
@@ -456,8 +506,8 @@ def write_article(t, glossary=None):
         "excerpt": clip(brief.get("excerpt"), EXCERPT_MAX),
         "metaTitle": clip(sentence_case(brief.get("meta_title") or title), 60),
         "metaDescription": clip(brief.get("meta_description"), 155),
-        "takeaways": [x for x in brief.get("takeaways", []) if isinstance(x, str)][:3],
-        "faq": [f for f in faq if isinstance(f, dict) and f.get("q") and f.get("a")][:3],
+        "takeaways": [scrub(x) for x in brief.get("takeaways", []) if isinstance(x, str)][:3],
+        "faq": [{"q": f["q"], "a": autofix(f["a"])} for f in faq if isinstance(f, dict) and f.get("q") and f.get("a")][:3],
         "content": edited,
         "defs": defs,
         "n_sections": len(sections),
@@ -498,7 +548,8 @@ def assess(art, t):
         hard = True
         issues = [f"contradicción: {c}" for c in contradictions] + issues
     fill = sum(filler_hits(art["content"]).values())
-    score = max(0.0, round(score - 0.3 * max(0, fill - 2) - (0.5 if not stats["completar"] else 0), 1))
+    score = max(0.0, round(score - 0.3 * max(0, fill - 2) - (0.5 if not stats["completar"] else 0)
+                           - (0.5 if stats["repeated_starts"] else 0) - (0.5 if stats["currency_mxn"] else 0), 1))
     if hard:
         score = min(score, 6.0)
     art["stats"] = {**stats, "contradictions": len(contradictions), "model_score": score}
