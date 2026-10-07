@@ -13,7 +13,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const res = await cms.find({ collection: 'posts', where: { slug: { equals: slug } }, limit: 1, depth: 1 })
   const post: any = res.docs[0]
   const cat = (post?.categories || []).find((c: any) => c && typeof c === 'object' && c.slug)?.slug || null
-  const svg = screenSvg({ slug, category: cat, minutes: post?.readingTime, still: true, noText: true })
+  const svg = screenSvg({ slug, category: cat, minutes: post?.readingTime, figure: post?.screenFigure, tag: post?.screenTag, still: true, noText: true })
   const src = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
   const code = (cat && SCREEN_CODES[cat]) || 'BLOG'
   const title: string = post?.title || 'soyroman.com'

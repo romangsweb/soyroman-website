@@ -175,6 +175,26 @@ export const Posts: CollectionConfig = {
         description: 'Tiempo de lectura estimado (minutos)',
       },
     },
+    {
+      name: 'screenFigure',
+      label: 'Cifra de la pantalla',
+      type: 'text',
+      maxLength: 5,
+      admin: {
+        position: 'sidebar',
+        description: 'Número clave del artículo que muestra la portada (p. ej. 6.5). Hasta 3 dígitos y un decimal; vacío = minutos.',
+      },
+    },
+    {
+      name: 'screenTag',
+      label: 'Etiqueta de la pantalla',
+      type: 'text',
+      maxLength: 3,
+      admin: {
+        position: 'sidebar',
+        description: '3 letras junto a la cifra (p. ej. MQL, ROI, PAS).',
+      },
+    },
   ],
   hooks: {
     beforeValidate: [markdownToContent],

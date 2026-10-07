@@ -81,6 +81,8 @@ export default async function TagPage({ params }: Args) {
                         slug={post.slug}
                         category={postCategory(post)}
                         minutes={post.readingTime}
+                        figure={post.screenFigure}
+                        tag={post.screenTag}
                         title={post.title}
                         speed={1.6}
                         className="aspect-[16/9] w-full border border-black group-hover:border-white transition-colors"

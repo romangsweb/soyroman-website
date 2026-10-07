@@ -199,6 +199,14 @@ export interface Post {
    * Tiempo de lectura estimado (minutos)
    */
   readingTime?: number | null;
+  /**
+   * Número clave del artículo que muestra la portada (p. ej. 6.5). Hasta 3 dígitos y un decimal; vacío = minutos.
+   */
+  screenFigure?: string | null;
+  /**
+   * 3 letras junto a la cifra (p. ej. MQL, ROI, PAS).
+   */
+  screenTag?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1036,6 +1044,8 @@ export interface PostsSelect<T extends boolean = true> {
       };
   publishedAt?: T;
   readingTime?: T;
+  screenFigure?: T;
+  screenTag?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

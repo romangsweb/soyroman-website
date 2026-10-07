@@ -62,6 +62,8 @@ export function RelatedPosts({ posts }: { posts: any[] }) {
               slug={p.slug}
               category={postCategory(p)}
               minutes={p.readingTime}
+              figure={p.screenFigure}
+              tag={p.screenTag}
               title={p.title}
               speed={1.6}
               className="aspect-[16/9] w-full border border-white/20 group-hover:border-[#e85a2a] transition-colors"

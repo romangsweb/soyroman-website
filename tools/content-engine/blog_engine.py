@@ -163,6 +163,7 @@ Responde SOLO con JSON válido con esta forma:
       "include": "el elemento concreto que lleva: ejemplo, criterio, tabla, pasos, cálculo o plantilla"}}
   ],
   "faq": ["4 preguntas que este lector escribiría tal cual en Google o en ChatGPT (cortas, en sus palabras, sin repetir el título)"],
+  "screen": {{"figure": "la cifra más representativa del artículo, solo número (máximo 3 dígitos y un decimal, p. ej. 6.5 o 3); debe aparecer tal cual en el artículo", "tag": "3 letras mayúsculas que digan qué es la cifra (p. ej. MQL, ROI, PAS, COB)"}},
   "scenario": "un caso hipotético con cifras concretas (marcado como ejemplo) que todas las secciones reutilizan; montos en USD; si hay costos, desglósalos (inversión en medios, otros costos de marketing y costo total); si el tema lleva fórmulas, el caso permite calcularlas todas con los mismos números"
 }}
 Reglas del esquema: {n_sections} secciones; la primera no puede ser una definición obvia; cada sección avanza la tesis; ninguna se repite con otra; la última sección da pasos concretos que el lector puede aplicar esta semana (no menciones días de la semana)."""
@@ -477,6 +478,21 @@ SECCIÓN:
 {body}"""
 
 
+def screen_fields(art):
+    """Cifra y etiqueta para la portada tipo pantalla. Solo si la cifra aparece en el texto; si no, la pantalla usa los minutos."""
+    sc = art.get("screen") or {}
+    fig = str(sc.get("figure") or "").strip().replace(",", ".")
+    tag = re.sub(r"[^A-Za-zÁÉÍÓÚÑ]", "", str(sc.get("tag") or "")).upper()[:3]
+    if not re.fullmatch(r"\d{1,3}(\.\d)?", fig) or len(tag) != 3:
+        return {}
+    variants = {fig, fig.replace(".", ",")}
+    if not any(re.search(rf"(?<![\d.,]){re.escape(v)}(?![\d])", art["content"]) for v in variants):
+        log(f"  cifra de pantalla {fig} no aparece en el texto: se usan los minutos")
+        return {}
+    log(f"  pantalla: {fig} {tag}")
+    return {"screenFigure": fig, "screenTag": tag}
+
+
 def lead_answers(md, system):
     """Para secciones cuyo primer párrafo sigue largo tras split_leads: pide al modelo 1-2 frases de respuesta y las antepone."""
     parts = re.split(r"(?m)^(## .+)$", md)
@@ -695,6 +711,7 @@ def write_article(t, glossary=None):
         "metaTitle": clip(sentence_case(brief.get("meta_title") or title), 60),
         "metaDescription": clip(brief.get("meta_description"), 155),
         "takeaways": [scrub(x) for x in brief.get("takeaways", []) if isinstance(x, str)][:3],
+        "screen": brief.get("screen") if isinstance(brief.get("screen"), dict) else {},
         "faq": [{"q": f["q"], "a": autofix(f["a"])} for f in faq if isinstance(f, dict) and f.get("q") and f.get("a")][:4],
         "content": edited,
         "defs": defs,
@@ -831,6 +848,7 @@ def run_one(t, cms, glossary, dry=False, no_cover=False):
             "slug": cms.unique_slug(art["slug"] or slugify(art["title"])),
             "excerpt": art["excerpt"],
             "markdownSource": art["content"],
+            **screen_fields(art),
             "meta": {"title": art["metaTitle"], "description": art["metaDescription"]},
         }
         cat_id = cms.category_id(t["cat"])

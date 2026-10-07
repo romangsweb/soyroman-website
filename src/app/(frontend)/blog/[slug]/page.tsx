@@ -163,6 +163,8 @@ export default async function BlogPostPage({ params }: Args) {
             slug={post.slug}
             category={postCategory(post)}
             minutes={post.readingTime}
+            figure={post.screenFigure}
+            tag={post.screenTag}
             title={post.title}
             className="aspect-[16/9] md:aspect-[21/7] w-full"
           />
