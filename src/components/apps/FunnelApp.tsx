@@ -5,6 +5,8 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { Device, ListMode, defaults, fmt, type Param, type Values } from './Device'
 import { AppHeader, Library } from './Panels'
 import { Gate } from './Gate'
+import { useToolTracking } from './useToolTracking'
+import Link from 'next/link'
 
 const PARAMS: Param[] = [
   { id: 'goal', key: 'A', label: 'Meta de ingresos / año', unit: '$', min: 50000, max: 20000000, step: 10000, val: 1500000, log: true, hint: 'USD por año' },
@@ -21,6 +23,7 @@ const n = (v: number) => fmt(v < 10 ? v : Math.ceil(v), v < 10 ? 1 : 0)
 export function FunnelApp() {
   const [v, setV] = useState<Values>(() => defaults(PARAMS))
   const [gate, setGate] = useState(false)
+  useToolTracking('Embudo inverso', v, gate)
 
   const o = useMemo(() => {
     const won = v.goal / v.ticket / 12
@@ -81,6 +84,13 @@ export function FunnelApp() {
             {gate ? <Gate tool="Embudo inverso" summary={summary} onDone={print} onCancel={() => setGate(false)} /> : undefined}
           </Library>
           <ListMode params={PARAMS} values={v} onChange={setV} />
+          <Link
+            className="btn or"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', marginTop: 18 }}
+            href={`/recursos/presupuesto-marketing?goal=${v.goal}&ticket=${v.ticket}&conv=${+(v.mql * v.sql * v.opp * v.win / 1e6).toFixed(4)}`}
+          >
+            Siguiente: ¿cuánto presupuesto necesito? ▸
+          </Link>
         </div>
       </div>
 

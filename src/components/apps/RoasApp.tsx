@@ -5,6 +5,7 @@ import React, { useMemo, useState } from 'react'
 
 import { Device, ListMode, defaults, fmt, type Param, type Values } from './Device'
 import { AppHeader, Library } from './Panels'
+import { useToolTracking } from './useToolTracking'
 
 const PARAMS: Param[] = [
   { id: 'spend', key: 'A', label: 'Inversión en medios', unit: '$', min: 100, max: 5000000, step: 100, val: 20000, log: true, hint: 'USD' },
@@ -15,6 +16,7 @@ const PARAMS: Param[] = [
 
 export function RoasApp() {
   const [v, setV] = useState<Values>(() => defaults(PARAMS))
+  useToolTracking('ROAS · ROMI · ROI', v)
   const o = useMemo(() => {
     const cost = v.spend + v.other
     return { cost, roas: v.rev / v.spend, romi: ((v.rev * v.margin) / 100 - cost) / cost * 100, roi: (v.rev - cost) / cost * 100 }

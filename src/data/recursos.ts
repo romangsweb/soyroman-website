@@ -64,6 +64,18 @@ export const RECURSOS: Recurso[] = [
     expertise: ['generacion-demanda-b2b', 'paid-media'],
     categories: ['generacion-demanda', 'contenido-email', 'paid-media'],
   },
+  {
+    slug: 'presupuesto-marketing',
+    href: '/recursos/presupuesto-marketing',
+    code: 'BUDGET',
+    name: 'Planificador de presupuesto',
+    sub: 'mesa de mezcla',
+    desc: 'De tu meta de ingresos al presupuesto anual por canal, con CAC, ROMI y adelanto de caja.',
+    preview: { label: 'Presupuesto', value: '$382k/año' },
+    glossary: ['cac', 'cpl', 'romi', 'roi', 'payback-cac', 'ltv-cac'],
+    expertise: ['paid-media', 'generacion-demanda-b2b', 'crm-revops'],
+    categories: ['paid-media', 'analitica', 'generacion-demanda'],
+  },
 ]
 
 export const LIVE = RECURSOS.filter((r) => r.href)

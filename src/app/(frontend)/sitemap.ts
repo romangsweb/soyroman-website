@@ -22,6 +22,7 @@ const STATIC = [
   '/recursos/roas-romi-roi',
   '/recursos/madurez-revops',
   '/recursos/icp',
+  '/recursos/presupuesto-marketing',
   '/about',
   '/cv',
   '/uses',

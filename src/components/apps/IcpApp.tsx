@@ -6,6 +6,7 @@ import { Gate } from './Gate'
 import { Knob } from './Knob'
 import { Osc, OscLabel } from './Osc'
 import { Scope } from './Scope'
+import { useToolTracking } from './useToolTracking'
 
 const SIZES = ['1–10', '11–50', '51–200', '201–1,000', '1,000+']
 const INDUSTRIES = ['Software y SaaS', 'Servicios profesionales', 'Manufactura', 'Salud', 'Educación', 'Finanzas', 'Logística', 'Otra']
@@ -44,6 +45,7 @@ export function IcpApp() {
   const [s, setS] = useState(0)
   const [gate, setGate] = useState(false)
   const [icp, setIcp] = useState<Icp>({ industria: '', tam: 2, ticket: 25000, ciclo: 4, decide: '', evalua: '', dolor: '', disparador: '' })
+  useToolTracking('Generador de ICP', icp, gate)
   const set = <K extends keyof Icp>(k: K, v: Icp[K]) => setIcp((x) => ({ ...x, [k]: v }))
 
   const valueText = [

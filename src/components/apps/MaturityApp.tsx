@@ -6,6 +6,7 @@ import { Gate } from './Gate'
 import { Knob } from './Knob'
 import { Osc, OscLabel } from './Osc'
 import { Scope } from './Scope'
+import { useToolTracking } from './useToolTracking'
 
 const LEVELS: [string, string][] = [
   ['No existe', 'No hay proceso ni dato; depende de cada persona.'],
@@ -46,6 +47,7 @@ export function MaturityApp() {
   const [gain, setGain] = useState(6)
   const [freq, setFreq] = useState(4)
   const [gate, setGate] = useState(false)
+  useToolTracking('Diagnóstico RevOps', ans, done)
 
   const per = useMemo(
     () =>
