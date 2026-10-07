@@ -60,7 +60,7 @@ export function MobileMenu({ items }: { items: NavItem[] }) {
                   <span className="flex items-center gap-3">
                     {item.label}
                     {item.href === '/recursos' && (
-                      <span className="text-[9px] bg-[#e85a2a] text-white px-1.5 py-0.5">Calculadoras</span>
+                      <span className="text-[9px] bg-[#e85a2a] text-white px-1.5 py-0.5">Herramientas</span>
                     )}
                   </span>
                   <span className="text-[10px] opacity-40">{String(i + 1).padStart(2, '0')}</span>

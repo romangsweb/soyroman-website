@@ -12,6 +12,11 @@ import { SystemDiagram } from '@/components/SystemDiagram'
 import { ProjectCover } from '@/components/ProjectCover'
 import { ResourceTeaser } from '@/components/ResourceTeaser'
 import { RECURSOS } from '@/data/recursos'
+
+// En la home solo 3, una de cada tipo: calculadora, analizador de sitio y consulta con IA
+const HOME_RECURSOS = ['embudo-inverso', 'auditor-aeo', 'te-recomienda-la-ia']
+  .map((slug) => RECURSOS.find((r) => r.slug === slug && r.href))
+  .filter((r): r is (typeof RECURSOS)[number] => !!r)
 import { canonical } from '@/lib/seo'
 
 export default async function HomePage() {
@@ -185,18 +190,18 @@ export default async function HomePage() {
                 <div className="flex justify-between items-start mb-16">
                   <h2 className="font-mono uppercase tracking-widest text-xs font-bold text-black/50">REC // Recursos</h2>
                   <Link href="/recursos" className="font-mono uppercase tracking-widest text-[10px] border border-black bg-white px-3 py-1 hover:bg-black hover:text-white transition-colors">
-                    Ver todos
+                    Ver las {RECURSOS.filter((r) => r.href).length}
                   </Link>
                 </div>
-                <h3 className="text-4xl md:text-5xl font-semibold tracking-tight leading-tight mb-6">Calculadoras gratuitas</h3>
+                <h3 className="text-4xl md:text-5xl font-semibold tracking-tight leading-tight mb-6">Herramientas y calculadoras gratuitas</h3>
                 <p className="font-mono text-sm leading-relaxed text-black/70 max-w-sm">
-                  Herramientas para planear y medir tu marketing B2B con tus propios números: cuántos leads necesitas, cuánto
-                  regresa tu inversión y qué tan madura es tu operación.
+                  Para planear, medir y diagnosticar tu marketing B2B: calcula cuántos leads necesitas, analiza tu sitio y
+                  descubre si la IA te recomienda.
                 </p>
               </Reveal>
             </div>
-            <div className="md:col-span-8 p-8 md:p-12 grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-10">
-              {RECURSOS.map((r, i) => (
+            <div className="md:col-span-8 p-8 md:p-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+              {HOME_RECURSOS.map((r, i) => (
                 <Reveal key={r.slug} delay={i * 0.08}>
                   <ResourceTeaser r={r} />
                 </Reveal>
