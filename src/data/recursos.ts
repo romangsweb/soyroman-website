@@ -100,6 +100,18 @@ export const RECURSOS: Recurso[] = [
     expertise: ['crm-revops', 'liderazgo-equipos'],
     categories: ['crm-revops', 'analitica'],
   },
+  {
+    slug: 'cpl-maximo',
+    href: '/recursos/cpl-maximo',
+    code: 'CPL MÁX',
+    name: 'CPL máximo',
+    sub: 'costo permitido',
+    desc: '¿Cuánto puedes pagar por un lead y por un clic sin perder dinero? CAC, CPL y CPC máximos.',
+    preview: { label: 'CPL máx', value: '$9.90' },
+    glossary: ['cpl', 'cpc', 'cac', 'cpa', 'roas'],
+    expertise: ['paid-media', 'generacion-demanda-b2b'],
+    categories: ['paid-media', 'generacion-demanda'],
+  },
 ]
 
 export const LIVE = RECURSOS.filter((r) => r.href)
