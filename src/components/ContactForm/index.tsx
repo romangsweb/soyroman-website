@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import React, { useActionState } from 'react'
 
+import { track } from '@/lib/analytics'
+
 import { submitLead, type LeadState } from '@/actions/lead'
 import { ArrowUpRight } from '@/components/icons'
 import { SERVICES } from '@/data/services'
@@ -15,6 +17,9 @@ type Props = { origin?: string; showService?: boolean }
 
 export function ContactForm({ origin = 'Contacto', showService = true }: Props) {
   const [state, action, pending] = useActionState<LeadState, FormData>(submitLead, { status: 'idle' })
+  React.useEffect(() => {
+    if (state.status === 'ok') track('generate_lead', { form: 'contacto' })
+  }, [state.status])
 
   if (state.status === 'ok') {
     return (

@@ -37,6 +37,11 @@ export function Reveal({
   useEffect(() => {
     const el = ref.current
     if (!el) return
+    // Elementos más altos que la pantalla, o sin IntersectionObserver: mostrar ya
+    if (typeof IntersectionObserver === 'undefined' || el.offsetHeight > window.innerHeight * 0.9) {
+      el.classList.add('is-visible')
+      return
+    }
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -46,7 +51,7 @@ export function Reveal({
           }
         }
       },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0 },
     )
     io.observe(el)
     return () => io.disconnect()

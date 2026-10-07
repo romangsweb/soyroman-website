@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
+import { track } from '@/lib/analytics'
 import type { NavItem } from './MobileMenu'
 
 const cell = 'relative font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-14 flex items-center border-l border-black transition-colors'
@@ -51,7 +52,7 @@ export function NavKeys({ available }: { available: boolean }) {
         <Led on={rec} color="#ffffff" idle="rgba(255,255,255,.45)" />
         Recursos
       </Link>
-      <Link href="/contacto" aria-current={con ? 'page' : undefined}
+      <Link href="/contacto" onClick={() => track('contact_click', { from: 'nav' })} aria-current={con ? 'page' : undefined}
         className={`group ${cell} bg-black text-white hover:bg-[#2a2d30]`}>
         <Led on color={available ? '#3ddc84' : '#e85a2a'} idle={available ? '#3ddc84' : '#e85a2a'} />
         Contacto

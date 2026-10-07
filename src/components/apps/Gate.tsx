@@ -3,13 +3,17 @@
 import React, { useActionState, useEffect } from 'react'
 
 import { submitToolLead, type LeadState } from '@/actions/lead'
+import { track } from '@/lib/analytics'
 
 /** Formulario que desbloquea el plan: manda el lead a HubSpot y luego llama a onDone (imprimir). */
 export function Gate({ tool, summary, onDone, onCancel }: { tool: string; summary: string; onDone: () => void; onCancel: () => void }) {
   const [state, action, pending] = useActionState<LeadState, FormData>(submitToolLead, { status: 'idle' })
   useEffect(() => {
-    if (state.status === 'ok') onDone()
-  }, [state.status, onDone])
+    if (state.status === 'ok') {
+      track('generate_lead', { form: 'recurso', tool })
+      onDone()
+    }
+  }, [state.status, onDone, tool])
 
   return (
     <form className="gate on" action={action}>

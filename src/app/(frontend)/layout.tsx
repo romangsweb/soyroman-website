@@ -13,6 +13,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { HeaderComponent } from '@/components/layout/Header'
 import { FooterComponent } from '@/components/layout/Footer'
 import { SpotlightTracker } from '@/components/motion/SpotlightTracker'
+import { Analytics } from '@/components/analytics/Analytics'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <HeaderComponent />
           <main className="flex-1">{children}</main>
           <FooterComponent />
+          <Analytics />
         </Providers>
       </body>
     </html>

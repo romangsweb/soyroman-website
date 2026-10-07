@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { cms } from '@/lib/cms'
 import { CdmxClock } from './DotMatrix'
 import { dotMatrix } from './dotFont'
+import { CookieLink } from '@/components/analytics/CookieLink'
 
 const GROUPS: [string, [string, string][]][] = [
   ['Trabajo', [['/expertise', 'Expertise'], ['/proyectos', 'Proyectos'], ['/consultoria', 'Consultoría']]],
@@ -89,6 +90,7 @@ export async function FooterComponent() {
               <nav key={title} className="p-6 md:p-7 border-r border-b md:border-b-0 border-black last:border-r-0" aria-label={title}>
                 <h4 className="font-mono text-[10px] uppercase font-bold tracking-widest opacity-50 mb-3">// {title}</h4>
                 {links.map(([href, label]) => <Link key={href} href={href} className={link}>{label}</Link>)}
+                {title === 'Sobre mí' && <CookieLink className={link} />}
               </nav>
             ))}
             <div className="p-6 md:p-7">

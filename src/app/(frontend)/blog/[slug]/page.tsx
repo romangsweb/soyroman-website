@@ -101,11 +101,9 @@ export default async function BlogPostPage({ params }: Args) {
         {/* Content */}
         <section className="bg-white">
           <div className="container max-w-4xl p-8 md:p-16 border-x border-black bg-white min-h-screen">
-            <Reveal delay={0.4}>
-              <div className="prose prose-lg md:prose-xl text-black prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-[#e85a2a] prose-a:font-bold prose-a:border-b prose-a:border-[#e85a2a] prose-a:no-underline hover:prose-a:bg-[#e85a2a] hover:prose-a:text-white max-w-none">
-                {post.content && <RichText data={post.content} />}
-              </div>
-            </Reveal>
+            <div className="prose prose-lg md:prose-xl text-black prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-[#e85a2a] prose-a:font-bold prose-a:border-b prose-a:border-[#e85a2a] prose-a:no-underline hover:prose-a:bg-[#e85a2a] hover:prose-a:text-white max-w-none">
+              {post.content && <RichText data={post.content} />}
+            </div>
           </div>
         </section>
 

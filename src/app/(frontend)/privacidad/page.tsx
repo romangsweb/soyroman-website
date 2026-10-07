@@ -30,7 +30,9 @@ export default function PrivacidadPage() {
           </p>
           <p>
             <strong>Encargados.</strong> Los datos de los formularios se almacenan en HubSpot, que actúa como proveedor de
-            CRM, y el sitio se aloja en Vercel. Ambos pueden procesar datos fuera de México bajo sus propias políticas de
+            CRM, y el sitio se aloja en Vercel. Para medir el uso del sitio uso Google Analytics y el seguimiento de HubSpot,
+            que solo instalan cookies si las aceptas en el aviso de cookies (puedes cambiar tu elección desde el enlace
+            &quot;Cookies&quot; del pie de página). Ambos pueden procesar datos fuera de México bajo sus propias políticas de
             protección.
           </p>
           <p>
