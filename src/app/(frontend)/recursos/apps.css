@@ -417,3 +417,51 @@
 .te-app .x-dx li{margin-bottom:4px}
 .te-app .x-dx b{color:var(--or);font-weight:400}
 @media(max-width:560px){.te-app .x-lab span{font-size:7px}.te-app .x-bands{gap:4px}}
+
+/* ───────── Velocidad real (velocímetros), Salud del correo (luces) y Comparador: prefijos v-, e-, c- ───────── */
+.te-app .v-in{flex-wrap:wrap}
+.te-app .v-seg{display:inline-flex;border:2px solid var(--ink);border-radius:6px;overflow:hidden}
+.te-app .v-seg button{font:inherit;font-size:11px;letter-spacing:.1em;border:0;background:#fff;color:var(--ink);padding:0 12px;min-height:40px;cursor:pointer;box-shadow:none}
+.te-app .v-seg button.on{background:var(--ink);color:#fff}
+.te-app .v-lcd,.te-app .e-lcd,.te-app .c-lcd{background:#0b0d0c;border:2px solid var(--ink);border-radius:10px;padding:16px 14px;margin-top:14px;color:#cfd}
+.te-app .v-gauges{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.te-app .v-g{text-align:center}
+.te-app .v-g svg{width:100%;max-width:150px;display:block;margin:0 auto}
+.te-app .v-g .v{font-size:clamp(16px,3vw,22px);margin-top:-30px;position:relative}
+.te-app .v-g .l{font-size:9px;letter-spacing:.12em;color:#8a9;text-transform:uppercase;margin-top:12px}
+.te-app .v-g .t{font-size:10px;color:#3ddc84;margin-top:2px}
+.te-app .v-g.warn .t{color:#f2c14e}.te-app .v-g.bad .t{color:var(--or)}.te-app .v-g.off .t{color:#677}
+.te-app .v-lcd.busy .v-g svg,.te-app .e-lcd.busy .e-cell i,.te-app .c-lcd.busy .c-idle{animation:ledrec 1s steps(1) infinite}
+.te-app .v-dist{margin-top:14px;display:grid;gap:6px}
+.te-app .v-dist>div{display:grid;grid-template-columns:40px minmax(0,1fr) 56px;gap:8px;align-items:center;font-size:10px;color:#8a9}
+.te-app .v-dist small{text-align:right;color:#cfd}
+.te-app .v-bar{display:flex;height:9px;border-radius:2px;overflow:hidden;background:#1c2024}
+.te-app .v-bar i{display:block}.te-app .v-bar .a{background:#3ddc84}.te-app .v-bar .b{background:#f2c14e}.te-app .v-bar .c{background:var(--or)}
+.te-app .v-per{margin:8px 0 0;font-size:9px;color:#6c7a72;letter-spacing:.06em;text-transform:uppercase}
+.te-app .v-row{display:flex;justify-content:space-between;gap:10px;border-top:1px dashed #9aa0a3;padding:6px 0;font-size:12px;line-height:1.4}
+.te-app .x-card h3+.v-row{border-top:0}
+.te-app .v-row small{color:var(--grey);font-size:10px;text-align:right;white-space:nowrap}
+.te-app .e-leds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media(max-width:520px){.te-app .e-leds{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.te-app .e-cell{border:1px solid #2a2f2c;border-radius:6px;padding:10px 6px;text-align:center;min-width:0}
+.te-app .e-cell i{display:block;width:22px;height:22px;border-radius:50%;margin:0 auto 6px;border:2px solid #000;background:#333}
+.te-app .e-cell.ok i{background:#3ddc84;box-shadow:0 0 10px #3ddc84}
+.te-app .e-cell.warn i{background:#f2c14e;box-shadow:0 0 10px #f2c14e}
+.te-app .e-cell.bad i{background:var(--or);box-shadow:0 0 10px var(--or)}
+.te-app .e-cell span{display:block;font-size:10px;letter-spacing:.1em;color:#9ab}
+.te-app .e-cell small{display:block;font-size:9px;color:#6c7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.te-app .e-cell.warn small{color:#f2c14e}.te-app .e-cell.bad small{color:var(--or)}.te-app .e-cell.off small{color:#677}
+.te-app .e-verdict{margin-top:14px;font-size:11px;letter-spacing:.06em;border-top:1px solid #233;padding-top:10px}
+.te-app .e-verdict b{color:#f2c14e;font-weight:400}.te-app .e-verdict b.ok{color:#3ddc84}
+.te-app .e-rec{display:block;font-size:10px;background:#fff;border:1px solid var(--ink);border-radius:4px;padding:5px 6px;margin:0 0 6px;word-break:break-all}
+.te-app .c-in{flex-wrap:wrap}.te-app .c-in input{min-width:160px}
+.te-app .c-lcd{overflow-x:auto}
+.te-app .c-idle{margin:0;font-size:11px;color:#8a9;letter-spacing:.06em}
+.te-app .c-tab{width:100%;border-collapse:collapse;font-size:11px}
+.te-app .c-tab th{font-weight:400;font-size:10px;letter-spacing:.08em;color:#8a9;text-align:left;padding:6px;border-bottom:1px solid #233;white-space:nowrap}
+.te-app .c-tab th.you{color:var(--or)}
+.te-app .c-tab td{padding:7px 6px;border-bottom:1px solid #1a1f1c;min-width:120px}
+.te-app .c-tab td:first-child{color:#8a9;font-size:10px;letter-spacing:.06em;text-transform:uppercase;min-width:150px}
+.te-app .c-tab td.ok{color:#3ddc84}.te-app .c-tab td.warn{color:#f2c14e}.te-app .c-tab td.bad{color:var(--or)}
+.te-app .c-meter{display:inline-block;width:52px;height:7px;background:#1c2024;border-radius:2px;vertical-align:middle;margin-right:6px;overflow:hidden}
+.te-app .c-meter i{display:block;height:100%;background:currentColor}

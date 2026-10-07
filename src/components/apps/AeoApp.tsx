@@ -129,6 +129,9 @@ export function AeoApp() {
               <a className="btn" href="/recursos/radiografia-stack" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
                 Ver todo su stack ▸
               </a>
+              <a className="btn" href="/recursos/comparador-competidores" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
+                Compárate con tu competencia ▸
+              </a>
             </div>
           ))}
         </div>

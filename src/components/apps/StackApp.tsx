@@ -105,7 +105,10 @@ export function StackApp() {
             {gate ? (
               <div className="s-gate"><Gate tool="Radiografía de stack" summary={summary} onDone={print} onCancel={() => setGate(false)} /></div>
             ) : (
-              <div className="s-keys"><button type="button" className="btn or" onClick={() => setGate(true)}>Diagnóstico completo en PDF ▸</button></div>
+              <div className="s-keys">
+                <button type="button" className="btn or" onClick={() => setGate(true)}>Diagnóstico completo en PDF ▸</button>
+                <a className="btn" href="/recursos/salud-correo" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>Revisar su correo ▸</a>
+              </div>
             )}
           </>
         )}
