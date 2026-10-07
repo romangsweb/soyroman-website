@@ -796,3 +796,9 @@ body::before {
   body { background: #fff; color: #111; }
   .reveal, .fade-up, .split-word > span { opacity: 1 !important; transform: none !important; filter: none !important; }
 }
+
+/* Punto que baja por los conectores del diagrama de arquitectura (móvil) */
+@keyframes flowdown {
+  from { top: -8px; }
+  to { top: 100%; }
+}

@@ -405,6 +405,177 @@ async function seed() {
   ]
   for (const project of projectsData) await bySlug('projects', project)
 
+  // Caso de uso extendido (borrador). Solo llena los campos vacíos para no pisar lo que se edite en el admin.
+  // Lo que lleva [COMPLETAR] no se publica hasta que se sustituya por el dato real.
+  const C = '[COMPLETAR]'
+  const col = (label: string, ...nodes: (string | [string, string])[]) => ({
+    label,
+    nodes: nodes.map((n) => (Array.isArray(n) ? { name: n[0], note: n[1] } : { name: n })),
+  })
+  const CASES: Record<string, any> = {
+    'sitio-b2b-visible': {
+      summary:
+        'Llevé el sitio corporativo de HubSpot CMS a WordPress y lo preparé para buscadores y motores de IA, con herramientas interactivas que convierten visitas en leads.',
+      role: C,
+      outcomes: [
+        { metric: 'Leads desde el sitio', before: C, after: C, impact: C },
+        { metric: 'Tráfico orgánico', before: C, after: C, impact: C },
+        { metric: 'Herramientas de captación', before: '', after: '2', impact: 'Simulador y cotizador como puntos de conversión' },
+      ],
+      highlights: [
+        { title: 'Medir antes que publicar', text: 'Apagué el motor GEO cuando vi que contaminaba los datos de GA4: un dato confiable vale más que publicar más rápido.' },
+        { title: 'Herramientas que convierten', text: 'El simulador y el cotizador le dan al visitante algo útil a cambio de sus datos.' },
+        { title: 'Traducción con LLM local', text: 'La traducción masiva del sitio se hizo con un modelo corriendo en infraestructura propia.' },
+        { title: 'Seguridad dentro del alcance', text: 'Endurecimiento del sitio y DNSSEC como parte de la migración, no como tarea aparte.' },
+      ],
+      phases: [
+        { name: 'Diagnóstico de narrativa y visibilidad' },
+        { name: 'Migración a WordPress en Kinsta' },
+        { name: 'Home y narrativa B2B' },
+        { name: 'Simulador y cotizador' },
+        { name: 'Traducción y motor GEO' },
+        { name: 'Seguridad y DNSSEC' },
+      ],
+      architecture: {
+        caption: 'Del contenido a la conversión medida',
+        columns: [
+          col('Contenido', ['WordPress', 'CMS'], ['Ollama', 'traducción local']),
+          col('Plataforma', ['Kinsta', 'hosting'], ['Cloudflare', 'DNS y DNSSEC']),
+          col('Conversión', ['Simulador', 'en Vercel'], ['Cotizador', 'landing interactiva']),
+          col('Medición', ['GA4', 'eventos y conversiones']),
+        ],
+      },
+    },
+    'forecast-confiable': {
+      summary:
+        'Migré un portal de HubSpot de ~76 mil contactos y unifiqué cinco pipelines en un modelo MEDDIC de 9 etapas para que la dirección pudiera confiar en el forecast.',
+      role: C,
+      outcomes: [
+        { metric: 'Base de contactos', before: '~76k', after: '~68k', impact: 'Depurada en varias rondas: menos ruido en reportes y segmentaciones' },
+        { metric: 'Pipelines comerciales', before: '5', after: '1', impact: 'Un solo modelo MEDDIC de 9 etapas con criterios comunes' },
+        { metric: 'Confianza en el forecast', before: C, after: C, impact: C },
+      ],
+      highlights: [
+        { title: 'Cada propiedad mapeada', text: 'Migrar entre portales exige mapear cada propiedad personalizada antes de mover un solo registro.' },
+        { title: 'Depuración iterativa', text: 'La limpieza se hizo en rondas, no en una pasada: cada ronda revelaba el siguiente problema.' },
+        { title: 'Un criterio común', text: 'MEDDIC dio a ventas y dirección la misma definición de qué tan avanzado está un negocio.' },
+        { title: 'Fecha límite real', text: 'La licencia por vencer fijó el calendario y obligó a priorizar.' },
+      ],
+      phases: [
+        { name: 'Inventario de objetos y propiedades' },
+        { name: 'Migración por API' },
+        { name: 'Depuración en rondas' },
+        { name: 'Análisis histórico de MQL' },
+        { name: 'Modelo MEDDIC de 9 etapas' },
+      ],
+      architecture: {
+        caption: 'Migración entre portales y modelo único de pipeline',
+        columns: [
+          col('Origen', ['Portal HubSpot', 'anterior · 5 pipelines']),
+          col('Migración', ['API de HubSpot', 'objetos y actividades'], ['Python', 'scripts y depuración']),
+          col('Destino', ['HubSpot', 'portal nuevo'], ['Pipeline MEDDIC', '9 etapas']),
+          col('Uso', ['Forecast', 'dirección comercial']),
+        ],
+      },
+    },
+    'migracion-dynamics-hubspot': {
+      summary:
+        'Llevé los datos comerciales de Dynamics CRM a HubSpot para que marketing y ventas trabajaran sobre el mismo embudo y se pudiera atribuir cada lead a su campaña.',
+      role: C,
+      outcomes: [
+        { metric: 'Plataforma de CRM', before: 'Dynamics', after: 'HubSpot', impact: 'Marketing y ventas sobre la misma base' },
+        { metric: 'Atribución de leads', before: C, after: C, impact: C },
+      ],
+      highlights: [
+        { title: 'Redefinir el embudo', text: 'La migración fue la oportunidad de rediseñar el ciclo de vida, no solo de mover datos.' },
+        { title: 'Limpiar antes de migrar', text: 'Los datos se limpiaron antes de migrar para no heredar problemas al nuevo CRM.' },
+        { title: 'Campañas conectadas', text: 'Formularios y campañas quedaron integrados con el CRM.' },
+      ],
+      phases: [
+        { name: 'Mapeo de entidades y campos' },
+        { name: 'Limpieza de datos' },
+        { name: 'Ciclo de vida y pipeline' },
+        { name: 'Integración con formularios y campañas' },
+      ],
+      architecture: {
+        caption: 'De un CRM de ventas a un embudo compartido',
+        columns: [
+          col('Origen', ['Dynamics CRM', 'datos comerciales']),
+          col('Transformación', ['Mapeo', 'entidades y campos'], ['Limpieza', 'duplicados y vacíos']),
+          col('Destino', ['HubSpot', 'ciclo de vida y pipeline']),
+          col('Captación', ['Formularios', 'del sitio'], ['Campañas', 'atribuidas']),
+        ],
+      },
+    },
+    'rescate-plataforma-cursos': {
+      summary:
+        'Recuperé una tienda de cursos en WooCommerce comprometida por malware durante meses y la dejé vendiendo de nuevo sin exponer datos de usuarios.',
+      role: C,
+      outcomes: [
+        { metric: 'Accesos comprometidos', before: 'Activos', after: 'Cerrados', impact: 'Webshells eliminados y credenciales rotadas' },
+        { metric: 'Operación de la tienda', before: 'En riesgo', after: 'Restaurada', impact: 'Ventas sin exponer datos de usuarios' },
+      ],
+      highlights: [
+        { title: 'Rastrear el vector de entrada', text: 'En hosting compartido no basta con borrar archivos: si no se cierra la entrada, el malware vuelve.' },
+        { title: 'Forense antes que limpieza', text: 'El análisis por SSH definió qué limpiar y qué credenciales rotar.' },
+      ],
+      phases: [
+        { name: 'Análisis forense por SSH' },
+        { name: 'Eliminación de webshells' },
+        { name: 'Recuperación de cuentas' },
+        { name: 'Endurecimiento' },
+      ],
+      architecture: {
+        caption: 'Respuesta a un incidente en WordPress',
+        columns: [
+          col('Detección', ['SSH', 'análisis forense']),
+          col('Contención', ['Webshells', 'eliminados'], ['Credenciales', 'rotadas']),
+          col('Recuperación', ['WordPress', 'endurecido'], ['WooCommerce', 'operando']),
+        ],
+      },
+    },
+    'buildations-ia': {
+      summary:
+        'Monté un laboratorio de IA sobre infraestructura propia para desarrollar motores de RevOps y de presencia en buscadores sin depender de plataformas SaaS.',
+      role: 'Fundador · arquitectura y operación',
+      outcomes: [
+        { metric: 'Operación continua', before: '', after: '+1 año', impact: 'Operación continua en producción' },
+        { metric: 'Motores en producción', before: '', after: '2', impact: 'Revenue Intelligence y Search & Presence' },
+        { metric: 'Costo frente a SaaS', before: C, after: C, impact: C },
+      ],
+      highlights: [
+        { title: 'Inversión única, no suscripción', text: 'El costo se paga una vez en hardware; la condición es contar con quien lo opere.' },
+        { title: 'Seguridad por capas', text: 'Wazuh, Suricata, CrowdSec y Fail2ban, con acceso solo por Tailscale.' },
+        { title: 'Observabilidad', text: 'Grafana, Prometheus y Loki para ver qué pasa antes de que falle.' },
+        { title: 'Respaldos verificados', text: 'Restic con copia fuera del servidor y verificación semanal.' },
+      ],
+      phases: [
+        { name: 'Servidor y contenedores' },
+        { name: 'Datos y modelos' },
+        { name: 'Orquestación de motores' },
+        { name: 'Seguridad y monitoreo' },
+        { name: 'Respaldos' },
+      ],
+      architecture: {
+        caption: 'Infraestructura propia para motores de IA',
+        columns: [
+          col('Datos', ['PostgreSQL', 'datos operativos'], ['Qdrant', 'vectores']),
+          col('Modelos', ['Ollama', 'LLM local'], ['ComfyUI', 'imágenes']),
+          col('Orquestación', ['n8n', 'flujos'], ['Docker', 'contenedores']),
+          col('Operación', ['Tailscale', 'acceso'], ['Grafana', 'monitoreo'], ['Restic', 'respaldos']),
+        ],
+      },
+    },
+  }
+  const isEmpty = (v: any) => v == null || v === '' || (Array.isArray(v) && v.length === 0) || (typeof v === 'object' && !Array.isArray(v) && !(v.columns || []).length)
+  for (const [slug, data] of Object.entries(CASES)) {
+    const found = await payload.find({ collection: 'projects', where: { slug: { equals: slug } }, limit: 1, depth: 0 })
+    const doc = found.docs[0] as any
+    if (!doc) continue
+    const patch = Object.fromEntries(Object.entries(data).filter(([k]) => isEmpty(doc[k])))
+    if (Object.keys(patch).length) await payload.update({ collection: 'projects', id: doc.id, data: patch, context: ctx })
+  }
+
   // ─── Experience ───
   console.log('  experience')
   const grow = { text: 'Incremento en la generación de demanda digital.' }

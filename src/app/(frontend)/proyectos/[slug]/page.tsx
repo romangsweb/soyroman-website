@@ -11,6 +11,7 @@ import { ArrowUpRight } from '@/components/icons'
 import { ProjectCover } from '@/components/ProjectCover'
 import { BrandTile } from '@/components/BrandIcon'
 import { Media } from '@/components/Media'
+import { Architecture, CaseClose, CaseSummary, Highlights, Outcomes, Phases, filled } from '@/components/CaseStudy'
 
 type Args = { params: Promise<{ slug: string }> }
 
@@ -30,6 +31,7 @@ export default async function ProjectDetailPage({ params }: Args) {
       ...((project.stackTags as any[]) || []).map((t: any) => t?.tag),
     ]),
   ].filter((x): x is string => Boolean(x))
+  const hasOutcomes = ((project as any).outcomes || []).some((o: any) => filled(o?.metric) && filled(o?.after))
   const gallery = ((project.gallery as any[]) || []).filter((g: any) => g?.image && typeof g.image === 'object')
 
   return (
@@ -71,6 +73,18 @@ export default async function ProjectDetailPage({ params }: Args) {
         <section className="border-b border-white/20">
           <ProjectCover slug={project.slug} color={project.color} className="w-full aspect-[16/9] md:aspect-[21/7]" />
         </section>
+
+        {/* Resumen y ficha */}
+        <CaseSummary
+          summary={(project as any).summary}
+          facts={[
+            ['Mi rol', (project as any).role],
+            ['Duración', (project as any).duration],
+            ['Equipo', (project as any).team],
+            ['Año', String(project.year || '')],
+            ['Cliente', project.client],
+          ]}
+        />
 
         {/* Content Area */}
         <section className="border-b border-white/20 bg-black">
@@ -119,7 +133,7 @@ export default async function ProjectDetailPage({ params }: Args) {
                   </div>
                 )}
 
-                {project.results && project.results.length > 0 && (
+                {!hasOutcomes && project.results && project.results.length > 0 && (
                   <div className="mt-16">
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-8 border-b border-white/20 pb-4">
                       // Resultados
@@ -167,6 +181,12 @@ export default async function ProjectDetailPage({ params }: Args) {
           </div>
         </section>
 
+        {/* Caso de uso */}
+        <Outcomes items={(project as any).outcomes} />
+        <Architecture id={`arch-${project.slug}`} caption={(project as any).architecture?.caption} columns={(project as any).architecture?.columns} />
+        <Phases items={(project as any).phases} />
+        <Highlights items={(project as any).highlights} />
+
         {/* Galería */}
         {gallery.length > 0 && (
           <section className="border-b border-white/20 bg-black">
@@ -191,6 +211,7 @@ export default async function ProjectDetailPage({ params }: Args) {
             </div>
           </section>
         )}
+        <CaseClose learnings={project.learnings} />
       </div>
     </PageTransition>
   )

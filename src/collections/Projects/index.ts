@@ -92,6 +92,94 @@ export const Projects: CollectionConfig = {
       type: 'tabs',
       tabs: [
         {
+          label: 'Caso de uso',
+          description:
+            'Lo que hace que el caso venda: resumen de negocio, resultados antes/después, arquitectura y fases. Lo que contenga [COMPLETAR] no se muestra en el sitio.',
+          fields: [
+            {
+              name: 'summary',
+              type: 'textarea',
+              localized: true,
+              admin: { description: 'El caso en 1–2 líneas, dicho como resultado de negocio.' },
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'role', type: 'text', localized: true, admin: { width: '34%', description: 'Mi rol' } },
+                { name: 'duration', type: 'text', localized: true, admin: { width: '33%', description: 'Duración (ej. 4 meses)' } },
+                { name: 'team', type: 'text', localized: true, admin: { width: '33%', description: 'Equipo (ej. 3 personas)' } },
+              ],
+            },
+            {
+              name: 'outcomes',
+              label: 'Resultados de negocio',
+              type: 'array',
+              localized: true,
+              admin: { description: 'Métrica con su antes y después. Se muestra grande, con el antes tachado.' },
+              fields: [
+                { name: 'metric', type: 'text', required: true },
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'before', type: 'text', admin: { width: '50%' } },
+                    { name: 'after', type: 'text', required: true, admin: { width: '50%' } },
+                  ],
+                },
+                { name: 'impact', type: 'text', admin: { description: 'Qué significó para el negocio' } },
+              ],
+            },
+            {
+              name: 'highlights',
+              label: 'Puntos clave',
+              type: 'array',
+              localized: true,
+              maxRows: 6,
+              fields: [
+                { name: 'title', type: 'text', required: true },
+                { name: 'text', type: 'textarea' },
+              ],
+            },
+            {
+              name: 'phases',
+              label: 'Fases',
+              type: 'array',
+              localized: true,
+              fields: [
+                { name: 'name', type: 'text', required: true },
+                { name: 'duration', type: 'text' },
+                { name: 'text', type: 'textarea' },
+              ],
+            },
+            {
+              name: 'architecture',
+              label: 'Arquitectura',
+              type: 'group',
+              admin: { description: 'Columnas de izquierda a derecha (fuentes → procesamiento → destinos). Se dibuja como diagrama animado.' },
+              fields: [
+                { name: 'caption', type: 'text', localized: true },
+                {
+                  name: 'columns',
+                  type: 'array',
+                  localized: true,
+                  maxRows: 5,
+                  fields: [
+                    { name: 'label', type: 'text', required: true },
+                    {
+                      name: 'nodes',
+                      type: 'array',
+                      maxRows: 5,
+                      fields: [
+                        { name: 'name', type: 'text', required: true, admin: { description: 'Si coincide con una marca (HubSpot, GA4…) se dibuja su logo' } },
+                        { name: 'note', type: 'text' },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
           label: 'Caso',
           fields: [
             {

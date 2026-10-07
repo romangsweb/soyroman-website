@@ -416,6 +416,74 @@ export interface Project {
       }[]
     | null;
   /**
+   * El caso en 1–2 líneas, dicho como resultado de negocio.
+   */
+  summary?: string | null;
+  /**
+   * Mi rol
+   */
+  role?: string | null;
+  /**
+   * Duración (ej. 4 meses)
+   */
+  duration?: string | null;
+  /**
+   * Equipo (ej. 3 personas)
+   */
+  team?: string | null;
+  /**
+   * Métrica con su antes y después. Se muestra grande, con el antes tachado.
+   */
+  outcomes?:
+    | {
+        metric: string;
+        before?: string | null;
+        after: string;
+        /**
+         * Qué significó para el negocio
+         */
+        impact?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  highlights?:
+    | {
+        title: string;
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  phases?:
+    | {
+        name: string;
+        duration?: string | null;
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Columnas de izquierda a derecha (fuentes → procesamiento → destinos). Se dibuja como diagrama animado.
+   */
+  architecture?: {
+    caption?: string | null;
+    columns?:
+      | {
+          label: string;
+          nodes?:
+            | {
+                /**
+                 * Si coincide con una marca (HubSpot, GA4…) se dibuja su logo
+                 */
+                name: string;
+                note?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
    * Contexto del proyecto
    */
   context?: string | null;
@@ -1018,6 +1086,52 @@ export interface ProjectsSelect<T extends boolean = true> {
     | {
         tag?: T;
         id?: T;
+      };
+  summary?: T;
+  role?: T;
+  duration?: T;
+  team?: T;
+  outcomes?:
+    | T
+    | {
+        metric?: T;
+        before?: T;
+        after?: T;
+        impact?: T;
+        id?: T;
+      };
+  highlights?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  phases?:
+    | T
+    | {
+        name?: T;
+        duration?: T;
+        text?: T;
+        id?: T;
+      };
+  architecture?:
+    | T
+    | {
+        caption?: T;
+        columns?:
+          | T
+          | {
+              label?: T;
+              nodes?:
+                | T
+                | {
+                    name?: T;
+                    note?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
       };
   context?: T;
   problem?: T;

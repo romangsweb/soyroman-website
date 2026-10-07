@@ -9,7 +9,6 @@ const DEFAULT_NAV: NavItem[] = [
   { href: '/proyectos', label: 'Proyectos' },
   { href: '/blog', label: 'Blog' },
   { href: '/glosario', label: 'Glosario' },
-  { href: '/recursos', label: 'Recursos' },
   { href: '/consultoria', label: 'Consultoría' },
   { href: '/cv', label: 'CV' },
   { href: '/contacto', label: 'Contacto' },
@@ -32,7 +31,9 @@ function toNavItems(navItems: any[] | null | undefined): NavItem[] {
 
 export async function HeaderComponent() {
   const header = await cms.findGlobal({ slug: 'header' })
-  const items = toNavItems(header?.navItems)
+  // «Recursos» siempre va al final y destacado, venga o no del CMS
+  const isRecursos = (href: string) => /\/recursos\/?$/.test(href)
+  const items = [...toNavItems(header?.navItems).filter((i) => !isRecursos(i.href)), { href: '/recursos', label: 'Recursos' }]
 
   return (
     <header className="sticky top-0 z-50 border-b border-black bg-[#f4f4f4]">
