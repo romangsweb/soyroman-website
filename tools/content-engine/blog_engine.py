@@ -73,6 +73,41 @@ FORMATS = {
     "checklist": "un checklist priorizado: qué revisar, en qué orden y cómo saber si está bien",
     "errores": "los errores más comunes, por qué ocurren y cómo corregir cada uno",
 }
+# Reglas propias del blog (se suman a VOICE)
+BLOG_RULES = """
+REGLAS DEL BLOG:
+- Escribe como Román, en primera persona: en cada sección aparece al menos un criterio propio ("cuando reviso un presupuesto, yo…", "lo que recomiendo es…").
+- Donde una experiencia real haría el texto más creíble, deja [COMPLETAR: qué ejemplo real va aquí]. Entre 1 y 3 en todo el artículo; nunca inventes la anécdota.
+- Respeta las DEFINICIONES Y FÓRMULAS que se te dan: no las contradigas ni inventes otras.
+- Español de México sin anglicismos innecesarios: "dirección" (no C-suite), "embudo" (no funnel), "hallazgos" (no insights), "interacción" (no engagement), "desempeño" (no performance). El presupuesto se defiende ante dirección general o finanzas (CFO), no ante el CTO.
+- Nada de llamados de venta tipo "Descubre", "Conoce" o "No te pierdas"."""
+
+# Anglicismos y muletillas que no deben aparecer (la calificación los penaliza)
+BANNED = {
+    r"\bC-?suite\b": "dirección", r"\bfunnel\b": "embudo", r"\binsights?\b": "hallazgos",
+    r"\bengagement\b": "interacción", r"\bperformance\b": "desempeño", r"\bDescubre\b": "(quitar)",
+}
+# Arreglos automáticos seguros (los demás los corrige el editor)
+AUTOFIX = [
+    (r"\bal C-?suite\b", "a la dirección"), (r"\bdel C-?suite\b", "de la dirección"),
+    (r"\b[Ee]l C-?suite\b", "la dirección"), (r"\b(el|del|al) funnel\b", r"\1 embudo"), (r"\bfunnel\b", "embudo"),
+]
+
+# Definiciones verificadas: mandan sobre las del glosario si hay diferencia
+CANON = {
+    "roas": "ROAS = ingresos atribuidos ÷ inversión en medios. No incluye margen ni otros costos de marketing.",
+    "romi": "ROMI = (ingresos atribuidos × margen bruto − costo total de marketing) ÷ costo total de marketing. Requiere conocer el margen; incluye medios, herramientas, agencia y equipo.",
+    "roi": "ROI = (ganancia − inversión) ÷ inversión. En marketing suele calcularse sobre ingresos sin descontar margen, por eso sobreestima el retorno frente al ROMI.",
+    "cac": "CAC = costo total de ventas y marketing del periodo ÷ clientes nuevos del periodo.",
+    "ltv-cac": "LTV:CAC = valor de vida del cliente ÷ CAC. Una referencia común es 3 o más.",
+    "payback-cac": "Periodo de recuperación = CAC ÷ margen bruto mensual por cliente (en meses).",
+    "win-rate": "Tasa de cierre = oportunidades ganadas ÷ oportunidades cerradas (ganadas + perdidas).",
+    "velocidad-del-pipeline": "Velocidad del pipeline = (oportunidades × ticket promedio × tasa de cierre) ÷ duración del ciclo de venta.",
+    "tasa-de-conversion": "Tasa de conversión = conversiones ÷ registros de la etapa anterior.",
+    "mql": "MQL: lead que cumple los criterios acordados con ventas (ajuste al ICP e interés) para pasar a seguimiento.",
+    "sql": "SQL: lead que ventas aceptó y calificó como oportunidad potencial tras un primer contacto.",
+}
+
 # Frases de relleno que delatan texto genérico (se cuentan y se piden quitar en la edición)
 FILLER = [
     "en el mundo actual", "hoy en día", "en la era digital", "es crucial", "es fundamental", "es importante destacar",
@@ -91,6 +126,8 @@ QUÉ BUSCA EL LECTOR: {intent}
 TESIS (la postura que el artículo defiende; no la cambies): {thesis}
 FORMATO: {fmt_desc}
 EXTENSIÓN: {length}
+DEFINICIONES Y FÓRMULAS (fuente de verdad):
+{defs}
 
 Responde SOLO con JSON válido con esta forma:
 {{
@@ -104,7 +141,8 @@ Responde SOLO con JSON válido con esta forma:
     {{"heading": "encabezado ## de la sección", "point": "qué argumenta o explica esta sección en una frase",
       "include": "el elemento concreto que lleva: ejemplo, criterio, tabla, pasos, cálculo o plantilla"}}
   ],
-  "faq": ["3 preguntas reales que este lector se haría después de leer, en sus palabras"]
+  "faq": ["3 preguntas reales que este lector se haría después de leer, en sus palabras"],
+  "scenario": "un caso hipotético con cifras concretas (marcado como ejemplo) que todas las secciones reutilizan; si el tema lleva fórmulas, el caso permite calcularlas todas con los mismos números"
 }}
 Reglas del esquema: {n_sections} secciones; la primera no puede ser una definición obvia; cada sección avanza la tesis; ninguna se repite con otra; la última sección es accionable (qué hacer el lunes)."""
 
@@ -123,12 +161,15 @@ LO YA ESCRITO (para no repetir y mantener el hilo):
 {so_far}
 ---
 
+IDEAS YA CUBIERTAS (no las repitas; aporta algo nuevo):
+{covered}
+
 SECCIÓN A ESCRIBIR: ## {heading}
 Qué debe argumentar: {point}
 Debe incluir: {include}
 Extensión: {words} palabras.
 
-Empieza con la línea "## {heading}". Puedes usar ### para subsecciones, listas o una tabla en Markdown si ayudan. No repitas ideas de lo ya escrito. No cierres el artículo aquí."""
+Empieza con la línea "## {heading}". Puedes usar ### para subsecciones, listas o una tabla en Markdown si ayudan. Usa el ESCENARIO cuando necesites un ejemplo numérico y escribe las fórmulas tal como vienen en las DEFINICIONES. Incluye al menos un criterio tuyo en primera persona. No cierres el artículo aquí."""
 
 CLOSING = """Escribe el CIERRE del artículo (60-110 palabras, sin encabezado "Conclusión").
 
@@ -140,6 +181,10 @@ El cierre retoma la tesis con una idea nueva o una consecuencia práctica; no re
 
 FAQ = """Responde estas preguntas frecuentes del lector del artículo "{title}".
 Tesis del artículo: {thesis}
+DEFINICIONES Y FÓRMULAS (no las contradigas):
+{defs}
+EL ARTÍCULO DICE (no lo contradigas):
+{article}
 
 Preguntas:
 {questions}
@@ -156,6 +201,10 @@ LISTA DE VERIFICACIÓN:
 - Frases cortas y directas; voz activa; primera persona donde aporte.
 - Mantén TODOS los encabezados ## y ###, las listas y las tablas. Mantén la extensión (no recortes más de 10 %).
 - Mayúsculas en español: solo al inicio, siglas y nombres propios.
+- Reemplaza anglicismos: C-suite → dirección, funnel → embudo, insights → hallazgos, engagement → interacción, performance → desempeño.
+- Asegura la primera persona: cada sección con al menos un criterio de Román ("yo…", "recomiendo…", "cuando reviso…").
+- Verifica que fórmulas y definiciones coincidan con estas (corrige si no):
+{defs}
 {extra}
 
 Devuelve SOLO el artículo editado en Markdown, empezando por el primer párrafo de la introducción.
@@ -169,9 +218,12 @@ SCORE = """Evalúa este artículo como editor exigente de un blog de marketing B
 
 Tesis esperada: {thesis}
 Lector: {reader}
+Definiciones correctas:
+{defs}
 
 Responde SOLO con JSON:
 {{"tesis": 0-10, "especificidad": 0-10, "estructura": 0-10, "estilo": 0-10, "utilidad": 0-10,
+  "contradicciones": ["cada frase que contradiga las definiciones o se contradiga con otra parte del artículo, citada"],
   "problemas": ["hasta 4 problemas concretos, citando la sección"]}}
 
 ARTÍCULO:
@@ -262,13 +314,59 @@ def pick_topics(cms, n, category=None, contains=None):
 
 
 def glossary_index(cms):
-    """{slug: término} de los términos publicados (solo a esos se puede enlazar)."""
-    try:
-        docs = cms.get("glossary", **{"where[_status][equals]": "published", "limit": 300, "depth": 0}).get("docs", [])
-        return {d["slug"]: d["term"] for d in docs if d.get("slug") and d.get("term")}
-    except Exception as e:
-        log(f"  glosario no disponible para enlazar: {e}")
+    """{slug: doc} del glosario, borradores incluidos (definiciones); solo los publicados se enlazan."""
+    if not cms:
         return {}
+    try:
+        docs = cms.get("glossary", **{"limit": 300, "depth": 0, "draft": "true"}).get("docs", [])
+        return {d["slug"]: d for d in docs if d.get("slug") and d.get("term")}
+    except Exception as e:
+        log(f"  glosario no disponible: {e}")
+        return {}
+
+
+def defs_block(t, glossary):
+    """Definiciones y fórmulas de los términos del tema: las verificadas (CANON) y, si no, las del glosario."""
+    lines = []
+    for slug in t["terms"]:
+        if slug in CANON:
+            lines.append(f"- {CANON[slug]}")
+            continue
+        d = glossary.get(slug)
+        if d and d.get("definition"):
+            txt = re.sub(r"\s+", " ", str(d["definition"]))[:320]
+            formula = f" Fórmula: {d['formula']}" if d.get("formula") else ""
+            lines.append(f"- {d['term']}: {txt}{formula}")
+    return "\n".join(lines) or "- (sin definiciones específicas para este tema)"
+
+
+FIRST_PERSON = re.compile(r"\b(yo|mi|mis|me|recomiendo|prefiero|reviso|uso|suelo|pido|empiezo|veo|he visto|aprendí|trabajo con)\b", re.I)
+
+
+def heuristics(md, t, n_sections):
+    """Chequeos objetivos que el modelo no puede inflar."""
+    issues, hard = [], False
+    fp = len(FIRST_PERSON.findall(md))
+    if fp < max(2, n_sections):
+        issues.append(f"poca primera persona ({fp} marcas para {n_sections} secciones): añade criterios propios de Román")
+        hard = True
+    banned = sorted({m.group(0) for pat in BANNED for m in re.finditer(pat, md, re.I)})
+    if banned:
+        issues.append(f"anglicismos o muletillas: {', '.join(banned)}")
+        hard = True
+    comp = len(re.findall(r"\[COMPLETAR:", md))
+    if comp == 0:
+        issues.append("ningún [COMPLETAR]: marca 1-3 lugares donde va una experiencia real de Román")
+    if any(x in CANON and "=" in CANON[x] for x in t["terms"][:3]) and not re.search(r"[=÷]", md):
+        issues.append("faltan las fórmulas de los indicadores del tema")
+        hard = True
+    return issues, hard, {"first_person": fp, "banned": banned, "completar": comp}
+
+
+def autofix(md):
+    for pat, rep_ in AUTOFIX:
+        md = re.sub(pat, rep_, md)
+    return md
 
 
 def link_terms(md, slugs, glossary):
@@ -276,8 +374,9 @@ def link_terms(md, slugs, glossary):
     linked = []
     lines = md.split("\n")
     for slug in slugs:
-        term = glossary.get(slug)
-        if not term:
+        d = glossary.get(slug) or {}
+        term = d.get("term")
+        if not term or d.get("_status") != "published":
             continue
         pat = re.compile(rf"(?<![\w\[/-])({re.escape(term)})(?![\w\]-])", re.IGNORECASE)
         for i, line in enumerate(lines):
@@ -292,16 +391,18 @@ def link_terms(md, slugs, glossary):
 
 
 # ───────────────────────── Pipeline ─────────────────────────
-def write_article(t):
+def write_article(t, glossary=None):
     length = "1600-2000 palabras" if t["pillar"] else "850-1100 palabras"
     n_sections = "5 a 6" if t["pillar"] else "3 a 4"
     section_words = "250-320" if t["pillar"] else "180-240"
     fmt_desc = FORMATS[t["fmt"]]
+    defs = defs_block(t, glossary or {})
+    system = VOICE + BLOG_RULES
 
     log("[1/5] brief")
-    brief = as_json(ollama_call(VOICE, BRIEF.format(
-        title=t["title"], reader=t["reader"], intent=t["intent"], thesis=t["thesis"],
-        fmt_desc=fmt_desc, length=length, n_sections=n_sections), predict=1800, temperature=0.5, fmt="json"))
+    brief = as_json(ollama_call(system, BRIEF.format(
+        title=t["title"], reader=t["reader"], intent=t["intent"], thesis=t["thesis"], defs=defs,
+        fmt_desc=fmt_desc, length=length, n_sections=n_sections), predict=2000, temperature=0.5, fmt="json"))
     sections = [s for s in brief.get("sections", []) if s.get("heading")][:6]
     if len(sections) < 3:
         raise RuntimeError(f"brief con {len(sections)} secciones")
@@ -309,35 +410,43 @@ def write_article(t):
     log(f"  {title}  ·  {len(sections)} secciones")
 
     outline = "\n".join(f"- {s['heading']}: {s.get('point', '')}" for s in sections)
+    scenario = brief.get("scenario") if isinstance(brief.get("scenario"), str) else json.dumps(brief.get("scenario") or "", ensure_ascii=False)
     context = (f"ARTÍCULO: {title}\nLECTOR: {t['reader']}\nTESIS: {t['thesis']}\nFORMATO: {fmt_desc}\n"
+               f"DEFINICIONES Y FÓRMULAS (fuente de verdad):\n{defs}\n"
+               f"ESCENARIO DE EJEMPLO (hipotético, reutilízalo):\n{scenario or '—'}\n"
                f"ESQUEMA COMPLETO:\n{outline}")
 
     log("[2/5] redacción por secciones")
-    parts = [ollama_call(VOICE, INTRO.format(context=context), predict=600, temperature=0.7)]
+    parts = [ollama_call(system, INTRO.format(context=context), predict=600, temperature=0.7)]
+    covered = ["Introducción: el problema del lector y la tesis"]
     for i, s in enumerate(sections, 1):
         so_far = "\n\n".join(parts)
         so_far = so_far if words(so_far) < 1400 else "…\n" + so_far[-6000:]
-        txt = ollama_call(VOICE, SECTION.format(context=context, so_far=so_far, heading=s["heading"],
-                                                point=s.get("point", ""), include=s.get("include", ""),
-                                                words=section_words), predict=1400, temperature=0.7)
+        txt = ollama_call(system, SECTION.format(context=context, so_far=so_far, heading=s["heading"],
+                                                 covered="\n".join(f"- {c}" for c in covered),
+                                                 point=s.get("point", ""), include=s.get("include", ""),
+                                                 words=section_words), predict=1400, temperature=0.7)
+        covered.append(f"{s['heading']}: {s.get('point', '')}")
         if not txt.lstrip().startswith("##"):
             txt = f"## {s['heading']}\n\n{txt}"
         parts.append(txt)
         log(f"  sección {i}/{len(sections)} ok")
-    closing = ollama_call(VOICE, CLOSING.format(context=context, headings="; ".join(s["heading"] for s in sections)),
+    closing = ollama_call(system, CLOSING.format(context=context, headings="; ".join(s["heading"] for s in sections)),
                           predict=500, temperature=0.6)
     parts.append(re.sub(r"(?m)^#{1,3}\s.*$", "", closing).strip())
     draft = tidy(re.sub(r"(?m)^#\s+", "## ", "\n\n".join(parts)))
 
+    draft = autofix(draft)
     log("[3/5] editor")
-    edited = edit(draft, t)
+    edited = autofix(edit(draft, t, defs=defs))
 
     faq = []
     if brief.get("faq"):
         try:
-            faq = as_json(ollama_call(VOICE, FAQ.format(title=title, thesis=t["thesis"],
-                                                        questions="\n".join(f"- {q}" for q in brief["faq"][:3])),
-                                      predict=900, temperature=0.4, fmt="json")).get("faq", [])
+            faq = as_json(ollama_call(system, FAQ.format(title=title, thesis=t["thesis"], defs=defs,
+                                                         article=edited[:5000],
+                                                         questions="\n".join(f"- {q}" for q in brief["faq"][:3])),
+                                      predict=900, temperature=0.3, fmt="json")).get("faq", [])
         except Exception as e:
             log(f"  FAQ falló (no bloqueante): {e}")
 
@@ -350,13 +459,15 @@ def write_article(t):
         "takeaways": [x for x in brief.get("takeaways", []) if isinstance(x, str)][:3],
         "faq": [f for f in faq if isinstance(f, dict) and f.get("q") and f.get("a")][:3],
         "content": edited,
+        "defs": defs,
+        "n_sections": len(sections),
     }
 
 
-def edit(draft, t, extra=""):
+def edit(draft, t, extra="", defs=""):
     hits = filler_hits(draft)
-    out = ollama_call(VOICE, EDITOR.format(filler=", ".join(f'"{f}"' for f in FILLER[:12]),
-                                           extra=extra, draft=draft), predict=6000, temperature=0.3, ctx=24576)
+    out = ollama_call(VOICE + BLOG_RULES, EDITOR.format(filler=", ".join(f'"{f}"' for f in FILLER[:12]), defs=defs or "-",
+                                                        extra=extra, draft=draft), predict=6000, temperature=0.3, ctx=24576)
     out = tidy(re.sub(r"(?m)^#\s+", "## ", out.strip().strip("-").strip()))
     # Salvaguardas: si el editor recortó de más o perdió encabezados, se queda el borrador
     h_draft, h_out = draft.count("\n## "), out.count("\n## ")
@@ -368,20 +479,30 @@ def edit(draft, t, extra=""):
 
 
 def assess(art, t):
+    """Calificación = la menor entre la del modelo y la de los chequeos objetivos."""
+    contradictions = []
     try:
-        s = as_json(ollama_call("Eres un editor exigente de marketing B2B.", SCORE.format(
-            thesis=t["thesis"], reader=t["reader"], article=art["content"][:14000]),
-            predict=600, temperature=0.2, fmt="json", ctx=24576))
+        s = as_json(ollama_call("Eres un editor exigente de marketing B2B. Calificas con dureza.", SCORE.format(
+            thesis=t["thesis"], reader=t["reader"], defs=art.get("defs", "-"), article=art["content"][:14000]),
+            predict=800, temperature=0.2, fmt="json", ctx=24576))
         keys = ["tesis", "especificidad", "estructura", "estilo", "utilidad"]
         vals = [float(s.get(k, 0)) for k in keys]
         score = round(sum(vals) / len(vals), 1)
         problems = [p for p in s.get("problemas", []) if isinstance(p, str)][:4]
+        contradictions = [c for c in s.get("contradicciones", []) if isinstance(c, str) and c.strip()][:4]
     except Exception as e:
         log(f"  autoevaluación falló: {e}")
         score, problems = 6.0, []
+    issues, hard, stats = heuristics(art["content"], t, art.get("n_sections", 4))
+    if contradictions:
+        hard = True
+        issues = [f"contradicción: {c}" for c in contradictions] + issues
     fill = sum(filler_hits(art["content"]).values())
-    score = max(0.0, round(score - 0.3 * max(0, fill - 2), 1))
-    return score, problems, fill
+    score = max(0.0, round(score - 0.3 * max(0, fill - 2) - (0.5 if not stats["completar"] else 0), 1))
+    if hard:
+        score = min(score, 6.0)
+    art["stats"] = {**stats, "contradictions": len(contradictions), "model_score": score}
+    return score, (issues + problems)[:6], fill
 
 
 def enrich(art, t, glossary):
@@ -409,13 +530,14 @@ def run_one(t, cms, glossary, dry=False, no_cover=False):
     ctx = NoRun() if dry else tel.TelemetryRun(ENGINE_NAME, topic=t["title"], triggered_by="v2", metadata=meta)
     with ctx as run:
         try:
-            art = write_article(t)
+            art = write_article(t, glossary)
             log("[4/5] calidad")
             score, problems, fill = assess(art, t)
             log(f"  calificación {score} · relleno {fill} · {problems}")
             if score < qmin and problems:
                 log("  segunda pasada de editor con los problemas detectados")
-                art["content"] = edit(art["content"], t, extra="- Corrige además estos problemas:\n" + "\n".join(f"  - {p}" for p in problems))
+                art["content"] = autofix(edit(art["content"], t, defs=art.get("defs", ""),
+                                              extra="- Corrige además estos problemas:\n" + "\n".join(f"  - {p}" for p in problems)))
                 score, problems, fill = assess(art, t)
                 log(f"  nueva calificación {score}")
             linked = enrich(art, t, glossary)
@@ -428,12 +550,14 @@ def run_one(t, cms, glossary, dry=False, no_cover=False):
         flags_brand, details = brand_check(art)
         flags = flags_brand + (["below_quality_min"] if score < qmin else [])
         run.set_quality(score, flags=flags)
-        run.add_metadata(words=words(art["content"]), filler=fill, problems=problems, linked_terms=linked, **details)
+        run.add_metadata(words=words(art["content"]), filler=fill, problems=problems, linked_terms=linked,
+                         **art.get("stats", {}), **details)
 
         if dry:
-            log(json.dumps({k: v for k, v in art.items() if k != "content"}, ensure_ascii=False, indent=2))
+            log(json.dumps({k: v for k, v in art.items() if k not in ("content", "defs")}, ensure_ascii=False, indent=2))
             log(art["content"])
             log(f"\n[dry-run] {words(art['content'])} palabras · calificación {score} · enlaces {linked} · flags {flags}")
+            log(f"[dry-run] chequeos {art.get('stats')} · problemas {problems}")
             return art
 
         dedup_text = f"{art['title']}\n{art['excerpt']}\n{art['content'][:1500]}"
@@ -520,8 +644,14 @@ def main():
                 log(f"  {'✓' if t['title'] in used else '·'} {'[P] ' if t['pillar'] else ''}{t['title']}")
         return
 
-    cms = None if args.dry_run else CMS()
-    glossary = glossary_index(cms) if cms else {}
+    try:
+        cms = CMS()  # en dry-run solo se usa para leer (glosario, conteos); no se guarda nada
+    except Exception as e:
+        if not args.dry_run:
+            raise
+        log(f"  sin CMS en dry-run ({e}): sin definiciones del glosario")
+        cms = None
+    glossary = glossary_index(cms)
     topics = pick_topics(cms, args.batch, args.category, args.topic)
     if not topics:
         log("No quedan temas disponibles con ese filtro.")
