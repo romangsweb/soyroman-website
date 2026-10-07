@@ -525,9 +525,9 @@
 .te-app .r-lcd{background:#0b0d0c;color:#3ddc84;border:2px solid var(--ink);border-radius:8px;padding:8px 12px;font-size:12px;letter-spacing:.08em}
 .te-app .r-lcd span{color:#4f8f6a}
 .te-app .r-tags{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 14px;margin-top:auto}
-.te-app .r-tg{font-size:9px;letter-spacing:.08em;text-transform:uppercase;border:1.5px solid var(--ink);border-radius:3px;padding:2px 6px;background:#fff;display:inline-flex;gap:5px;align-items:center}
+.te-app .r-tg{font-size:9px;letter-spacing:.08em;text-transform:uppercase;border:1.5px solid var(--ink);border-radius:3px;padding:2px 6px;background:#fff;display:inline-flex;gap:5px;align-items:center;white-space:nowrap;line-height:1.4}
 .te-app .r-tg i{width:7px;height:7px;border-radius:50%;background:var(--ac);border:1px solid var(--ink)}
-.te-app .r-tg.k{background:var(--ink);color:#fff}
+.te-app .r-tg.r-kind{background:var(--ink);color:#fff}
 .te-app .r-tags+.cg{margin-top:0}
 .te-app .r-empty{font-size:13px}
 .te-app .r-empty button{font:inherit;text-decoration:underline;background:none;border:0;cursor:pointer;color:var(--or)}

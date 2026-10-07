@@ -75,7 +75,7 @@ export function RecursosGrid({ items }: { items: Recurso[] }) {
           const tags = (
             <div className="r-tags">
               {a.areas.map((x) => <span key={x} className="r-tg" data-area={x}><i aria-hidden="true" />{AREAS[x]}</span>)}
-              <span className="r-tg k">{KINDS[a.kind].label}</span>
+              <span className="r-tg r-kind">{KINDS[a.kind].label}</span>
             </div>
           )
           return a.href ? (
