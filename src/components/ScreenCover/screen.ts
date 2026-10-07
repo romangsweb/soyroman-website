@@ -357,6 +357,172 @@ const EXTRA: Record<string, ((r: () => number) => string)[]> = {
   ],
 }
 
+// Más escenas por tema (4ª y 5ª)
+const ROCKET = ['..a..', '.aaa.', '.aba.', '.aaa.', 'aaaaa', 'a.c.a', '..c..']
+const PIN = ['.aaa.', 'aabaa', 'aaaaa', '.aaa.', '..a..']
+const EXTRA2: Record<string, ((r: () => number) => string)[]> = {
+  'generacion-demanda': [
+    (r) => {
+      let s = ''
+      for (let i = 0; i < 14; i++) s += `<rect x="${Math.floor(r() * 560) + 40}" y="${Math.floor(r() * 200) + 70}" width="3" height="3" fill="${P.white}" ${a('blink', 1 + r() * 2, -r() * 2)}/>`
+      return s + `<g ${a('rise', 3)}>${sprite(ROCKET, 285, 130, { a: P.cream, b: P.blue, c: P.or }, 14)}</g>`
+    },
+    (r) => {
+      let s = ''
+      for (let y = 0; y < 5; y++) for (let x = 0; x < 12; x++) if (r() < 0.62) s += `<rect x="${110 + x * 36}" y="${100 + y * 32}" width="30" height="26" fill="#13302a"/>`
+      for (let i = 0; i < 5; i++) {
+        const x = 120 + Math.floor(r() * 11) * 36, y = 90 + Math.floor(r() * 4) * 32
+        s += `<g ${a('drop', 2.6, -i * 0.5)}>${sprite(PIN, x, y, { a: i === 0 ? P.or : P.pink, b: '#111' }, 4)}</g>`
+      }
+      return s
+    },
+  ],
+  'crm-revops': [
+    () => {
+      let s = `<ellipse cx="420" cy="110" rx="70" ry="18" fill="${P.blue}"/><rect x="350" y="110" width="140" height="130" fill="${P.blue}" opacity=".75"/><ellipse cx="420" cy="240" rx="70" ry="18" fill="${P.blue}"/>`
+      ;[150, 185, 220].forEach((y) => { s += `<ellipse cx="420" cy="${y}" rx="70" ry="10" fill="none" stroke="#050607" stroke-width="3" opacity=".5"/>` })
+      for (let i = 0; i < 4; i++) s += `<g ${a('belt', 4, -i)}><rect x="40" y="170" width="44" height="12" fill="${i === 0 ? P.or : P.cream}"/></g>`
+      return s
+    },
+    () => {
+      let s = `<rect x="200" y="80" width="80" height="200" rx="14" fill="#2a2e33"/>`
+      ;[P.red, P.yel, P.teal].forEach((c, i) => { s += `<circle cx="240" cy="${120 + i * 60}" r="22" fill="${c}" ${a('blink', 3, -i)}/>` })
+      return s + `<rect x="320" y="170" width="220" height="16" fill="#2a2e33"/><rect x="320" y="170" width="220" height="16" ${a('fill', 5) || ' fill="#2a2e33"'}/><text x="320" y="160" font-size="11" fill="${P.white}" style="${FONT}">SLA 24H</text>`
+    },
+  ],
+  'seo-aeo': [
+    () => {
+      let s = ''
+      for (let i = 0; i < 6; i++) s += `<rect x="${140 + i * 64}" y="${250 - i * 30}" width="60" height="${i * 30 + 20}" fill="${i === 5 ? P.or : '#2a2e33'}"/><text x="${154 + i * 64}" y="${270}" font-size="11" fill="${P.white}" style="${FONT}">#${10 - i * 2 || 1}</text>`
+      return s + `<g ${a('rise', 3.4)}><rect x="${140 + 5 * 64 + 22}" y="70" width="16" height="16" fill="${P.teal}"/></g>`
+    },
+    () => {
+      const n: [number, number][] = [[160, 120], [300, 90], [460, 130], [220, 240], [380, 220], [520, 250]]
+      let s = ''
+      ;[[0, 1], [1, 2], [0, 3], [1, 4], [2, 5], [3, 4], [4, 5]].forEach(([x, y]) => { s += `<line x1="${n[x][0]}" y1="${n[x][1]}" x2="${n[y][0]}" y2="${n[y][1]}" stroke="#2a2e33" stroke-width="3"/>` })
+      n.forEach(([x, y], i) => { s += `<rect x="${x - 18}" y="${y - 14}" width="36" height="28" fill="${i === 4 ? P.or : P.cream}"/>` })
+      return s + `<g ${a('slide', 4, 0, { w: 300 })}><circle cx="160" cy="120" r="9" fill="${P.teal}"/><line x1="152" y1="112" x2="146" y2="104" stroke="${P.teal}" stroke-width="3"/><line x1="168" y1="112" x2="174" y2="104" stroke="${P.teal}" stroke-width="3"/></g>`
+    },
+  ],
+  'paid-media': [
+    () => {
+      let s = `<defs><clipPath id="sc-slots"><rect x="190" y="120" width="260" height="100"/></clipPath></defs><rect x="176" y="100" width="288" height="140" rx="12" fill="#2a2e33"/>`
+      s += `<g clip-path="url(#sc-slots)">`
+      for (let c = 0; c < 3; c++) {
+        s += `<g ${a('scroll', 1.2 + c * 0.4)}>`
+        for (let k = 0; k < 6; k++) s += `<rect x="${200 + c * 86}" y="${130 + k * 40}" width="70" height="30" fill="${[P.or, P.blue, P.yel, P.teal][(k + c) % 4]}"/>`
+        s += '</g>'
+      }
+      return s + `</g><rect x="480" y="110" width="10" height="90" fill="${P.white}"/><circle cx="485" cy="104" r="12" fill="${P.red}"/>`
+    },
+    () => {
+      let s = ''
+      for (let i = 0; i < 10; i++) {
+        const ang = Math.PI + (i / 9) * Math.PI
+        s += `<rect x="${(320 + Math.cos(ang) * 120 - 12).toFixed(1)}" y="${(240 + Math.sin(ang) * 120 - 8).toFixed(1)}" width="24" height="16" fill="${i > 6 ? P.red : i > 3 ? P.yel : P.teal}" ${a('blink', 3, -i * 0.25)}/>`
+      }
+      return s + `<line x1="320" y1="240" x2="380" y2="150" stroke="${P.white}" stroke-width="6"/><circle cx="320" cy="240" r="12" fill="${P.white}"/>`
+    },
+  ],
+  'contenido-email': [
+    (r) => {
+      let s = ''
+      for (let y = 0; y < 4; y++) for (let x = 0; x < 7; x++) {
+        const on = r() < 0.4
+        s += `<rect x="${150 + x * 50}" y="${90 + y * 46}" width="42" height="38" fill="${on ? [P.or, P.blue, P.teal, P.pink][Math.floor(r() * 4)] : '#15181b'}" ${on ? a('blink', 3, -r() * 3) : ''}/>`
+      }
+      return s
+    },
+    () => {
+      let s = ''
+      ;[P.blue, P.cream, P.teal, P.pink].forEach((c, i) => { s += `<rect x="${250 + (i % 2) * 8}" y="${250 - i * 34}" width="140" height="30" fill="${c}"/>` })
+      return s + `<g ${a('drop', 2.6)}><rect x="250" y="70" width="140" height="30" fill="${P.or}"/></g>`
+    },
+  ],
+  analitica: [
+    () => {
+      let s = ''
+      ;[[360, '100%'], [280, '42%'], [200, '18%'], [120, '6%']].forEach(([w, t], i) => {
+        s += `<rect x="${320 - (w as number) / 2}" y="${90 + i * 46}" width="${w}" height="34" fill="${i === 3 ? P.or : [P.teal, P.blue, P.cream][i]}" ${a('blink', 3, -i * 0.5)}/><text x="${330 + (w as number) / 2}" y="${112 + i * 46}" font-size="12" fill="${P.white}" style="${FONT}">${t}</text>`
+      })
+      return s
+    },
+    (r) => {
+      let s = ''
+      ;[170, 320, 470].forEach((cx, i) => {
+        const ang = Math.PI + (0.2 + r() * 0.7) * Math.PI
+        s += `<circle cx="${cx}" cy="200" r="56" fill="none" stroke="#2a2e33" stroke-width="10"/><line x1="${cx}" y1="200" x2="${(cx + Math.cos(ang) * 46).toFixed(1)}" y2="${(200 + Math.sin(ang) * 46).toFixed(1)}" stroke="${i === 1 ? P.or : P.white}" stroke-width="5"/><circle cx="${cx}" cy="200" r="6" fill="${P.white}"/><rect x="${cx - 6}" y="270" width="12" height="8" fill="${[P.teal, P.or, P.blue][i]}" ${a('blink', 1.6, -i * 0.5)}/>`
+      })
+      return s
+    },
+  ],
+  'sitios-web': [
+    () => {
+      let s = `<rect x="170" y="80" width="300" height="200" fill="none" stroke="${P.white}" stroke-width="3"/><rect x="190" y="100" width="260" height="24" fill="#2a2e33"/><rect x="190" y="140" width="120" height="120" fill="#2a2e33"/><rect x="330" y="140" width="120" height="50" fill="#2a2e33"/>`
+      ;[[250, 200, P.red], [390, 165, P.yel], [270, 112, P.or]].forEach(([x, y, c], i) => { s += `<circle cx="${x}" cy="${y}" r="20" fill="${c}" opacity=".7" ${a('pulse', 2.4, -i * 0.8, { origin: [x as number, y as number] })}/>` })
+      return s
+    },
+    () => {
+      let s = ''
+      for (let i = 0; i < 12; i++) {
+        const ang = Math.PI + (i / 11) * Math.PI
+        s += `<line x1="${(320 + Math.cos(ang) * 110).toFixed(1)}" y1="${(250 + Math.sin(ang) * 110).toFixed(1)}" x2="${(320 + Math.cos(ang) * 130).toFixed(1)}" y2="${(250 + Math.sin(ang) * 130).toFixed(1)}" stroke="${i > 8 ? P.or : P.white}" stroke-width="5"/>`
+      }
+      return s + `<line x1="320" y1="250" x2="410" y2="175" stroke="${P.or}" stroke-width="6"/><circle cx="320" cy="250" r="12" fill="${P.white}"/><text x="290" y="290" font-size="13" fill="${P.white}" style="${FONT}">1.2 s</text>`
+    },
+  ],
+  liderazgo: [
+    () => `<circle cx="320" cy="180" r="100" fill="none" stroke="${P.white}" stroke-width="4"/><circle cx="320" cy="180" r="84" fill="none" stroke="#2a2e33" stroke-width="2"/><text x="313" y="98" font-size="14" fill="${P.white}" style="${FONT}">N</text><g transform="translate(320,180)"><g ${a('sweep', 9)}><polygon points="0,-70 10,0 -10,0" fill="${P.or}"/><polygon points="0,70 10,0 -10,0" fill="${P.cream}"/></g></g>`,
+    () => {
+      let s = `<rect x="80" y="230" width="480" height="6" fill="#2a2e33"/>`
+      s += `<g ${a('bob', 0.8)}>${sprite(PERSON, 180, 160, { a: P.blue, b: P.blue }, 10)}</g><g ${a('bob', 0.8, -0.4)}>${sprite(PERSON2, 400, 160, { a: P.teal, b: P.teal }, 10)}</g>`
+      return s + `<g ${a('pass', 2)}><rect x="240" y="190" width="40" height="10" fill="${P.or}" transform="translate(0,0)"/></g>`
+    },
+  ],
+  'ia-aplicada': [
+    () => {
+      let s = ''
+      ;[[90, 90], [250, 160], [410, 230]].forEach(([x, y], i) => {
+        s += `<rect x="${x}" y="${y}" width="150" height="54" rx="8" fill="${i === 2 ? '#2a1a14' : '#1d2a3a'}"/><rect x="${x + 14}" y="${y + 16}" height="8" width="110" fill="${i === 2 ? P.or : P.cream}" ${a('type', 3, i * 1, { w: 110 })}/>`
+        if (i < 2) s += `<line x1="${x + 150}" y1="${y + 27}" x2="${x + 160}" y2="${y + 70}" stroke="${P.white}" stroke-width="3"/>`
+      })
+      return s
+    },
+    (r) => {
+      let s = ''
+      for (let y = 0; y < 7; y++) for (let x = 0; x < 15; x++) s += `<rect x="${130 + x * 26}" y="${90 + y * 26}" width="12" height="12" fill="${r() < 0.12 ? P.or : P.teal}" ${a('blink', 1 + r() * 2, -r() * 3)}/>`
+      return s
+    },
+  ],
+}
+
+// Paletas (el slug elige una): se aplican solo a la escena, no al marco de la pantalla
+const PALETTES: Record<string, string>[] = [
+  {},
+  { '#e85a2a': '#3a7bfd', '#ff4a3d': '#3a7bfd', '#3a7bfd': '#2ec4b6', '#2ec4b6': '#7cf2c7', '#ffc93c': '#e8f2ff', '#ff6f91': '#9ad1ff', '#f2e6d0': '#d9f2ef' },
+  { '#e85a2a': '#ff3d8b', '#ff4a3d': '#ff3d8b', '#3a7bfd': '#ffc93c', '#2ec4b6': '#ff8ac2', '#ffc93c': '#ff3d8b', '#ff6f91': '#ffc93c', '#f2e6d0': '#fff2c4' },
+  { '#3a7bfd': '#9aa0a6', '#2ec4b6': '#c8ccd0', '#ffc93c': '#e2e4e6', '#ff6f91': '#6b7177', '#f2e6d0': '#f4f4f0' },
+]
+function recolor(svg: string, pal: Record<string, string>) {
+  const keys = Object.keys(pal)
+  if (!keys.length) return svg
+  return svg.replace(new RegExp(keys.join('|'), 'gi'), (m) => pal[m.toLowerCase()] || m)
+}
+
+function backgroundAlt(r: () => number, kind: number) {
+  let s = `<rect width="${W}" height="${H}" fill="#050607"/>`
+  if (kind === 1) {
+    for (let x = 16; x < W; x += 32) s += `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#101418"/>`
+    for (let y = 16; y < H; y += 32) s += `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#101418"/>`
+  } else {
+    for (let i = 0; i < 26; i++) {
+      const x = Math.floor(r() * 40) * 16, h = 20 + Math.floor(r() * 60)
+      s += `<rect x="${x}" y="${Math.floor(r() * (H - h))}" width="4" height="${h}" fill="${i % 3 ? P.dim2 : P.dim}"/>`
+    }
+  }
+  return s
+}
+
 export type ScreenOptions = {
   slug: string
   category?: string | null
@@ -367,11 +533,14 @@ export type ScreenOptions = {
   /** Cifra clave del artículo (p. ej. "6.5") y su etiqueta de 3 letras (p. ej. "MQL"): sustituyen a los minutos */
   figure?: string | null
   tag?: string | null
-  /** Forzar una variante (0-2), para vistas previas */
+  /** Forzar escena, paleta, espejo y fondo (vistas previas) */
   variant?: number
+  palette?: number
+  mirror?: boolean
+  bg?: number
 }
 
-export function screenSvg({ slug, category, minutes, title, still = false, noText = false, figure, tag, variant }: ScreenOptions) {
+export function screenSvg({ slug, category, minutes, title, still = false, noText = false, figure, tag, variant, palette, mirror, bg }: ScreenOptions) {
   STILL = still
   const r = rng(slug || 'soyroman')
   const key = category && SCENES[category] ? category : KEYS[Math.floor(r() * KEYS.length)]
@@ -379,11 +548,18 @@ export function screenSvg({ slug, category, minutes, title, still = false, noTex
   const fig = figure && /^\d{1,3}(\.\d)?$/.test(figure.trim()) ? figure.trim() : null
   const tg = tag && /^[A-Za-zÁÉÍÓÚÑáéíóúñ0-9→]{2,4}$/.test(tag.trim()) ? tag.trim().toUpperCase().slice(0, 3) : null
   const num = fig || `${m}.${Math.floor(r() * 10)}`
-  const variants = [SCENES[key], ...(EXTRA[key] || [])]
+  const variants = [SCENES[key], ...(EXTRA[key] || []), ...(EXTRA2[key] || [])]
   const vr = rng(`${slug || 'soyroman'}#variante`)
   const v = variant !== undefined ? variant % variants.length : Math.floor(vr() * variants.length)
+  const pal = palette !== undefined ? palette % PALETTES.length : Math.floor(vr() * PALETTES.length)
+  const flip = mirror !== undefined ? mirror : vr() < 0.5
+  const bgk = bg !== undefined ? bg % 3 : Math.floor(vr() * 3)
+  let scene = recolor(variants[v](r), PALETTES[pal])
+  // Espejo solo si la escena no tiene texto (el texto se leería al revés)
+  if (flip && !scene.includes('<text')) scene = `<g transform="translate(${W},0) scale(-1,1)">${scene}</g>`
+  const back = bgk === 0 ? background(r) : backgroundAlt(r, bgk)
   const label = title ? title.replace(/[<&"]/g, '') : key
-  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}" preserveAspectRatio="xMidYMid slice">${still ? '' : STYLE}${background(r)}${variants[v](r)}${hud(SCREEN_CODES[key], num, fig && tg ? tg : 'MIN')}</svg>`
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}" preserveAspectRatio="xMidYMid slice">${still ? '' : STYLE}${back}${scene}${hud(SCREEN_CODES[key], num, fig && tg ? tg : 'MIN')}</svg>`
   if (noText) svg = svg.replace(/<text[^>]*>[^<]*<\/text>/g, '').replace(/<rect x="22" y="300"[^>]*\/>/, '')
   STILL = false
   return svg
