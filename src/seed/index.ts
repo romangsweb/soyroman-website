@@ -239,6 +239,25 @@ async function seed() {
 
   for (const exp of expertiseData) await bySlug('expertise', exp)
 
+  // Pasos de framework (borrador para revisar en el admin). Solo se cargan si el
+  // área aún no tiene pasos, para no pisar lo que se edite a mano.
+  const FRAMEWORKS: Record<string, string[]> = {
+    'generacion-demanda-b2b': ['Diagnóstico de pipeline', 'ICP y cuentas objetivo', 'Oferta y contenido', 'Canales y captura', 'Nutrición y handoff', 'Medición contra pipeline'],
+    'seo-aeo-geo': ['Auditoría técnica', 'Mapa de intención', 'Contenido para personas y LLMs', 'Datos estructurados', 'Autoridad y menciones', 'Medición de visibilidad'],
+    'paid-media': ['Objetivo de pipeline', 'Audiencias por cuenta', 'Oferta y landing', 'Lanzamiento y pruebas', 'Calidad de lead', 'Optimización por oportunidad'],
+    'crm-revops': ['Auditoría de datos', 'Modelo de objetos y pipeline', 'Migración y depuración', 'Automatización', 'Atribución', 'Gobierno del dato'],
+    'web-herramientas': ['Objetivo de conversión', 'Arquitectura y contenido', 'Diseño y desarrollo', 'Integración con CRM', 'Medición', 'Iteración'],
+    'liderazgo-equipos': ['Roles y responsabilidades', 'Objetivos de pipeline', 'Rituales y tableros', 'Desarrollo del equipo', 'Revisión de resultados'],
+    'motores-ia': ['Caso de uso y datos', 'Infraestructura propia', 'Modelo y prompts', 'Integración al flujo', 'Evaluación y mejora'],
+  }
+  for (const [slug, steps] of Object.entries(FRAMEWORKS)) {
+    const found = await payload.find({ collection: 'expertise', where: { slug: { equals: slug } }, limit: 1, depth: 0 })
+    const doc = found.docs[0] as any
+    if (doc && !doc.framework?.length) {
+      await payload.update({ collection: 'expertise', id: doc.id, data: { framework: steps.map((step) => ({ step })) }, context: ctx })
+    }
+  }
+
   // ─── Temas (taxonomía compartida de blog, glosario y notas) ───
   console.log('  categories')
   const categoriesData = [

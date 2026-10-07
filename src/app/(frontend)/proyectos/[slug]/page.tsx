@@ -8,6 +8,9 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { ArrowUpRight } from '@/components/icons'
+import { ProjectCover } from '@/components/ProjectCover'
+import { BrandTile } from '@/components/BrandIcon'
+import { Media } from '@/components/Media'
 
 type Args = { params: Promise<{ slug: string }> }
 
@@ -20,6 +23,14 @@ export default async function ProjectDetailPage({ params }: Args) {
   })
   const project = result.docs[0]
   if (!project) notFound()
+
+  const stackNames: string[] = [
+    ...new Set([
+      ...((project.stack as any[]) || []).map((t: any) => (typeof t === 'object' ? t?.name : null)),
+      ...((project.stackTags as any[]) || []).map((t: any) => t?.tag),
+    ]),
+  ].filter((x): x is string => Boolean(x))
+  const gallery = ((project.gallery as any[]) || []).filter((g: any) => g?.image && typeof g.image === 'object')
 
   return (
     <PageTransition>
@@ -54,6 +65,11 @@ export default async function ProjectDetailPage({ params }: Args) {
             </h1>
             <div className="w-full h-8 border border-white/20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjMDAwIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDBMOCA4Wk04IDBMMCA4WiIgc3Ryb2tlPSIjMjIyIiBzdHJva2Utd2lkdGg9IjEiPjwvcGF0aD4KPC9zdmc+')] opacity-20 invert mt-8"></div>
           </div>
+        </section>
+
+        {/* Portada */}
+        <section className="border-b border-white/20">
+          <ProjectCover slug={project.slug} color={project.color} className="w-full aspect-[16/9] md:aspect-[21/7]" />
         </section>
 
         {/* Content Area */}
@@ -128,18 +144,19 @@ export default async function ProjectDetailPage({ params }: Args) {
                 )}
 
                 {/* Stack */}
-                {project.stack && (project.stack as any[]).length > 0 && (
+                {stackNames.length > 0 && (
                   <div className="pt-16 mt-16 border-t border-white/20">
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-8">
                       // Tecnologías aplicadas
                     </h2>
-                    <div className="flex flex-wrap gap-2">
-                      {(project.stack as any[]).map((tool: any) => (
+                    <div className="flex flex-wrap gap-3">
+                      {stackNames.map((name) => (
                         <span
-                          key={typeof tool === 'object' ? tool.id : tool}
-                          className="px-3 py-1 text-[10px] font-mono border border-white/20 uppercase tracking-widest font-bold hover:bg-[#ff3300] hover:border-[#ff3300] transition-colors"
+                          key={name}
+                          className="inline-flex items-center gap-3 pr-4 border border-white/20 font-mono text-[10px] uppercase tracking-widest font-bold hover:border-[#ff3300] transition-colors"
                         >
-                          {typeof tool === 'object' ? tool.name : tool}
+                          <BrandTile name={name} size="sm" className="border-0 border-r border-white/20" />
+                          {name}
                         </span>
                       ))}
                     </div>
@@ -149,6 +166,31 @@ export default async function ProjectDetailPage({ params }: Args) {
             </div>
           </div>
         </section>
+
+        {/* Galería */}
+        {gallery.length > 0 && (
+          <section className="border-b border-white/20 bg-black">
+            <div className="p-8 md:p-16 pb-0 md:pb-0">
+              <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-8 border-b border-white/20 pb-4">
+                // Galería
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/20 border-t border-white/20">
+              {gallery.map((g: any, i: number) => (
+                <figure key={g.id || i} className="bg-black">
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <Media resource={g.image} fill htmlElement={null} imgClassName="object-cover" size="(max-width: 768px) 100vw, 50vw" />
+                  </div>
+                  {g.caption && (
+                    <figcaption className="p-4 font-mono text-[10px] uppercase tracking-widest opacity-60 border-t border-white/20">
+                      FIG.{String(i + 1).padStart(2, '0')} // {g.caption}
+                    </figcaption>
+                  )}
+                </figure>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </PageTransition>
   )

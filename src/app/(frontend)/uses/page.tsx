@@ -5,6 +5,7 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { IconTile } from '@/components/IconTile'
+import { BrandTile } from '@/components/BrandIcon'
 
 export default async function UsesPage() {
   const tools = await cms.find({
@@ -89,7 +90,10 @@ export default async function UsesPage() {
                           key={tool.id}
                           className="flex items-center justify-between gap-3 p-4 bg-white border-r border-b border-black hover:bg-black hover:text-white transition-colors group"
                         >
-                          <span className="font-semibold text-sm tracking-tight">{tool.name}</span>
+                          <span className="flex items-center gap-3 min-w-0">
+                            <BrandTile name={tool.name} />
+                            <span className="font-semibold text-sm tracking-tight">{tool.name}</span>
+                          </span>
                           {tool.level && (
                             <span className="text-[9px] font-mono border border-black/20 px-2 py-0.5 uppercase tracking-widest group-hover:border-white/30 group-hover:text-white">
                               {LEVELS[tool.level] || tool.level}

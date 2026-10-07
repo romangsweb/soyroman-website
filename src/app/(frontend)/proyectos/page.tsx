@@ -6,6 +6,8 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { ArrowUpRight } from '@/components/icons'
+import { ProjectCover } from '@/components/ProjectCover'
+import { BrandTile } from '@/components/BrandIcon'
 
 export default async function ProjectsPage() {
   const projects = await cms.find({
@@ -53,19 +55,17 @@ export default async function ProjectsPage() {
                   >
                     <div className="grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-white/20">
                       
-                      {/* Left: Year & Client */}
-                      <div className="md:col-span-3 p-8 flex flex-col justify-between">
-                        <div className="flex items-center gap-4 mb-8 md:mb-0">
+                      {/* Izquierda: portada con año */}
+                      <div className="md:col-span-3 relative">
+                        <ProjectCover slug={project.slug} color={project.color} className="w-full h-full min-h-[200px] aspect-[16/10] md:aspect-auto" />
+                        <div className="absolute top-4 left-4 flex items-center gap-3">
                           <span className="font-mono text-xs uppercase tracking-widest font-bold bg-white text-black px-2 py-1 inline-block group-hover:bg-[#ff3300] group-hover:text-white transition-colors">
                             {project.year || '2024'}
                           </span>
                           {project.featured && (
-                            <span className="font-mono text-[10px] uppercase tracking-widest border border-white/20 px-2 py-1 text-[#ff3300]">Featured</span>
+                            <span className="font-mono text-[10px] uppercase tracking-widest border border-white/20 bg-black px-2 py-1 text-[#ff3300]">Destacado</span>
                           )}
                         </div>
-                        {project.client && (
-                          <span className="font-mono text-sm uppercase tracking-widest opacity-80 mt-auto">{project.client}</span>
-                        )}
                       </div>
                       
                       {/* Middle: Title & Context */}
@@ -77,6 +77,16 @@ export default async function ProjectsPage() {
                           <p className="font-mono text-sm opacity-60 leading-relaxed line-clamp-2 max-w-xl">
                             {project.context}
                           </p>
+                        )}
+                        {project.client && (
+                          <p className="font-mono text-xs uppercase tracking-widest opacity-80 mt-6">{project.client}</p>
+                        )}
+                        {project.stackTags && project.stackTags.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-6 text-white/80">
+                            {project.stackTags.slice(0, 6).map((t: any, idx: number) => (
+                              <BrandTile key={idx} name={t.tag} size="sm" className="border-white/25" />
+                            ))}
+                          </div>
                         )}
                       </div>
 

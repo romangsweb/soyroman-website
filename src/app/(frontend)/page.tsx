@@ -8,6 +8,8 @@ import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { PostCover } from '@/components/PostCover'
 import { IconTile } from '@/components/IconTile'
+import { SystemDiagram } from '@/components/SystemDiagram'
+import { ProjectCover } from '@/components/ProjectCover'
 
 export default async function HomePage() {
   const profile = await cms.findGlobal({ slug: 'profile' })
@@ -40,7 +42,7 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-12">
             
             {/* Main Title Area */}
-            <div className="md:col-span-8 p-8 md:p-16 border-b md:border-b-0 md:border-r border-black bg-[#f4f4f4] relative">
+            <div className="md:col-span-7 p-8 md:p-16 border-b md:border-b-0 md:border-r border-black bg-[#f4f4f4] relative">
               <Reveal duration={1.2}>
                 <div className="flex items-center gap-3 mb-16">
                   <div className="w-3 h-3 bg-[#ff3300]"></div>
@@ -64,29 +66,42 @@ export default async function HomePage() {
               </Reveal>
             </div>
 
-            {/* Right Action Area */}
-            <div className="md:col-span-4 flex flex-col bg-white">
-              <Reveal className="flex-1 flex flex-col" delay={0.5}>
-                <Link href="/consultoria" className="group p-8 border-b border-black flex-1 flex flex-col justify-center items-center text-center hover:bg-[#f4f4f4] transition-colors">
-                  <span className="font-mono uppercase tracking-widest text-xs font-bold text-black/50 mb-6 block">Estado</span>
-                  <div className="w-16 h-16 bg-[#ff3300] border border-black mb-6 animate-pulse"></div>
-                  <p className="font-mono text-sm uppercase tracking-widest font-bold">Aceptando proyectos</p>
-                  <span className="mt-4 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest font-bold text-black/60 group-hover:text-[#ff3300]">
-                    Ver servicios <ArrowUpRight className="w-3 h-3" />
-                  </span>
-                </Link>
-                <div className="grid grid-cols-2 divide-x divide-black border-b border-black">
-                  <Link href="/contacto" className="p-6 text-center hover:bg-[#ff3300] hover:text-white transition-colors group flex flex-col items-center justify-center gap-2">
-                    <span className="font-mono uppercase tracking-widest text-[10px] font-bold">Contacto</span>
-                    <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                  </Link>
-                  <Link href="/cv" className="p-6 text-center hover:bg-black hover:text-white transition-colors group flex flex-col items-center justify-center gap-2">
-                    <span className="font-mono uppercase tracking-widest text-[10px] font-bold">Ver CV</span>
-                    <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                  </Link>
-                </div>
+            {/* Derecha: diagrama del sistema */}
+            <div className="md:col-span-5 bg-white flex items-center p-4 md:p-8">
+              <Reveal className="w-full" delay={0.5}>
+                <SystemDiagram className="w-full h-auto" />
               </Reveal>
             </div>
+          </div>
+        </section>
+
+        {/* Franja de estado y accesos */}
+        <section className="border-b border-black bg-white">
+          <div className="grid grid-cols-2 sm:grid-cols-12 divide-x divide-black">
+            <Link
+              href="/consultoria"
+              className="col-span-2 sm:col-span-6 group p-6 md:px-16 flex items-center gap-5 border-b sm:border-b-0 border-black hover:bg-[#f4f4f4] transition-colors"
+            >
+              <span className="w-4 h-4 bg-[#ff3300] border border-black animate-pulse shrink-0" />
+              <span className="font-mono text-xs md:text-sm uppercase tracking-widest font-bold">Aceptando proyectos</span>
+              <span className="ml-auto inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest font-bold text-black/60 group-hover:text-[#ff3300]">
+                Ver servicios <ArrowUpRight className="w-3 h-3" />
+              </span>
+            </Link>
+            <Link
+              href="/contacto"
+              className="sm:col-span-3 p-6 flex items-center justify-center gap-2 hover:bg-[#ff3300] hover:text-white transition-colors group"
+            >
+              <span className="font-mono uppercase tracking-widest text-[10px] font-bold">Contacto</span>
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </Link>
+            <Link
+              href="/cv"
+              className="sm:col-span-3 p-6 flex items-center justify-center gap-2 hover:bg-black hover:text-white transition-colors group"
+            >
+              <span className="font-mono uppercase tracking-widest text-[10px] font-bold">Ver CV</span>
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </Link>
           </div>
         </section>
 
@@ -185,7 +200,13 @@ export default async function HomePage() {
                 <Reveal delay={i * 0.1} key={project.id}>
                   <Morph name={`project-${project.slug}`}>
                     <Link href={`/proyectos/${project.slug}`} className="flex flex-col sm:flex-row sm:items-center justify-between p-8 md:p-12 hover:bg-white hover:text-black transition-colors duration-300 group relative">
-                      <div className="flex flex-col gap-2 mb-6 sm:mb-0">
+                      <ProjectCover
+                        slug={project.slug}
+                        color={project.color}
+                        label={false}
+                        className="hidden md:block w-40 aspect-[16/10] shrink-0 mr-8 border border-white/20 group-hover:border-black transition-colors"
+                      />
+                      <div className="flex flex-col gap-2 mb-6 sm:mb-0 sm:mr-auto">
                         <div className="flex items-center gap-4">
                           <span className="font-mono uppercase tracking-widest text-xs font-bold bg-white text-black group-hover:bg-[#ff3300] group-hover:text-white px-2 py-0.5 transition-colors">
                             {project.year || '2024'}

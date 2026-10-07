@@ -8,6 +8,7 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { ArrowUpRight } from '@/components/icons'
+import { FrameworkDiagram } from '@/components/FrameworkDiagram'
 
 type Args = {
   params: Promise<{ slug: string }>
@@ -68,6 +69,9 @@ export default async function ExpertiseDetailPage({ params }: Args) {
           </div>
         </header>
 
+        {/* Framework dibujado */}
+        <FrameworkDiagram steps={(expertise.framework as any[]) || []} title={expertise.title} />
+
         {/* Main Content Area */}
         <section className="border-b border-black bg-white">
           <div className="grid grid-cols-1 lg:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-black">
@@ -119,7 +123,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
                 )}
 
                 {/* Framework */}
-                {expertise.framework && expertise.framework.length > 0 && (
+                {expertise.framework && expertise.framework.some((st: any) => st.description) && (
                   <div className="p-8 md:p-16 border-t border-black bg-white flex-1">
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-8 border-b border-black/10 pb-4">
                       // Pasos
