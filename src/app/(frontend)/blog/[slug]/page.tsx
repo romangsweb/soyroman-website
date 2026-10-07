@@ -14,6 +14,7 @@ import { hasCover } from '@/components/PostCover'
 import { ScreenCover, postCategory } from '@/components/ScreenCover'
 import { ArrowUpRight } from '@/components/icons'
 import { AuthorBox, RelatedPosts } from '@/components/PostExtras'
+import { Subscribe } from '@/components/Subscribe'
 import { SITE, PERSON_ID, ld } from '@/lib/seo'
 
 type Args = { params: Promise<{ slug: string }> }
@@ -161,6 +162,11 @@ export default async function BlogPostPage({ params }: Args) {
           </div>
         </section>
 
+        <section className="bg-white border-t border-black">
+          <div className="container max-w-4xl p-8 md:p-12 border-x border-black">
+            <Subscribe where="articulo" />
+          </div>
+        </section>
         <AuthorBox profile={profile} />
         <RelatedPosts posts={related} />
 

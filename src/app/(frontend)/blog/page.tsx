@@ -6,6 +6,7 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { ScreenCover, postCategory } from '@/components/ScreenCover'
+import { Subscribe } from '@/components/Subscribe'
 
 export default async function BlogPage() {
   const posts = await cms.find({
@@ -96,6 +97,9 @@ export default async function BlogPage() {
                     <span className="font-mono text-sm uppercase font-bold text-[#e85a2a] group-hover:text-black">Recursos</span>
                     <span className="font-mono text-[9px] uppercase font-bold bg-[#e85a2a] text-white px-1.5 py-0.5">Calc</span>
                   </Link>
+                </div>
+                <div className="mt-12">
+                  <Subscribe where="blog" compact />
                 </div>
               </div>
             </div>

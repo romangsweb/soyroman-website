@@ -8,7 +8,9 @@ import { cookies, headers } from 'next/headers'
  */
 const PORTAL_ID = process.env.HUBSPOT_PORTAL_ID || '51346021'
 const FORM_GUID = process.env.HUBSPOT_FORM_GUID || '5f4b698f-db18-4c9a-b547-1c37d54d1ce1'
-const ENDPOINT = `https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${FORM_GUID}`
+const SUB_GUID = process.env.HUBSPOT_SUBSCRIBE_FORM_GUID || '89dc04aa-03b8-4810-a373-9468478e0e38'
+const SUB_TYPE = Number(process.env.HUBSPOT_BLOG_SUBSCRIPTION_ID || 0)
+const endpoint = (guid: string) => `https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${guid}`
 
 export type LeadState = { status: 'idle' | 'ok' | 'error'; message?: string }
 
@@ -41,13 +43,19 @@ export async function submitLead(_prev: LeadState, form: FormData): Promise<Lead
 
 type Field = { objectTypeId: string; name: string; value: string }
 
-async function sendToHubspot(fields: Field[], origin: string, fallbackUri: string): Promise<LeadState> {
+async function sendToHubspot(
+  fields: Field[],
+  origin: string,
+  fallbackUri: string,
+  guid = FORM_GUID,
+  extra: object = {},
+): Promise<LeadState> {
   const h = await headers()
   const hutk = (await cookies()).get('hubspotutk')?.value
   const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim()
 
   try {
-    const res = await fetch(ENDPOINT, {
+    const res = await fetch(endpoint(guid), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -58,6 +66,7 @@ async function sendToHubspot(fields: Field[], origin: string, fallbackUri: strin
           ...(hutk ? { hutk } : {}),
           ...(ip ? { ipAddress: ip } : {}),
         },
+        ...extra,
       }),
       cache: 'no-store',
       signal: AbortSignal.timeout(10000),
@@ -93,4 +102,35 @@ export async function submitToolLead(_prev: LeadState, form: FormData): Promise<
     { objectTypeId: '0-1', name: 'message', value: `[Recurso: ${tool}]\n${summary}` },
   ]
   return sendToHubspot(fields, `Recurso · ${tool}`, 'https://soyroman.com/recursos')
+}
+
+/**
+ * Suscripción al blog: solo correo. Si existe HUBSPOT_BLOG_SUBSCRIPTION_ID, el contacto queda
+ * suscrito con consentimiento explícito a ese tipo de suscripción (necesario para enviarle correos de marketing).
+ */
+export async function submitSubscriber(_prev: LeadState, form: FormData): Promise<LeadState> {
+  if (clean(form.get('website'), 200)) return { status: 'ok' }
+  const email = clean(form.get('email'), 200).toLowerCase()
+  const where = clean(form.get('where'), 60) || 'blog'
+  if (!EMAIL.test(email)) return { status: 'error', message: 'Revisa tu correo.' }
+
+  const consent = SUB_TYPE
+    ? {
+        legalConsentOptions: {
+          consent: {
+            consentToProcess: true,
+            text: 'Acepto recibir el resumen del blog de soyroman.com y el tratamiento de mis datos según el aviso de privacidad.',
+            communications: [{ value: true, subscriptionTypeId: SUB_TYPE, text: 'Resumen del blog' }],
+          },
+        },
+      }
+    : {}
+
+  return sendToHubspot(
+    [{ objectTypeId: '0-1', name: 'email', value: email }],
+    `Suscripción · ${where}`,
+    'https://soyroman.com/blog',
+    SUB_GUID,
+    consent,
+  )
 }
