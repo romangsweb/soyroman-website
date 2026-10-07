@@ -13,6 +13,19 @@ export type Recurso = {
   glossary: string[] // términos del glosario que enlazan aquí
   expertise: string[] // áreas de expertise relacionadas
   categories: string[] // temas del blog relacionados
+  areas: Area[] // especialidad para el filtro de /recursos (la primera es la principal)
+  kind: Kind // qué necesita tener a la mano quien la usa
+  isNew?: boolean
+}
+
+export type Area = 'dem' | 'rev' | 'seo' | 'web'
+export type Kind = 'calc' | 'diag' | 'sitio' | 'ia'
+export const AREAS: Record<Area, string> = { dem: 'Demanda y medios', rev: 'RevOps y CRM', seo: 'SEO e IA', web: 'Sitio y stack' }
+export const KINDS: Record<Kind, { label: string; hint: string }> = {
+  calc: { label: 'Calculadora', hint: 'usa tus números' },
+  diag: { label: 'Diagnóstico', hint: 'respondes preguntas' },
+  sitio: { label: 'Analizador', hint: 'escribe un dominio' },
+  ia: { label: 'Con IA', hint: 'consulta en vivo' },
 }
 
 export const RECURSOS: Recurso[] = [
@@ -27,6 +40,8 @@ export const RECURSOS: Recurso[] = [
     glossary: ['lead', 'mql', 'sql', 'sal', 'embudo-de-ventas', 'pipeline', 'win-rate', 'tasa-de-conversion', 'forecast', 'velocidad-del-pipeline', 'kpi'],
     expertise: ['generacion-demanda-b2b', 'crm-revops'],
     categories: ['generacion-demanda', 'crm-revops', 'analitica'],
+    areas: ['dem', 'rev'],
+    kind: 'calc',
   },
   {
     slug: 'roas-romi-roi',
@@ -39,6 +54,8 @@ export const RECURSOS: Recurso[] = [
     glossary: ['roas', 'romi', 'roi', 'cac', 'cpl', 'cpa', 'cpc', 'ltv-cac', 'payback-cac', 'modelo-de-atribucion'],
     expertise: ['paid-media', 'generacion-demanda-b2b'],
     categories: ['paid-media', 'analitica'],
+    areas: ['dem'],
+    kind: 'calc',
   },
   {
     slug: 'madurez-revops',
@@ -51,6 +68,8 @@ export const RECURSOS: Recurso[] = [
     glossary: ['revops', 'crm', 'sla-marketing-ventas', 'ciclo-de-vida', 'forecast', 'modelo-de-atribucion', 'meddic'],
     expertise: ['crm-revops', 'liderazgo-equipos'],
     categories: ['crm-revops', 'liderazgo'],
+    areas: ['rev'],
+    kind: 'diag',
   },
   {
     slug: 'icp',
@@ -63,6 +82,8 @@ export const RECURSOS: Recurso[] = [
     glossary: ['icp', 'buyer-persona', 'abm', 'lead-scoring', 'customer-journey', 'outbound'],
     expertise: ['generacion-demanda-b2b', 'paid-media'],
     categories: ['generacion-demanda', 'contenido-email', 'paid-media'],
+    areas: ['dem', 'rev'],
+    kind: 'diag',
   },
   {
     slug: 'presupuesto-marketing',
@@ -75,6 +96,8 @@ export const RECURSOS: Recurso[] = [
     glossary: ['cac', 'cpl', 'romi', 'roi', 'payback-cac', 'ltv-cac'],
     expertise: ['paid-media', 'generacion-demanda-b2b', 'crm-revops'],
     categories: ['paid-media', 'analitica', 'generacion-demanda'],
+    areas: ['dem'],
+    kind: 'calc',
   },
   {
     slug: 'auditor-aeo',
@@ -87,6 +110,8 @@ export const RECURSOS: Recurso[] = [
     glossary: ['aeo', 'geo', 'seo', 'schema-markup', 'serp'],
     expertise: ['seo-aeo-geo', 'web-herramientas'],
     categories: ['seo-aeo', 'sitios-web'],
+    areas: ['seo', 'web'],
+    kind: 'sitio',
   },
   {
     slug: 'brecha-pipeline',
@@ -99,6 +124,8 @@ export const RECURSOS: Recurso[] = [
     glossary: ['forecast', 'pipeline', 'win-rate', 'velocidad-del-pipeline', 'embudo-de-ventas'],
     expertise: ['crm-revops', 'liderazgo-equipos'],
     categories: ['crm-revops', 'analitica'],
+    areas: ['rev'],
+    kind: 'calc',
   },
   {
     slug: 'cpl-maximo',
@@ -111,6 +138,8 @@ export const RECURSOS: Recurso[] = [
     glossary: ['cpl', 'cpc', 'cac', 'cpa', 'roas'],
     expertise: ['paid-media', 'generacion-demanda-b2b'],
     categories: ['paid-media', 'generacion-demanda'],
+    areas: ['dem'],
+    kind: 'calc',
   },
   {
     slug: 'radiografia-stack',
@@ -123,6 +152,8 @@ export const RECURSOS: Recurso[] = [
     glossary: ['crm', 'seo', 'modelo-de-atribucion', 'lead-scoring', 'landing-page'],
     expertise: ['web-herramientas', 'crm-revops', 'seo-aeo-geo'],
     categories: ['sitios-web', 'crm-revops', 'analitica'],
+    areas: ['web', 'rev'],
+    kind: 'sitio',
   },
   {
     slug: 'velocidad-real',
@@ -135,6 +166,9 @@ export const RECURSOS: Recurso[] = [
     glossary: ['seo', 'landing-page', 'tasa-de-conversion'],
     expertise: ['web-herramientas', 'seo-aeo-geo'],
     categories: ['sitios-web', 'seo-aeo'],
+    areas: ['web', 'seo'],
+    kind: 'sitio',
+    isNew: true,
   },
   {
     slug: 'salud-correo',
@@ -147,6 +181,9 @@ export const RECURSOS: Recurso[] = [
     glossary: ['crm', 'lead', 'lead-nurturing'],
     expertise: ['generacion-demanda-b2b', 'crm-revops', 'web-herramientas'],
     categories: ['contenido-email', 'crm-revops'],
+    areas: ['web', 'dem'],
+    kind: 'sitio',
+    isNew: true,
   },
   {
     slug: 'comparador-competidores',
@@ -159,6 +196,9 @@ export const RECURSOS: Recurso[] = [
     glossary: ['seo', 'crm', 'benchmark'],
     expertise: ['seo-aeo-geo', 'web-herramientas', 'generacion-demanda-b2b'],
     categories: ['sitios-web', 'seo-aeo', 'analitica'],
+    areas: ['seo', 'web'],
+    kind: 'sitio',
+    isNew: true,
   },
   {
     slug: 'te-recomienda-la-ia',
@@ -171,6 +211,9 @@ export const RECURSOS: Recurso[] = [
     glossary: ['seo', 'aeo', 'geo'],
     expertise: ['seo-aeo-geo', 'generacion-demanda-b2b'],
     categories: ['seo-aeo', 'ia-aplicada'],
+    areas: ['seo'],
+    kind: 'ia',
+    isNew: true,
   },
   {
     slug: 'explorador-busquedas',
@@ -183,6 +226,9 @@ export const RECURSOS: Recurso[] = [
     glossary: ['seo', 'aeo', 'contenido', 'buyer-persona'],
     expertise: ['seo-aeo-geo', 'generacion-demanda-b2b'],
     categories: ['seo-aeo', 'contenido-email'],
+    areas: ['seo', 'dem'],
+    kind: 'ia',
+    isNew: true,
   },
 ]
 
