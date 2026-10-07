@@ -46,7 +46,7 @@ export function Subscribe({ where, compact = false }: { where: string; compact?:
               </p>
               <form action={action} className={`mt-4 flex gap-3 ${compact ? 'flex-col' : 'flex-col sm:flex-row'}`}>
                 <input type="hidden" name="where" value={where} />
-                <div className="hidden" aria-hidden="true"><input name="website" tabIndex={-1} autoComplete="off" /></div>
+                <div className="hidden" aria-hidden="true"><input name="sr_trap" tabIndex={-1} autoComplete="off" /></div>
                 <input
                   name="email"
                   type="email"

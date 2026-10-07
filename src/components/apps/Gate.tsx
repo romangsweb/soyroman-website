@@ -23,7 +23,7 @@ export function Gate({ tool, summary, onDone, onCancel }: { tool: string; summar
       <input name="company" placeholder="Empresa" aria-label="Empresa" autoComplete="organization" />
       <input name="tool" type="hidden" value={tool} />
       <input name="summary" type="hidden" value={summary} />
-      <div className="hp" aria-hidden="true"><input name="website" tabIndex={-1} autoComplete="off" /></div>
+      <div className="hidden" aria-hidden="true"><input name="sr_trap" tabIndex={-1} autoComplete="off" /></div>
       {state.status === 'error' && <span className="err" role="alert">{state.message}</span>}
       <button disabled={pending}>{pending ? 'Enviando…' : 'Enviar y descargar ▸'}</button>
       <small>

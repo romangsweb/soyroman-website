@@ -38,9 +38,8 @@ export function ContactForm({ origin = 'Contacto', showService = true }: Props) 
     <form action={action} className="space-y-8 relative z-10" noValidate={false}>
       <input type="hidden" name="origin" value={origin} />
       {/* Campo trampa para bots: oculto a personas y lectores de pantalla */}
-      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-        <label htmlFor="website">Sitio web</label>
-        <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+      <div aria-hidden="true" className="hidden">
+        <input name="sr_trap" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

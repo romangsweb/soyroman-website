@@ -17,9 +17,16 @@ export type LeadState = { status: 'idle' | 'ok' | 'error'; message?: string }
 const clean = (v: FormDataEntryValue | null, max: number) => String(v ?? '').trim().slice(0, max)
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
+/** Campo trampa (oculto con display:none para que el autollenado no lo toque). Lleno = bot. */
+const trapped = (form: FormData, where: string) => {
+  const hit = Boolean(clean(form.get('sr_trap'), 200))
+  if (hit) console.warn(`[lead] descartado por campo trampa (${where})`)
+  return hit
+}
+
 export async function submitLead(_prev: LeadState, form: FormData): Promise<LeadState> {
   // Campo trampa: los humanos no lo ven; si viene lleno, fingimos éxito y descartamos.
-  if (clean(form.get('website'), 200)) return { status: 'ok' }
+  if (trapped(form, 'contacto')) return { status: 'ok' }
 
   const name = clean(form.get('name'), 120)
   const email = clean(form.get('email'), 200).toLowerCase()
@@ -75,6 +82,7 @@ async function sendToHubspot(
       console.error('[hubspot] envío rechazado', res.status, (await res.text()).slice(0, 500))
       return { status: 'error', message: 'No se pudo enviar. Escríbeme directo a contacto@soyroman.com.' }
     }
+    console.info(`[hubspot] enviado ${origin} → ${guid.slice(0, 8)}`)
     return { status: 'ok' }
   } catch (err) {
     console.error('[hubspot] error de red', err)
@@ -87,7 +95,7 @@ async function sendToHubspot(
  * mensaje con el prefijo [Recurso: …] para filtrarlo o disparar workflows en HubSpot.
  */
 export async function submitToolLead(_prev: LeadState, form: FormData): Promise<LeadState> {
-  if (clean(form.get('website'), 200)) return { status: 'ok' }
+  if (trapped(form, 'recurso')) return { status: 'ok' }
   const name = clean(form.get('name'), 120)
   const email = clean(form.get('email'), 200).toLowerCase()
   const company = clean(form.get('company'), 160)
@@ -109,7 +117,7 @@ export async function submitToolLead(_prev: LeadState, form: FormData): Promise<
  * suscrito con consentimiento explícito a ese tipo de suscripción (necesario para enviarle correos de marketing).
  */
 export async function submitSubscriber(_prev: LeadState, form: FormData): Promise<LeadState> {
-  if (clean(form.get('website'), 200)) return { status: 'ok' }
+  if (trapped(form, 'suscripcion')) return { status: 'ok' }
   const email = clean(form.get('email'), 200).toLowerCase()
   const where = clean(form.get('where'), 60) || 'blog'
   if (!EMAIL.test(email)) return { status: 'error', message: 'Revisa tu correo.' }
