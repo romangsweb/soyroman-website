@@ -30,6 +30,17 @@ Genera borradores de los términos de `glossary_terms.py` que aún no existen en
 ~/homeserver/venv/bin/python3 tools/content-engine/glossary_engine.py --batch 5
 ```
 
+## Blog v2 (`blog_engine.py`)
+Escribe a partir de `editorial_map.py` (90 temas con lector, tesis, formato, términos y recurso):
+brief → redacción por secciones → editor → calificación (segunda pasada si < 7) → resumen, enlaces al glosario,
+llamado a la calculadora y preguntas frecuentes → portada por tema. `soyroman_engine.py` queda como módulo compartido.
+```bash
+~/homeserver/venv/bin/python3 tools/content-engine/blog_engine.py --list            # estado del mapa
+~/homeserver/venv/bin/python3 tools/content-engine/blog_engine.py --dry-run --topic "ROAS, ROMI"
+~/homeserver/venv/bin/python3 tools/content-engine/blog_engine.py --batch 3          # tres borradores
+```
+Modelo: `SOYROMAN_MODEL_WRITER` en el `.env` de buildations_engines (recomendado `qwen3:14b`; si no existe, usa `MODEL_WRITER`).
+
 ## Notas de campo (`notes_engine.py`)
 Redacta las notas en etapa "idea" usando SOLO tus apuntes (campo "Tus apuntes"). La idea debe
 guardarse como borrador (no publicada) para que el bot pueda editarla.
@@ -39,7 +50,10 @@ guardarse como borrador (no publicada) para que el bot pueda editarla.
 
 ## Cron sugerido (escalonado para no saturar Ollama)
 ```
-47 7  * * 2,4 cd /home/hall/homeserver/soyroman-cms && /home/hall/homeserver/venv/bin/python3 tools/content-engine/soyroman_engine.py >> /home/hall/homeserver/logs/soyroman-content.log 2>&1
+# Blog v2: lote inicial, 3 por noche (quitar tras ~9 noches)
+17 1  * * *   cd /home/hall/homeserver/soyroman-cms && /home/hall/homeserver/venv/bin/python3 tools/content-engine/blog_engine.py --batch 3 >> /home/hall/homeserver/logs/soyroman-content.log 2>&1
+# Blog v2: ritmo normal, 1 artículo lunes, miércoles y viernes
+# 17 1  * * 1,3,5 cd /home/hall/homeserver/soyroman-cms && /home/hall/homeserver/venv/bin/python3 tools/content-engine/blog_engine.py >> /home/hall/homeserver/logs/soyroman-content.log 2>&1
 23 6  * * *   cd /home/hall/homeserver/soyroman-cms && /home/hall/homeserver/venv/bin/python3 tools/content-engine/glossary_engine.py --batch 3 >> /home/hall/homeserver/logs/soyroman-glossary.log 2>&1
 11 9  * * *   cd /home/hall/homeserver/soyroman-cms && /home/hall/homeserver/venv/bin/python3 tools/content-engine/notes_engine.py >> /home/hall/homeserver/logs/soyroman-notes.log 2>&1
 ```

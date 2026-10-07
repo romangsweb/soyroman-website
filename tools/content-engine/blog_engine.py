@@ -1,0 +1,537 @@
+#!/usr/bin/env python3
+"""
+Motor de blog v2 — soyroman.com
+
+Escribe BORRADORES con criterio editorial a partir de editorial_map.py:
+
+  1. Brief      esquema, título, extracto y metadatos en JSON, a partir de la tesis y el lector
+  2. Redacción  introducción, cada sección y cierre por separado; cada paso ve el esquema y lo ya escrito
+  3. Editor     pasada de edición contra una lista de verificación (relleno, frases hechas, repeticiones)
+  4. Enriquecer resumen al inicio, enlaces al glosario, llamado a la calculadora y preguntas frecuentes
+  5. Calidad    heurística + autoevaluación; si no pasa, una segunda pasada de editor; si sigue sin pasar, llega marcado
+  6. Portada    ComfyUI con motivo por tema (si falla, el sitio dibuja una portada generativa)
+
+El CMS impone que el bot solo cree borradores: publicar sigue siendo decisión de Román.
+
+Uso:
+  python blog_engine.py                       # siguiente tema (la categoría con menos artículos)
+  python blog_engine.py --batch 3             # varios seguidos (cron nocturno)
+  python blog_engine.py --category paid-media # siguiente tema de esa categoría
+  python blog_engine.py --topic "ROAS, ROMI"  # el tema del mapa que contenga ese texto
+  python blog_engine.py --dry-run             # escribe e imprime; no guarda ni genera portada
+  python blog_engine.py --list                # estado del mapa: qué temas ya se usaron
+
+Config (además de la del motor v1):
+  SOYROMAN_MODEL_WRITER   modelo de Ollama para el blog (si no, MODEL_WRITER)
+  SOYROMAN_QUALITY_MIN    calificación mínima (0-10) para no marcar el borrador; por defecto 7
+"""
+import argparse
+import json
+import re
+import sys
+from collections import Counter
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from editorial_map import CAT_EXPERTISE, TOPICS  # noqa: E402
+from soyroman_engine import (  # noqa: E402
+    CMS,
+    CMS_PUBLIC,
+    EXCERPT_MAX,
+    VOICE,
+    brand_check,
+    cfg,
+    clip,
+    dedup,
+    engine_lock,
+    generate_cover,
+    heading_case,
+    log,
+    ollama_call,
+    send_telegram,
+    sentence_case,
+    slugify,
+    tel,
+    tidy,
+    writer_model,
+)
+
+ENGINE_NAME = "soyroman-posts"  # misma telemetría que v1: así no repite temas ya usados
+RESOURCES = {
+    "embudo-inverso": ("calculadora de embudo inverso", "/recursos/embudo-inverso",
+                       "Calcula cuántos leads, MQL y SQL necesitas al mes para tu meta de ingresos"),
+    "roas-romi-roi": ("calculadora de ROAS, ROMI y ROI", "/recursos/roas-romi-roi",
+                      "Calcula el retorno real de tu inversión en marketing con tus números"),
+}
+FORMATS = {
+    "marco": "un marco de decisión: criterios claros, cuándo aplica cada opción y sus trade-offs",
+    "guia": "una guía paso a paso accionable, con el porqué de cada paso",
+    "comparativa": "una comparativa honesta con criterios explícitos y una recomendación según el caso",
+    "opinion": "un artículo de opinión que defiende una postura con argumentos y reconoce el contraargumento",
+    "plantilla": "una plantilla que el lector pueda copiar y adaptar, explicada campo por campo",
+    "checklist": "un checklist priorizado: qué revisar, en qué orden y cómo saber si está bien",
+    "errores": "los errores más comunes, por qué ocurren y cómo corregir cada uno",
+}
+# Frases de relleno que delatan texto genérico (se cuentan y se piden quitar en la edición)
+FILLER = [
+    "en el mundo actual", "hoy en día", "en la era digital", "es crucial", "es fundamental", "es importante destacar",
+    "juega un papel", "desempeña un papel", "sin lugar a dudas", "sin duda alguna", "en conclusión", "en resumen,",
+    "cabe destacar", "cabe mencionar", "no es ningún secreto", "el panorama actual", "clave del éxito", "potenciar",
+    "sinergia", "de manera efectiva", "de forma efectiva", "a la hora de", "en definitiva", "llevar al siguiente nivel",
+    "revolucionar", "un mundo cada vez más", "panorama competitivo", "en este artículo exploraremos", "vamos a explorar",
+]
+
+# ───────────────────────── Prompts ─────────────────────────
+BRIEF = """Vas a planear un artículo para el blog. No lo escribas todavía: arma el brief.
+
+TEMA DE TRABAJO: {title}
+LECTOR: {reader}
+QUÉ BUSCA EL LECTOR: {intent}
+TESIS (la postura que el artículo defiende; no la cambies): {thesis}
+FORMATO: {fmt_desc}
+EXTENSIÓN: {length}
+
+Responde SOLO con JSON válido con esta forma:
+{{
+  "title": "título final, específico, máximo 80 caracteres, mayúsculas solo al inicio y en siglas/nombres propios",
+  "slug": "slug-sin-acentos",
+  "excerpt": "1-2 frases afirmativas con la tesis, máximo 180 caracteres, sin preguntas",
+  "meta_title": "máximo 60 caracteres, sin signos de exclamación",
+  "meta_description": "máximo 155 caracteres",
+  "takeaways": ["3 ideas clave que el lector se lleva, una frase cada una"],
+  "sections": [
+    {{"heading": "encabezado ## de la sección", "point": "qué argumenta o explica esta sección en una frase",
+      "include": "el elemento concreto que lleva: ejemplo, criterio, tabla, pasos, cálculo o plantilla"}}
+  ],
+  "faq": ["3 preguntas reales que este lector se haría después de leer, en sus palabras"]
+}}
+Reglas del esquema: {n_sections} secciones; la primera no puede ser una definición obvia; cada sección avanza la tesis; ninguna se repite con otra; la última sección es accionable (qué hacer el lunes)."""
+
+INTRO = """Escribe la INTRODUCCIÓN del artículo (sin encabezado, 90-140 palabras).
+
+{context}
+
+La introducción plantea el problema real del lector y enuncia la tesis en la primera o segunda frase. Nada de "en este artículo veremos". Solo Markdown del párrafo o párrafos."""
+
+SECTION = """Escribe UNA sección del artículo.
+
+{context}
+
+LO YA ESCRITO (para no repetir y mantener el hilo):
+---
+{so_far}
+---
+
+SECCIÓN A ESCRIBIR: ## {heading}
+Qué debe argumentar: {point}
+Debe incluir: {include}
+Extensión: {words} palabras.
+
+Empieza con la línea "## {heading}". Puedes usar ### para subsecciones, listas o una tabla en Markdown si ayudan. No repitas ideas de lo ya escrito. No cierres el artículo aquí."""
+
+CLOSING = """Escribe el CIERRE del artículo (60-110 palabras, sin encabezado "Conclusión").
+
+{context}
+
+LO YA ESCRITO (resumen de secciones): {headings}
+
+El cierre retoma la tesis con una idea nueva o una consecuencia práctica; no resume sección por sección. Sin encabezado: solo el párrafo."""
+
+FAQ = """Responde estas preguntas frecuentes del lector del artículo "{title}".
+Tesis del artículo: {thesis}
+
+Preguntas:
+{questions}
+
+Responde SOLO con JSON: {{"faq": [{{"q": "pregunta", "a": "respuesta directa de 40-80 palabras, empieza por la respuesta, sin rodeos"}}]}}"""
+
+EDITOR = """Eres el editor del blog. Edita este borrador para que suene a un profesional con criterio, no a texto generado.
+
+LISTA DE VERIFICACIÓN:
+- Quita relleno y frases hechas (por ejemplo: {filler}).
+- Elimina repeticiones entre secciones; si dos párrafos dicen lo mismo, deja uno.
+- Cada afirmación general lleva un criterio, un ejemplo o un número presentado como rango típico. Si falta y requiere experiencia personal real, deja [COMPLETAR: qué ejemplo real va aquí].
+- No inventes cifras, clientes ni anécdotas como reales.
+- Frases cortas y directas; voz activa; primera persona donde aporte.
+- Mantén TODOS los encabezados ## y ###, las listas y las tablas. Mantén la extensión (no recortes más de 10 %).
+- Mayúsculas en español: solo al inicio, siglas y nombres propios.
+{extra}
+
+Devuelve SOLO el artículo editado en Markdown, empezando por el primer párrafo de la introducción.
+
+BORRADOR:
+---
+{draft}
+---"""
+
+SCORE = """Evalúa este artículo como editor exigente de un blog de marketing B2B. Sé estricto: un 10 es publicable sin tocar.
+
+Tesis esperada: {thesis}
+Lector: {reader}
+
+Responde SOLO con JSON:
+{{"tesis": 0-10, "especificidad": 0-10, "estructura": 0-10, "estilo": 0-10, "utilidad": 0-10,
+  "problemas": ["hasta 4 problemas concretos, citando la sección"]}}
+
+ARTÍCULO:
+---
+{article}
+---"""
+
+
+# ───────────────────────── Utilidades ─────────────────────────
+class NoRun:
+    """Sustituto de TelemetryRun para --dry-run."""
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def __getattr__(self, name):
+        return lambda *a, **k: None
+
+
+def as_json(raw):
+    """Extrae el primer objeto JSON de la respuesta (tolerante a texto alrededor)."""
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        m = re.search(r"\{.*\}", raw, re.S)
+        if m:
+            return json.loads(m.group(0))
+        raise
+
+
+def words(md):
+    return len(re.findall(r"\w+", md))
+
+
+def filler_hits(md):
+    low = md.lower()
+    return {f: low.count(f) for f in FILLER if f in low}
+
+
+def used_topics():
+    used = set()
+    try:
+        for run in tel.get_recent_runs(ENGINE_NAME, limit=500, status="success"):
+            if run.get("topic"):
+                used.add(run["topic"])
+    except Exception as e:
+        log(f"  telemetría no disponible: {e}")
+    return used
+
+
+def category_counts(cms):
+    """Cuántos posts (borradores incluidos) tiene cada categoría, para repartir el volumen."""
+    counts = Counter()
+    try:
+        docs = cms.get("posts", **{"limit": 500, "depth": 1, "draft": "true"}).get("docs", [])
+        for d in docs:
+            for c in d.get("categories") or []:
+                if isinstance(c, dict) and c.get("slug"):
+                    counts[c["slug"]] += 1
+    except Exception as e:
+        log(f"  no se pudo contar posts por categoría: {e}")
+    return counts
+
+
+def pick_topics(cms, n, category=None, contains=None):
+    used = used_topics()
+    pool = [t for t in TOPICS if t["title"] not in used]
+    if contains:
+        pool = [t for t in TOPICS if contains.lower() in t["title"].lower()]
+        return pool[:n]
+    if category:
+        return [t for t in pool if t["cat"] == category][:n]
+    counts = category_counts(cms) if cms else Counter()
+    out = []
+    for _ in range(n):
+        cands = [t for t in pool if t not in out]
+        if not cands:
+            break
+        # categoría con menos artículos; dentro de ella, primero el pilar y luego en orden del mapa
+        cand_cats = {t["cat"] for t in cands}
+        cat = min(cand_cats, key=lambda c: (counts[c], c))
+        pick = next(t for t in cands if t["cat"] == cat)
+        out.append(pick)
+        counts[cat] += 1
+    return out
+
+
+def glossary_index(cms):
+    """{slug: término} de los términos publicados (solo a esos se puede enlazar)."""
+    try:
+        docs = cms.get("glossary", **{"where[_status][equals]": "published", "limit": 300, "depth": 0}).get("docs", [])
+        return {d["slug"]: d["term"] for d in docs if d.get("slug") and d.get("term")}
+    except Exception as e:
+        log(f"  glosario no disponible para enlazar: {e}")
+        return {}
+
+
+def link_terms(md, slugs, glossary):
+    """Enlaza la primera mención de cada término (fuera de encabezados y de enlaces existentes)."""
+    linked = []
+    lines = md.split("\n")
+    for slug in slugs:
+        term = glossary.get(slug)
+        if not term:
+            continue
+        pat = re.compile(rf"(?<![\w\[/-])({re.escape(term)})(?![\w\]-])", re.IGNORECASE)
+        for i, line in enumerate(lines):
+            if line.lstrip().startswith(("#", ">", "|")):
+                continue
+            new, n = pat.subn(rf"[\1](/glosario/{slug})", line, count=1)
+            if n:
+                lines[i] = new
+                linked.append(slug)
+                break
+    return "\n".join(lines), linked
+
+
+# ───────────────────────── Pipeline ─────────────────────────
+def write_article(t):
+    length = "1600-2000 palabras" if t["pillar"] else "850-1100 palabras"
+    n_sections = "5 a 6" if t["pillar"] else "3 a 4"
+    section_words = "250-320" if t["pillar"] else "180-240"
+    fmt_desc = FORMATS[t["fmt"]]
+
+    log("[1/5] brief")
+    brief = as_json(ollama_call(VOICE, BRIEF.format(
+        title=t["title"], reader=t["reader"], intent=t["intent"], thesis=t["thesis"],
+        fmt_desc=fmt_desc, length=length, n_sections=n_sections), predict=1800, temperature=0.5, fmt="json"))
+    sections = [s for s in brief.get("sections", []) if s.get("heading")][:6]
+    if len(sections) < 3:
+        raise RuntimeError(f"brief con {len(sections)} secciones")
+    title = sentence_case((brief.get("title") or t["title"]).strip().strip('"'))
+    log(f"  {title}  ·  {len(sections)} secciones")
+
+    outline = "\n".join(f"- {s['heading']}: {s.get('point', '')}" for s in sections)
+    context = (f"ARTÍCULO: {title}\nLECTOR: {t['reader']}\nTESIS: {t['thesis']}\nFORMATO: {fmt_desc}\n"
+               f"ESQUEMA COMPLETO:\n{outline}")
+
+    log("[2/5] redacción por secciones")
+    parts = [ollama_call(VOICE, INTRO.format(context=context), predict=600, temperature=0.7)]
+    for i, s in enumerate(sections, 1):
+        so_far = "\n\n".join(parts)
+        so_far = so_far if words(so_far) < 1400 else "…\n" + so_far[-6000:]
+        txt = ollama_call(VOICE, SECTION.format(context=context, so_far=so_far, heading=s["heading"],
+                                                point=s.get("point", ""), include=s.get("include", ""),
+                                                words=section_words), predict=1400, temperature=0.7)
+        if not txt.lstrip().startswith("##"):
+            txt = f"## {s['heading']}\n\n{txt}"
+        parts.append(txt)
+        log(f"  sección {i}/{len(sections)} ok")
+    closing = ollama_call(VOICE, CLOSING.format(context=context, headings="; ".join(s["heading"] for s in sections)),
+                          predict=500, temperature=0.6)
+    parts.append(re.sub(r"(?m)^#{1,3}\s.*$", "", closing).strip())
+    draft = tidy(re.sub(r"(?m)^#\s+", "## ", "\n\n".join(parts)))
+
+    log("[3/5] editor")
+    edited = edit(draft, t)
+
+    faq = []
+    if brief.get("faq"):
+        try:
+            faq = as_json(ollama_call(VOICE, FAQ.format(title=title, thesis=t["thesis"],
+                                                        questions="\n".join(f"- {q}" for q in brief["faq"][:3])),
+                                      predict=900, temperature=0.4, fmt="json")).get("faq", [])
+        except Exception as e:
+            log(f"  FAQ falló (no bloqueante): {e}")
+
+    return {
+        "title": title,
+        "slug": slugify(brief.get("slug") or title),
+        "excerpt": clip(brief.get("excerpt"), EXCERPT_MAX),
+        "metaTitle": clip(sentence_case(brief.get("meta_title") or title), 60),
+        "metaDescription": clip(brief.get("meta_description"), 155),
+        "takeaways": [x for x in brief.get("takeaways", []) if isinstance(x, str)][:3],
+        "faq": [f for f in faq if isinstance(f, dict) and f.get("q") and f.get("a")][:3],
+        "content": edited,
+    }
+
+
+def edit(draft, t, extra=""):
+    hits = filler_hits(draft)
+    out = ollama_call(VOICE, EDITOR.format(filler=", ".join(f'"{f}"' for f in FILLER[:12]),
+                                           extra=extra, draft=draft), predict=6000, temperature=0.3, ctx=24576)
+    out = tidy(re.sub(r"(?m)^#\s+", "## ", out.strip().strip("-").strip()))
+    # Salvaguardas: si el editor recortó de más o perdió encabezados, se queda el borrador
+    h_draft, h_out = draft.count("\n## "), out.count("\n## ")
+    if words(out) < 0.8 * words(draft) or h_out < h_draft - 1:
+        log(f"  editor descartado ({words(out)} vs {words(draft)} palabras, {h_out}/{h_draft} secciones)")
+        return draft
+    log(f"  editado: {words(draft)} → {words(out)} palabras · relleno {sum(hits.values())} → {sum(filler_hits(out).values())}")
+    return out
+
+
+def assess(art, t):
+    try:
+        s = as_json(ollama_call("Eres un editor exigente de marketing B2B.", SCORE.format(
+            thesis=t["thesis"], reader=t["reader"], article=art["content"][:14000]),
+            predict=600, temperature=0.2, fmt="json", ctx=24576))
+        keys = ["tesis", "especificidad", "estructura", "estilo", "utilidad"]
+        vals = [float(s.get(k, 0)) for k in keys]
+        score = round(sum(vals) / len(vals), 1)
+        problems = [p for p in s.get("problemas", []) if isinstance(p, str)][:4]
+    except Exception as e:
+        log(f"  autoevaluación falló: {e}")
+        score, problems = 6.0, []
+    fill = sum(filler_hits(art["content"]).values())
+    score = max(0.0, round(score - 0.3 * max(0, fill - 2), 1))
+    return score, problems, fill
+
+
+def enrich(art, t, glossary):
+    md = art["content"]
+    md, linked = link_terms(md, t["terms"], glossary)
+    top = ""
+    if art["takeaways"]:
+        top = "**En resumen**\n\n" + "\n".join(f"- {x.strip()}" for x in art["takeaways"]) + "\n\n"
+    tail = ""
+    if t["resource"] in RESOURCES:
+        name, href, desc = RESOURCES[t["resource"]]
+        tail += f"\n\n> **Hazlo con tus números.** {desc}: [abrir la {name}]({href})."
+    if art["faq"]:
+        tail += "\n\n## Preguntas frecuentes\n\n" + "\n\n".join(f"### {f['q'].strip()}\n\n{f['a'].strip()}" for f in art["faq"])
+    art["content"] = heading_case(tidy(top + md + tail))
+    return linked
+
+
+# ───────────────────────── Un artículo ─────────────────────────
+def run_one(t, cms, glossary, dry=False, no_cover=False):
+    qmin = float(cfg.get("SOYROMAN_QUALITY_MIN") or 7)
+    log(f"\n{'=' * 64}\nBLOG v2 · {t['cat']} · {'pilar' if t['pillar'] else 'satélite'} · {t['fmt']}\n  {t['title']}\n  modelo: {writer_model()}\n{'=' * 64}")
+    meta = {"category": t["cat"], "format": t["fmt"], "pillar": t["pillar"], "model": writer_model()}
+    # En dry-run no se registra telemetría: si no, el tema quedaría como "usado"
+    ctx = NoRun() if dry else tel.TelemetryRun(ENGINE_NAME, topic=t["title"], triggered_by="v2", metadata=meta)
+    with ctx as run:
+        try:
+            art = write_article(t)
+            log("[4/5] calidad")
+            score, problems, fill = assess(art, t)
+            log(f"  calificación {score} · relleno {fill} · {problems}")
+            if score < qmin and problems:
+                log("  segunda pasada de editor con los problemas detectados")
+                art["content"] = edit(art["content"], t, extra="- Corrige además estos problemas:\n" + "\n".join(f"  - {p}" for p in problems))
+                score, problems, fill = assess(art, t)
+                log(f"  nueva calificación {score}")
+            linked = enrich(art, t, glossary)
+        except Exception as e:
+            run.set_status("failed", error=f"generación falló: {e}")
+            send_telegram(f"❌ soyroman v2: error en «{t['title'][:70]}»\n{str(e)[:200]}")
+            log(f"  ERROR: {e}")
+            return None
+
+        flags_brand, details = brand_check(art)
+        flags = flags_brand + (["below_quality_min"] if score < qmin else [])
+        run.set_quality(score, flags=flags)
+        run.add_metadata(words=words(art["content"]), filler=fill, problems=problems, linked_terms=linked, **details)
+
+        if dry:
+            log(json.dumps({k: v for k, v in art.items() if k != "content"}, ensure_ascii=False, indent=2))
+            log(art["content"])
+            log(f"\n[dry-run] {words(art['content'])} palabras · calificación {score} · enlaces {linked} · flags {flags}")
+            return art
+
+        dedup_text = f"{art['title']}\n{art['excerpt']}\n{art['content'][:1500]}"
+        try:
+            dup = dedup.check_duplicate(dedup_text)
+            run.add_metadata(dedup_score=dup["score"], dedup_level=dup["level"])
+            if dup["level"] == "duplicate":
+                sim = dup.get("similar_doc") or {}
+                run.set_status("skipped", error=f"duplicado de {sim.get('engine')}:{sim.get('doc_id')}")
+                send_telegram(f"⚠️ soyroman v2: duplicado, no se guardó\n{art['title']}\nSimilar a: {sim.get('title', '?')}")
+                return None
+        except Exception as e:
+            run.add_metadata(dedup_error=str(e))
+
+        log("[5/5] portada y borrador")
+        cover_id = None
+        if not no_cover:
+            path, prompt = generate_cover(t["cat"], art["title"])
+            run.add_metadata(cover_prompt=prompt)
+            if path:
+                try:
+                    cover_id = cms.upload_cover(path, art["title"])
+                except Exception as e:
+                    log(f"  subida de portada falló: {e}")
+
+        data = {
+            "title": art["title"],
+            "slug": cms.unique_slug(art["slug"] or slugify(art["title"])),
+            "excerpt": art["excerpt"],
+            "markdownSource": art["content"],
+            "meta": {"title": art["metaTitle"], "description": art["metaDescription"]},
+        }
+        cat_id = cms.category_id(t["cat"])
+        if cat_id:
+            data["categories"] = [cat_id]
+        exp_id = cms.expertise_id(CAT_EXPERTISE.get(t["cat"]))
+        if exp_id:
+            data["expertises"] = [exp_id]
+        if cover_id:
+            data["cover"] = cover_id
+            data["meta"]["image"] = cover_id
+        try:
+            doc = cms.create_draft(data)
+        except Exception as e:
+            run.set_status("failed", error=str(e))
+            send_telegram(f"❌ soyroman v2: Payload rechazó el borrador\n{str(e)[:300]}")
+            return None
+        post_id = doc.get("id")
+        run.set_output("posts", post_id)
+        try:
+            dedup.index_content(ENGINE_NAME, post_id, data["slug"], art["title"], dedup_text,
+                                text_source="title+excerpt+content[:1500]")
+        except Exception as e:
+            run.add_metadata(index_error=str(e))
+
+        mark = "🚨 " if flags else ""
+        send_telegram(
+            f"✅ <b>soyroman: borrador listo</b>\n📝 {art['title']}\n🏷 {t['cat']} · {t['fmt']}\n"
+            f"⭐ {score}/10 · {words(art['content'])} palabras · {'con' if cover_id else 'sin'} portada\n"
+            f"✍️ [COMPLETAR]: {details['placeholders']} · 🔗 glosario: {len(linked)}\n"
+            f"{mark}{', '.join(flags) if flags else 'sin flags'}\n"
+            f"{CMS_PUBLIC}/admin/collections/posts/{post_id}"
+        )
+        log(f"DRAFT {post_id} · {score}/10 · {CMS_PUBLIC}/admin/collections/posts/{post_id}")
+        return art
+
+
+def main():
+    ap = argparse.ArgumentParser(description="Motor de blog v2 de soyroman.com")
+    ap.add_argument("--batch", type=int, default=1, help="cuántos artículos escribir seguidos")
+    ap.add_argument("--category", help="limitar a una categoría (slug)")
+    ap.add_argument("--topic", help="texto contenido en el tema del mapa")
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--no-cover", action="store_true")
+    ap.add_argument("--list", action="store_true", help="estado del mapa editorial")
+    args = ap.parse_args()
+
+    if args.list:
+        used = used_topics()
+        for cat in dict.fromkeys(t["cat"] for t in TOPICS):
+            ts = [t for t in TOPICS if t["cat"] == cat]
+            log(f"\n{cat}  ({sum(t['title'] in used for t in ts)}/{len(ts)} usados)")
+            for t in ts:
+                log(f"  {'✓' if t['title'] in used else '·'} {'[P] ' if t['pillar'] else ''}{t['title']}")
+        return
+
+    cms = None if args.dry_run else CMS()
+    glossary = glossary_index(cms) if cms else {}
+    topics = pick_topics(cms, args.batch, args.category, args.topic)
+    if not topics:
+        log("No quedan temas disponibles con ese filtro.")
+        return
+    if not args.dry_run:
+        send_telegram(f"🖊 <b>soyroman v2: {len(topics)} borrador(es)</b>\n" + "\n".join(f"· {t['title']}" for t in topics))
+    ok = sum(1 for t in topics if run_one(t, cms, glossary, dry=args.dry_run, no_cover=args.no_cover or args.dry_run))
+    log(f"\nLote terminado: {ok}/{len(topics)} borradores")
+
+
+if __name__ == "__main__":
+    with engine_lock("blog"):
+        main()

@@ -60,7 +60,7 @@ COVER_BASE = (
     "minimalist industrial design product render, compact hardware device with "
     "rounded rectangular aluminum body, matte light grey (#e5e5e5) surface, "
     "precise black hairline engraved pictograms and dot-grid markings, "
-    "a single signal-orange (#ff3300) knob or button as the only color accent, "
+    "a single signal-orange (#e85a2a) knob or button as the only color accent, "
     "modular knobs, sliders and tiny LED dots, flat geometric icon language, "
     "orthographic three-quarter view on seamless light grey studio background, "
     "soft even studio light, crisp shadows, swiss grid composition, generous negative space, "
@@ -76,6 +76,26 @@ COVER_BY_EXPERTISE = {
     "liderazgo-equipos": "set of three small modular devices docked together on a rail, people pictograms as simple dots",
     "motores-ia": "device with an exposed circuit-grid top plate and a single glowing orange core, node graph pictograms",
 }
+# Motivo por tema del blog (las 9 categorías del CMS). El motor v2 usa estos.
+COVER_BY_CATEGORY = {
+    "generacion-demanda": "device with a signal meter and waveform display, pictograms of arrows converging into a target",
+    "crm-revops": "device with a circular dial and stacked pipeline-like sliders, pictograms of funnels and connected nodes",
+    "seo-aeo": "device with a radar-like round screen and a magnifier pictogram, concentric circle markings",
+    "paid-media": "device with a large rotary budget dial and bar-meter LEDs, pictogram of a megaphone",
+    "contenido-email": "device like a compact typewriter-terminal with a paper slot, envelope and paragraph pictograms",
+    "analitica": "device with a small black display showing a bar chart pictogram, rows of measurement LEDs and a gauge",
+    "sitios-web": "device shaped like a tiny modular screen terminal, grid of square keys, browser-window pictogram",
+    "liderazgo": "set of three small modular devices docked together on a rail, people pictograms as simple dots",
+    "ia-aplicada": "device with an exposed circuit-grid top plate and a single glowing orange core, node graph pictograms",
+}
+# Variaciones de composición para que las portadas no salgan todas iguales
+COVER_COMPOSITIONS = [
+    "orthographic three-quarter view, device centered",
+    "top-down flat lay view, device slightly rotated, lots of negative space",
+    "low front view, device on the left third, empty space on the right",
+    "close-up macro detail of the controls, shallow depth of field",
+    "two related devices side by side, one larger, isometric view",
+]
 
 # ───────────────────────── Voz y reglas ─────────────────────────
 VOICE = """Eres Román García escribiendo en su blog personal (soyroman.com). Director de marketing B2B; desde 2017 trabaja en generación de demanda para empresas de tecnología. Tu posicionamiento: el mercadólogo que también construye la infraestructura — CRM, datos y web.
@@ -291,17 +311,33 @@ class CMS:
 
 
 # ───────────────────────── Generación ─────────────────────────
-def ollama_call(system, prompt, predict=6000, temperature=0.7):
-    model = cfg.get("MODEL_WRITER")
+def writer_model():
+    """Modelo de soyroman (SOYROMAN_MODEL_WRITER); si no está definido, el compartido con buildations."""
+    return cfg.get("SOYROMAN_MODEL_WRITER") or cfg.get("MODEL_WRITER")
+
+
+def ollama_call(system, prompt, predict=6000, temperature=0.7, fmt=None, model=None, ctx=16384):
+    model = model or writer_model()
     log(f"  -> {model}...")
-    r = requests.post(
-        f"{cfg.get('OLLAMA_URL')}/api/generate",
-        json={"model": model, "system": system, "prompt": prompt, "stream": False,
-              "options": {"num_ctx": 16384, "num_predict": predict, "temperature": temperature}},
-        timeout=900,
-    )
+    body = {"model": model, "system": system, "prompt": prompt, "stream": False, "keep_alive": "10m",
+            "options": {"num_ctx": ctx, "num_predict": predict, "temperature": temperature}}
+    if fmt:
+        body["format"] = fmt  # "json" o un JSON schema
+    if model.startswith(("qwen3", "deepseek-r1")):
+        body["think"] = False  # sin razonamiento visible: más rápido y sin <think> en la salida
+    r = requests.post(f"{cfg.get('OLLAMA_URL')}/api/generate", json=body, timeout=1800)
     r.raise_for_status()
-    return r.json().get("response", "")
+    out = r.json().get("response", "")
+    return re.sub(r"<think>.*?</think>", "", out, flags=re.S).strip()
+
+
+def ollama_unload(model=None):
+    """Saca el modelo de la VRAM (antes de ComfyUI)."""
+    try:
+        requests.post(f"{cfg.get('OLLAMA_URL')}/api/generate",
+                      json={"model": model or writer_model(), "keep_alive": 0}, timeout=30)
+    except Exception as e:
+        log(f"  no se pudo descargar el modelo de Ollama: {e}")
 
 
 def generate_article(topic, article_type, parent):
@@ -417,12 +453,16 @@ def _comfyui_stop():
         log(f"  no se pudo apagar ComfyUI: {e}")
 
 
-def generate_cover(expertise, title):
+def generate_cover(key, title):
+    """`key` puede ser una categoría del blog (v2) o un slug de Expertise (v1)."""
+    ollama_unload()  # la GPU es una sola: libera VRAM antes de levantar ComfyUI
     was_active = _comfyui_active()
     if not was_active and not _comfyui_warmup():
         log("  ComfyUI no disponible, sin portada")
         return None, None
-    prompt = f"{COVER_BASE}, {COVER_BY_EXPERTISE.get(expertise, COVER_BY_EXPERTISE['motores-ia'])}, subtle reference to: {title[:60].lower()}"
+    motif = COVER_BY_CATEGORY.get(key) or COVER_BY_EXPERTISE.get(key) or COVER_BY_EXPERTISE["motores-ia"]
+    base = COVER_BASE.replace("orthographic three-quarter view", random.choice(COVER_COMPOSITIONS))
+    prompt = f"{base}, {motif}, subtle reference to: {title[:60].lower()}"
     try:
         res = subprocess.run(["bash", cfg.get("COMFYUI_SERVICE"), prompt, IMAGE_STEPS, IMAGE_WIDTH, IMAGE_HEIGHT],
                              capture_output=True, text=True, timeout=600)

@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 
 import { cms } from '@/lib/cms'
 import { ArrowUpRight } from '@/components/icons'
-import { PostCover, hasCover } from '@/components/PostCover'
+import { PostCover } from '@/components/PostCover'
 import { Reveal } from '@/components/motion/Reveal'
 
 type Args = { params: Promise<{ tag: string }> }
@@ -65,7 +65,7 @@ export default async function TagPage({ params }: Args) {
               <Reveal key={post.id} delay={0.05}>
                 <Link
                   href={`/blog/${post.slug}`}
-                  className={`group p-8 md:p-16 hover:bg-[#111] hover:text-white transition-colors duration-300 ${hasCover(post.cover) ? 'grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,360px)] md:items-center' : 'block'}`}
+                  className={`group p-8 md:p-16 hover:bg-[#111] hover:text-white transition-colors duration-300 grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,360px)] md:items-center`}
                 >
                   <div>
                     {post.publishedAt && (
@@ -78,6 +78,7 @@ export default async function TagPage({ params }: Args) {
                   </div>
                   <PostCover
                     cover={post.cover}
+                    seed={post.slug}
                     className="aspect-[16/9] w-full border border-black group-hover:border-white transition-colors"
                     sizes="(max-width: 768px) 100vw, 360px"
                     priority={index === 0}

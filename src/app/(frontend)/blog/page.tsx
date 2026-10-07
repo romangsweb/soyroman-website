@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
-import { PostCover, hasCover } from '@/components/PostCover'
+import { PostCover } from '@/components/PostCover'
 
 export default async function BlogPage() {
   const posts = await cms.find({
@@ -107,7 +107,7 @@ export default async function BlogPage() {
                   <Reveal key={post.id} delay={0.1}>
                     <Link
                       href={`/blog/${post.slug}`}
-                      className={`group p-8 md:p-16 hover:bg-[#111] hover:text-white transition-colors duration-300 relative ${hasCover(post.cover) ? 'grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,360px)] md:items-center' : 'block'}`}
+                      className={`group p-8 md:p-16 hover:bg-[#111] hover:text-white transition-colors duration-300 relative grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,360px)] md:items-center`}
                     >
                       <div>
                       <div className="flex items-center gap-6 font-mono text-[10px] uppercase tracking-widest font-bold opacity-60 mb-6 group-hover:text-white">
@@ -140,6 +140,7 @@ export default async function BlogPage() {
                       </div>
                       <PostCover
                         cover={post.cover}
+                    seed={post.slug}
                         className="aspect-[16/9] w-full border border-black group-hover:border-white transition-colors"
                         sizes="(max-width: 768px) 100vw, 360px"
                         priority={index === 0}

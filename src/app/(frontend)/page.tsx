@@ -295,7 +295,7 @@ export default async function HomePage() {
                   <Link href={`/blog/${post.slug}`} className="flex flex-col h-full p-8 hover:bg-[#f4f4f4] transition-colors">
                     <PostCover
                       cover={post.cover}
-                      fallback
+                      seed={post.slug}
                       className="aspect-[16/9] w-full border border-black mb-8"
                       sizes="(max-width: 768px) 100vw, 33vw"
                     />

@@ -87,11 +87,15 @@ export default async function BlogPostPage({ params }: Args) {
         </header>
 
         {/* Portada */}
-        {hasCover(post.cover) && (
-          <section className="border-b border-black bg-[#e5e5e5]">
-            <PostCover cover={post.cover} priority className="aspect-[1344/768] w-full" sizes="(max-width: 1920px) 100vw, 1920px" />
-          </section>
-        )}
+        <section className="border-b border-black bg-[#e5e5e5]">
+          <PostCover
+            cover={post.cover}
+            seed={post.slug}
+            priority
+            className={hasCover(post.cover) ? 'aspect-[1344/768] w-full' : 'aspect-[16/9] md:aspect-[21/7] w-full'}
+            sizes="(max-width: 1920px) 100vw, 1920px"
+          />
+        </section>
 
         {/* Content */}
         <section className="bg-white">

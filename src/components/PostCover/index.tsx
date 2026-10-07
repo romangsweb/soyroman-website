@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Media } from '@/components/Media'
+import { ProjectCover } from '@/components/ProjectCover'
 import type { Media as MediaType } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
@@ -11,6 +12,8 @@ type Props = {
   sizes?: string
   /** Si no hay portada, dibuja un marcador con retícula en lugar de nada. */
   fallback?: boolean
+  /** Si no hay portada, dibuja una portada generativa a partir de este texto (p. ej. el slug). */
+  seed?: string | null
 }
 
 /** ¿El post trae una portada poblada (objeto Media con URL)? */
@@ -21,8 +24,9 @@ export const hasCover = (cover: Props['cover']): cover is MediaType =>
  * Portada de un post con proporción fija (la define `className`, p. ej. aspect-[16/9]).
  * No renderiza nada si el post no tiene portada.
  */
-export function PostCover({ cover, className, priority, sizes, fallback }: Props) {
+export function PostCover({ cover, className, priority, sizes, fallback, seed }: Props) {
   if (!hasCover(cover)) {
+    if (seed) return <ProjectCover slug={seed} label={false} className={className} />
     if (!fallback) return null
     return (
       <div
