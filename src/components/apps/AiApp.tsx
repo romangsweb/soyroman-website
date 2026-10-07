@@ -48,13 +48,13 @@ export function AiApp() {
         top="AI·REC"
         bottom="IA·05"
         cable="GRATIS"
-        message={busy ? 'Preguntando a Gemini (5 preguntas, unos 20 s)…'
+        message={busy ? 'Preguntando a Gemini (5 preguntas)…'
           : res ? `${res.domain}: aparece en ${res.mentions} de 5 respuestas`
             : 'Cuando alguien le pregunta a la IA por tu servicio, ¿te recomienda?'}
       />
 
       <div className="x-dev">
-        <div className="x-brand"><span><b>IA·05</b> ¿te recomienda la IA?</span><span>5 preguntas de compra · en vivo</span></div>
+        <div className="x-brand"><span><b>IA·05</b> ¿te recomienda la IA?</span><span>5 preguntas de compra</span></div>
         <form className="s-in c-in" onSubmit={run}>
           <input value={f.domain} onChange={set('domain')} placeholder="tu-dominio.com" aria-label="Tu dominio" inputMode="url" autoCapitalize="off" spellCheck={false} />
           <input value={f.brand} onChange={set('brand')} placeholder="Nombre de tu marca (opcional)" aria-label="Nombre de tu marca" />
@@ -93,17 +93,24 @@ export function AiApp() {
                   ))}
               </div>
             </>
-          ) : <p className="c-idle">{busy ? 'Gemini está buscando en Google y respondiendo cada pregunta…' : 'Escribe tu dominio, tu servicio y tu correo.'}</p>}
+          ) : <p className="c-idle">{busy ? 'Gemini está respondiendo cada pregunta…' : 'Escribe tu dominio, tu servicio y tu correo.'}</p>}
         </div>
 
         {res && (
           <>
             <div className="x-grid">
-              <div className="x-card">
-                <h3><i className={`s-led ${res.sources.length ? 'warn' : ''}`} aria-hidden="true" />Fuentes que consultó la IA</h3>
-                {res.sources.length ? <div className="x-chips">{res.sources.map((s) => <span key={s.domain} className="x-chip">{s.domain}<small>{s.count}</small></span>)}</div>
-                  : <span className="x-none">Gemini no reportó fuentes.</span>}
-              </div>
+              {res.grounded ? (
+                <div className="x-card">
+                  <h3><i className={`s-led ${res.sources.length ? 'warn' : ''}`} aria-hidden="true" />Fuentes que consultó la IA</h3>
+                  {res.sources.length ? <div className="x-chips">{res.sources.map((s) => <span key={s.domain} className="x-chip">{s.domain}<small>{s.count}</small></span>)}</div>
+                    : <span className="x-none">Gemini no reportó fuentes.</span>}
+                </div>
+              ) : (
+                <div className="x-card">
+                  <h3><i className="s-led warn" aria-hidden="true" />De dónde sale esta respuesta</h3>
+                  <p className="i-quote">Gemini respondió con lo que aprendió en su entrenamiento, sin buscar en vivo. Mide si tu marca ya forma parte de lo que la IA “sabe” de tu categoría, igual que cuando alguien usa un chat sin búsqueda.</p>
+                </div>
+              )}
               <div className="x-card">
                 <h3><i className={`s-led ${res.quote ? 'ok' : 'bad'}`} aria-hidden="true" />Cómo te describe</h3>
                 {res.quote ? <p className="i-quote">“{res.quote}”</p> : <span className="x-none">No te menciona, así que no hay descripción.</span>}
@@ -127,15 +134,14 @@ export function AiApp() {
         <section className="te-print" aria-hidden="true">
           <span className="tag">soyroman.com · ¿Te recomienda la IA?</span>
           <h1>{res.domain}: {res.mentions} de 5 respuestas</h1>
-          <p>Servicio: {res.service} · {res.market}. Preguntado a Gemini ({res.model}) con búsqueda en Google el {new Date(res.at).toLocaleDateString('es-MX')}.</p>
+          <p>Servicio: {res.service} · {res.market}. Preguntado a Gemini ({res.model}){res.grounded ? ' con búsqueda en Google' : ', sin búsqueda en vivo,'} el {new Date(res.at).toLocaleDateString('es-MX')}.</p>
           <table>
             <thead><tr><th>Pregunta</th><th>¿Te menciona?</th><th>Lugar</th></tr></thead>
             <tbody>{res.answers.map((a) => <tr key={a.q}><td>{a.q}</td><td>{a.mentioned ? 'Sí' : 'No'}</td><td>{a.position ? `${a.position} de ${a.of}` : '—'}</td></tr>)}</tbody>
           </table>
           <h3>Competidores que menciona</h3>
           <p>{res.rivals.map((r) => `${r.domain} (${r.count}/5)`).join(' · ') || '—'}</p>
-          <h3>Fuentes que consultó</h3>
-          <p>{res.sources.map((s) => s.domain).join(' · ') || '—'}</p>
+          {res.grounded && <><h3>Fuentes que consultó</h3><p>{res.sources.map((s) => s.domain).join(' · ') || '—'}</p></>}
           <h3>Diagnóstico</h3>
           <ol>{res.findings.map((x) => <li key={x.title}><b>{x.title}.</b> {x.detail}</li>)}</ol>
           <p>Las respuestas de la IA cambian con el tiempo y entre motores (ChatGPT, Perplexity, Gemini); esto es una foto de hoy en Gemini.</p>

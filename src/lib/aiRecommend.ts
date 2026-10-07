@@ -22,10 +22,13 @@ export type AiResult = {
   quote: string | null
   findings: { title: string; detail: string }[]
   model: string
+  grounded: boolean // true = Gemini buscó en Google; false = respondió con lo que aprendió en su entrenamiento
   at: string
 }
 
 const MODEL = () => process.env.GEMINI_MODEL || 'gemini-flash-latest'
+// La búsqueda en Google no tiene cuota en proyectos sin facturación: se activa solo con GEMINI_GROUNDING=1
+const GROUNDED = () => process.env.GEMINI_GROUNDING === '1'
 
 export const questions = (s: string, m: Market) => [
   `¿Qué empresas ofrecen ${s} en ${m}?`,
@@ -57,7 +60,7 @@ async function ask(q: string): Promise<{ text: string; sources: string[] }> {
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: SYSTEM }] },
       contents: [{ role: 'user', parts: [{ text: q }] }],
-      tools: [{ google_search: {} }],
+      ...(GROUNDED() ? { tools: [{ google_search: {} }] } : {}),
       generationConfig: { temperature: 0.3, maxOutputTokens: 2048 },
     }),
     signal: AbortSignal.timeout(45_000),
@@ -121,7 +124,8 @@ export async function runAiRecommend(domain: string, brandInput: string, service
   if (late.length) F.push({ title: 'Apareces, pero al final de la lista', detail: `En ${late.length} respuesta${late.length > 1 ? 's' : ''} quedas después del tercer lugar: la mayoría de los compradores no llega hasta ahí.` })
   const notYou = sources.filter((s) => !needles.some((n) => s.domain.includes(n))).slice(0, 3)
   if (notYou.length) F.push({ title: `La IA se apoya en ${notYou.map((s) => s.domain).join(', ')}`, detail: 'Son las páginas que consultó para responder. Si no estás en ellas (con un perfil, un artículo o una mención), la IA no tiene de dónde sacarte.' })
-  if (!sources.some((s) => s.domain === root(domain))) F.push({ title: 'Tu sitio no aparece entre las fuentes', detail: 'Gemini no leyó tu sitio para responder. Revisa con el auditor AEO que los bots puedan entrar y que tus páginas de servicio respondan precio, plazos y para quién es.' })
+  if (!GROUNDED() && !mentions) F.push({ title: 'Lo que la IA sabe de tu categoría viene de lo publicado en internet', detail: 'Sin búsqueda en vivo, Gemini responde con lo que aprendió: menciones en directorios, medios, comparativas y blogs de terceros. Aparecer ahí es lo que te mete en sus respuestas.' })
+  if (GROUNDED() && !sources.some((s) => s.domain === root(domain))) F.push({ title: 'Tu sitio no aparece entre las fuentes', detail: 'Gemini no leyó tu sitio para responder. Revisa con el auditor AEO que los bots puedan entrar y que tus páginas de servicio respondan precio, plazos y para quién es.' })
 
-  return { domain, brand, service, market, answers, mentions, rivals, sources, quote, findings: F.slice(0, 5), model: MODEL(), at: new Date().toISOString() }
+  return { domain, brand, service, market, answers, mentions, rivals, sources, quote, findings: F.slice(0, 5), model: MODEL(), grounded: GROUNDED(), at: new Date().toISOString() }
 }
