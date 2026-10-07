@@ -16,6 +16,7 @@ import { ArrowUpRight } from '@/components/icons'
 import { AuthorBox, RelatedPosts } from '@/components/PostExtras'
 import { Subscribe } from '@/components/Subscribe'
 import { SITE, PERSON_ID, ld } from '@/lib/seo'
+import { extractFaq } from '@/lib/faq'
 
 type Args = { params: Promise<{ slug: string }> }
 
@@ -35,6 +36,7 @@ export default async function BlogPostPage({ params }: Args) {
 
   const url = `${SITE}/blog/${post.slug}`
   const cats = ((post.categories as any[]) || []).filter((c) => typeof c === 'object' && c)
+  const faq = extractFaq(post.content)
   const jsonLd = ld(
     {
       '@type': 'BlogPosting',
@@ -59,6 +61,19 @@ export default async function BlogPostPage({ params }: Args) {
         { '@type': 'ListItem', position: 3, name: post.title, item: url },
       ],
     },
+    ...(faq.length >= 2
+      ? [
+          {
+            '@type': 'FAQPage',
+            '@id': `${url}#faq`,
+            mainEntity: faq.map((f) => ({
+              '@type': 'Question',
+              name: f.q,
+              acceptedAnswer: { '@type': 'Answer', text: f.a },
+            })),
+          },
+        ]
+      : []),
   )
 
   // Relacionados: misma categoría primero, luego los más recientes

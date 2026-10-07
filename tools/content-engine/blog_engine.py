@@ -152,7 +152,7 @@ Responde SOLO con JSON válido con esta forma:
     {{"heading": "encabezado ## de la sección", "point": "qué argumenta o explica esta sección en una frase",
       "include": "el elemento concreto que lleva: ejemplo, criterio, tabla, pasos, cálculo o plantilla"}}
   ],
-  "faq": ["3 preguntas reales que este lector se haría después de leer, en sus palabras"],
+  "faq": ["4 preguntas que este lector escribiría tal cual en Google o en ChatGPT (cortas, en sus palabras, sin repetir el título)"],
   "scenario": "un caso hipotético con cifras concretas (marcado como ejemplo) que todas las secciones reutilizan; montos en USD; si hay costos, desglósalos (inversión en medios, otros costos de marketing y costo total); si el tema lleva fórmulas, el caso permite calcularlas todas con los mismos números"
 }}
 Reglas del esquema: {n_sections} secciones; la primera no puede ser una definición obvia; cada sección avanza la tesis; ninguna se repite con otra; la última sección da pasos concretos que el lector puede aplicar esta semana (no menciones días de la semana)."""
@@ -180,7 +180,9 @@ Qué debe argumentar: {point}
 Debe incluir: {include}
 Extensión: {words} palabras.
 
-Empieza con la línea "## {heading}". Puedes usar ### para subsecciones, listas o una tabla en Markdown si ayudan. Usa el ESCENARIO cuando necesites un ejemplo numérico y escribe las fórmulas tal como vienen en las DEFINICIONES. Incluye al menos un criterio tuyo en primera persona. No cierres el artículo aquí."""
+Empieza con la línea "## {heading}". Puedes usar ### para subsecciones, listas o una tabla en Markdown si ayudan. Usa el ESCENARIO cuando necesites un ejemplo numérico y escribe las fórmulas tal como vienen en las DEFINICIONES. Incluye al menos un criterio tuyo en primera persona. No cierres el artículo aquí.
+
+La sección EMPIEZA (después del encabezado) con 1-2 frases que responden directamente a su encabezado y se entienden solas, sin el resto del artículo: una IA debe poder citarlas tal cual. Después vienen el criterio, el ejemplo y el detalle. Si la sección responde a una duda concreta del lector, formula el encabezado como esa pregunta."""
 
 CLOSING = """Escribe el CIERRE del artículo (60-110 palabras, sin encabezado "Conclusión").
 
@@ -222,6 +224,7 @@ LISTA DE VERIFICACIÓN:
 - No inventes cifras, clientes ni anécdotas como reales.
 - Frases cortas y directas; voz activa; primera persona donde aporte.
 - Mantén TODOS los encabezados ## y ###, las listas y las tablas. Mantén la extensión (no recortes más de 10 %).
+- Respuesta primero: el primer párrafo de cada sección ## responde su encabezado en 1-2 frases (máximo 60 palabras) que se entienden sin contexto. Si no, reescríbelo; no lo borres.
 - Mayúsculas en español: solo al inicio, siglas y nombres propios.
 - Reemplaza anglicismos: C-suite → dirección, funnel → embudo, insights → hallazgos, engagement → interacción, performance → desempeño.
 - Asegura la primera persona: cada sección con al menos un criterio de Román ("yo…", "recomiendo…", "cuando reviso…").
@@ -383,6 +386,10 @@ def heuristics(md, t, n_sections):
         issues.append(f"arranque repetido más de dos veces: {', '.join(rep_starts)}; varía cómo introduces el criterio")
     if re.search(r"\b(pesos|MXN)\b", md, re.I):
         issues.append("montos en pesos: usa USD")
+    long_leads = [h for h, p in re.findall(r"(?m)^## (.+)\n+([^\n#][^\n]*)", md)
+                  if len(p.split()) > 70 and not h.lower().startswith("preguntas frecuentes")]
+    if long_leads:
+        issues.append(f"respuesta enterrada en {len(long_leads)} sección(es): el primer párrafo debe responder en ≤60 palabras ({long_leads[0][:40]}…)")
     comp = len(re.findall(r"\[COMPLETAR:", md))
     if comp == 0:
         issues.append("ningún [COMPLETAR]: marca 1-3 lugares donde va una experiencia real de Román")
@@ -390,7 +397,8 @@ def heuristics(md, t, n_sections):
         issues.append("faltan las fórmulas de los indicadores del tema")
         hard = True
     return issues, hard, {"first_person": fp, "banned": banned, "completar": comp,
-                          "repeated_starts": rep_starts, "currency_mxn": bool(re.search(r"\b(pesos|MXN)\b", md, re.I))}
+                          "repeated_starts": rep_starts, "currency_mxn": bool(re.search(r"\b(pesos|MXN)\b", md, re.I)),
+                          "long_leads": len(long_leads)}
 
 
 def autofix(md):
@@ -495,7 +503,7 @@ def write_article(t, glossary=None):
         try:
             faq = as_json(ollama_call(system, FAQ.format(title=title, thesis=t["thesis"], defs=defs,
                                                          article=edited[:5000],
-                                                         questions="\n".join(f"- {q}" for q in brief["faq"][:3])),
+                                                         questions="\n".join(f"- {q}" for q in brief["faq"][:4])),
                                       predict=900, temperature=0.3, fmt="json")).get("faq", [])
         except Exception as e:
             log(f"  FAQ falló (no bloqueante): {e}")
@@ -507,7 +515,7 @@ def write_article(t, glossary=None):
         "metaTitle": clip(sentence_case(brief.get("meta_title") or title), 60),
         "metaDescription": clip(brief.get("meta_description"), 155),
         "takeaways": [scrub(x) for x in brief.get("takeaways", []) if isinstance(x, str)][:3],
-        "faq": [{"q": f["q"], "a": autofix(f["a"])} for f in faq if isinstance(f, dict) and f.get("q") and f.get("a")][:3],
+        "faq": [{"q": f["q"], "a": autofix(f["a"])} for f in faq if isinstance(f, dict) and f.get("q") and f.get("a")][:4],
         "content": edited,
         "defs": defs,
         "n_sections": len(sections),
@@ -548,7 +556,7 @@ def assess(art, t):
         hard = True
         issues = [f"contradicción: {c}" for c in contradictions] + issues
     fill = sum(filler_hits(art["content"]).values())
-    score = max(0.0, round(score - 0.3 * max(0, fill - 2) - (0.5 if not stats["completar"] else 0)
+    score = max(0.0, round(score - 0.3 * max(0, fill - 2) - 0.3 * stats["long_leads"] - (0.5 if not stats["completar"] else 0)
                            - (0.5 if stats["repeated_starts"] else 0) - (0.5 if stats["currency_mxn"] else 0), 1))
     if hard:
         score = min(score, 6.0)

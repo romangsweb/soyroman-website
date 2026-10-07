@@ -32,7 +32,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html className={cn(poppins.variable, aldrich.variable, 'font-sans light')} lang="es" suppressHydrationWarning>
       <head>
         <InitTheme />
-        <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
