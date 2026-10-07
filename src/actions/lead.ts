@@ -30,16 +30,21 @@ export async function submitLead(_prev: LeadState, form: FormData): Promise<Lead
     return { status: 'error', message: 'Revisa tu nombre, correo y mensaje.' }
   }
 
-  const h = await headers()
-  const hutk = (await cookies()).get('hubspotutk')?.value
-  const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim()
-
   const fields = [
     { objectTypeId: '0-1', name: 'firstname', value: name },
     { objectTypeId: '0-1', name: 'email', value: email },
     ...(company ? [{ objectTypeId: '0-1', name: 'company', value: company }] : []),
     { objectTypeId: '0-1', name: 'message', value: service ? `[${service}]\n${message}` : message },
   ]
+  return sendToHubspot(fields, origin, 'https://soyroman.com/contacto')
+}
+
+type Field = { objectTypeId: string; name: string; value: string }
+
+async function sendToHubspot(fields: Field[], origin: string, fallbackUri: string): Promise<LeadState> {
+  const h = await headers()
+  const hutk = (await cookies()).get('hubspotutk')?.value
+  const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim()
 
   try {
     const res = await fetch(ENDPOINT, {
@@ -48,7 +53,7 @@ export async function submitLead(_prev: LeadState, form: FormData): Promise<Lead
       body: JSON.stringify({
         fields,
         context: {
-          pageUri: h.get('referer') || 'https://soyroman.com/contacto',
+          pageUri: h.get('referer') || fallbackUri,
           pageName: `soyroman.com · ${origin}`,
           ...(hutk ? { hutk } : {}),
           ...(ip ? { ipAddress: ip } : {}),
@@ -66,4 +71,26 @@ export async function submitLead(_prev: LeadState, form: FormData): Promise<Lead
     console.error('[hubspot] error de red', err)
     return { status: 'error', message: 'No se pudo enviar. Escríbeme directo a contacto@soyroman.com.' }
   }
+}
+
+/**
+ * Lead desde un micro aplicativo de /recursos. El resumen del cálculo va en el
+ * mensaje con el prefijo [Recurso: …] para filtrarlo o disparar workflows en HubSpot.
+ */
+export async function submitToolLead(_prev: LeadState, form: FormData): Promise<LeadState> {
+  if (clean(form.get('website'), 200)) return { status: 'ok' }
+  const name = clean(form.get('name'), 120)
+  const email = clean(form.get('email'), 200).toLowerCase()
+  const company = clean(form.get('company'), 160)
+  const tool = clean(form.get('tool'), 80)
+  const summary = clean(form.get('summary'), 2000)
+  if (!name || !EMAIL.test(email) || !tool) return { status: 'error', message: 'Revisa tu nombre y correo.' }
+
+  const fields = [
+    { objectTypeId: '0-1', name: 'firstname', value: name },
+    { objectTypeId: '0-1', name: 'email', value: email },
+    ...(company ? [{ objectTypeId: '0-1', name: 'company', value: company }] : []),
+    { objectTypeId: '0-1', name: 'message', value: `[Recurso: ${tool}]\n${summary}` },
+  ]
+  return sendToHubspot(fields, `Recurso · ${tool}`, 'https://soyroman.com/recursos')
 }

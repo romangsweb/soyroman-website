@@ -9,6 +9,7 @@ const DEFAULT_NAV: NavItem[] = [
   { href: '/proyectos', label: 'Proyectos' },
   { href: '/blog', label: 'Blog' },
   { href: '/glosario', label: 'Glosario' },
+  { href: '/recursos', label: 'Recursos' },
   { href: '/consultoria', label: 'Consultoría' },
   { href: '/cv', label: 'CV' },
   { href: '/contacto', label: 'Contacto' },
