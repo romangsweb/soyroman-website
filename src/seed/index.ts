@@ -339,14 +339,14 @@ async function seed() {
       year: 2020,
       color: '#22C55E',
       client: 'Empresa de desarrollo de inteligencia artificial',
-      context: 'Los datos comerciales vivían en Dynamics CRM y marketing no tenía forma de conectarlos con sus campañas.',
-      problem: 'Sin un CRM compartido, marketing no podía atribuir leads ni dar seguimiento al embudo hasta la venta.',
+      context: 'El grupo operaba ventas en Dynamics CRM; marketing usaba HubSpot por separado para precalificar los leads antes de subirlos a Dynamics.',
+      problem: 'Dynamics se había quedado atrás en la integración entre marketing y ventas: dos sistemas, traspaso manual de leads y sin seguimiento del embudo completo.',
       approach: richText([
         bulletList([
-          'Mapeo de entidades y campos de Dynamics a HubSpot.',
-          'Limpieza de datos antes de migrar.',
-          'Modelo de ciclo de vida y pipeline en HubSpot.',
-          'Integración con formularios y campañas.',
+          'Demostré el valor de HubSpot con el uso de marketing antes de proponer la migración.',
+          'Impulsé la decisión de migrar todo el grupo, aprovechando el licenciamiento de HubSpot ya contratado.',
+          'Definí la estructura del nuevo CRM: ciclo de vida, propiedades, scoring y el paso de lead a MQL, SQL y oportunidad.',
+          'La migración técnica la ejecutó una agencia de implementación.',
         ]),
       ]),
       learnings: 'Una migración de CRM es la oportunidad de redefinir el embudo, no solo de mover datos.',
@@ -359,7 +359,7 @@ async function seed() {
       featured: false,
       year: 2024,
       color: '#EF4444',
-      client: 'Confidencial',
+      client: 'Cliente de una agencia (proyecto freelance)',
       context: 'Una tienda de cursos en WordPress y WooCommerce llevaba meses comprometida por malware.',
       problem: 'Webshells activos, cuentas comprometidas y riesgo de exposición de datos de usuarios.',
       approach: richText([
@@ -487,49 +487,60 @@ async function seed() {
     },
     'migracion-dynamics-hubspot': {
       summary:
-        'Llevé los datos comerciales de Dynamics CRM a HubSpot para que marketing y ventas trabajaran sobre el mismo embudo y se pudiera atribuir cada lead a su campaña.',
-      role: C,
+        'Marketing ya precalificaba leads en HubSpot mientras ventas operaba en Dynamics. Impulsé la decisión de migrar todo el grupo a HubSpot y definí la estructura del nuevo CRM; la migración técnica la ejecutó una agencia.',
+      role: 'Impulsor de la decisión y responsable de la nueva estructura del CRM',
+      duration: '~6 meses',
+      team: 'Agencia de implementación + marketing y ventas',
       outcomes: [
-        { metric: 'Plataforma de CRM', before: 'Dynamics', after: 'HubSpot', impact: 'Marketing y ventas sobre la misma base' },
-        { metric: 'Atribución de leads', before: C, after: C, impact: C },
+        { metric: 'Sistemas de CRM', before: '2', after: '1', impact: 'Marketing y ventas sobre la misma base en todo el grupo' },
+        { metric: 'Traspaso de leads', before: 'Manual', after: 'Automático', impact: 'Los leads calificados llegan a ventas sin pasar entre sistemas' },
+        { metric: 'Licencias', before: 'Subutilizadas', after: 'En uso', impact: 'Se aprovechó el licenciamiento de HubSpot ya contratado' },
       ],
       highlights: [
-        { title: 'Redefinir el embudo', text: 'La migración fue la oportunidad de rediseñar el ciclo de vida, no solo de mover datos.' },
-        { title: 'Limpiar antes de migrar', text: 'Los datos se limpiaron antes de migrar para no heredar problemas al nuevo CRM.' },
-        { title: 'Campañas conectadas', text: 'Formularios y campañas quedaron integrados con el CRM.' },
+        { title: 'Probar en pequeño', text: 'El uso de HubSpot en marketing fue la prueba de concepto que justificó migrar todo el grupo.' },
+        { title: 'Argumento de negocio', text: 'La propuesta se sostuvo en dos datos: la integración que faltaba y una licencia que ya se pagaba.' },
+        { title: 'Redefinir el embudo', text: 'Definí las etapas del ciclo de vida, las propiedades y el scoring de marketing, y cómo un lead pasa a MQL y SQL hasta ventas.' },
+        { title: 'Reglas para la oportunidad', text: 'Quedó definido qué debe tener una oportunidad para darse de alta, para que ventas reciba negocios completos y no solo nombres.' },
       ],
       phases: [
-        { name: 'Mapeo de entidades y campos' },
-        { name: 'Limpieza de datos' },
-        { name: 'Ciclo de vida y pipeline' },
-        { name: 'Integración con formularios y campañas' },
+        { name: 'HubSpot como precalificador de marketing' },
+        { name: 'Caso de negocio para migrar' },
+        { name: 'Diseño de la estructura del CRM' },
+        { name: 'Migración con agencia' },
       ],
       architecture: {
-        caption: 'De un CRM de ventas a un embudo compartido',
+        caption: 'De dos sistemas a un CRM de grupo',
         columns: [
-          col('Origen', ['Dynamics CRM', 'datos comerciales']),
-          col('Transformación', ['Mapeo', 'entidades y campos'], ['Limpieza', 'duplicados y vacíos']),
-          col('Destino', ['HubSpot', 'ciclo de vida y pipeline']),
-          col('Captación', ['Formularios', 'del sitio'], ['Campañas', 'atribuidas']),
+          col('Antes', ['HubSpot', 'precalificación de marketing'], ['Dynamics CRM', 'ventas']),
+          col('Decisión', ['Caso de negocio', 'integración + licencia']),
+          col('Estructura', ['Ciclo de vida', 'lead → MQL → SQL'], ['Scoring', 'de marketing'], ['Oportunidad', 'requisitos de alta']),
+          col('Después', ['HubSpot', 'marketing y ventas del grupo'], ['Agencia', 'migración técnica']),
         ],
       },
     },
     'rescate-plataforma-cursos': {
       summary:
-        'Recuperé una tienda de cursos en WooCommerce comprometida por malware durante meses y la dejé vendiendo de nuevo sin exponer datos de usuarios.',
-      role: C,
+        'Una agencia me llamó porque la tienda de cursos de su cliente llevaba meses comprometida por malware. En 4 horas la dejé vendiendo de nuevo; en el mes siguiente cerré el incidente por completo.',
+      role: 'Respuesta al incidente de punta a punta: forense, limpieza, recuperación y endurecimiento',
+      duration: '4 horas para recuperar la operación · 1 mes para cerrar el incidente',
+      team: 'Proyecto individual (freelance para una agencia)',
       outcomes: [
+        { metric: 'Tiempo de recuperación', before: '', after: '4 horas', impact: 'La tienda volvió a vender el mismo día' },
         { metric: 'Accesos comprometidos', before: 'Activos', after: 'Cerrados', impact: 'Webshells eliminados y credenciales rotadas' },
         { metric: 'Operación de la tienda', before: 'En riesgo', after: 'Restaurada', impact: 'Ventas sin exponer datos de usuarios' },
+        { metric: 'Reinfecciones', before: '', after: '0', impact: 'Sin reinfección desde 2024' },
       ],
       highlights: [
-        { title: 'Rastrear el vector de entrada', text: 'En hosting compartido no basta con borrar archivos: si no se cierra la entrada, el malware vuelve.' },
+        { title: 'Cerrar la entrada, no solo limpiar', text: 'En hosting compartido no basta con borrar archivos: si no se cierran los accesos, el malware vuelve.' },
         { title: 'Forense antes que limpieza', text: 'El análisis por SSH definió qué limpiar y qué credenciales rotar.' },
+        { title: 'Recuperar no es cerrar', text: 'La tienda volvió a operar en horas, pero cerrar el incidente tomó un mes: configuraciones, residuos y páginas que el malware había dejado.' },
+        { title: 'Seguridad como práctica', text: 'Configuro el endurecimiento y la seguridad de mis propios servidores y de los que opero; este caso es esa práctica aplicada a un incidente real.' },
       ],
       phases: [
         { name: 'Análisis forense por SSH' },
         { name: 'Eliminación de webshells' },
         { name: 'Recuperación de cuentas' },
+        { name: 'Limpieza de residuos y páginas inyectadas' },
         { name: 'Endurecimiento' },
       ],
       architecture: {
@@ -580,6 +591,8 @@ async function seed() {
   const FORCE: Record<string, string[]> = {
     'sitio-b2b-visible': ['outcomes', 'highlights'],
     'forecast-confiable': ['summary', 'outcomes', 'highlights', 'architecture'],
+    'migracion-dynamics-hubspot': ['summary', 'outcomes', 'highlights', 'phases', 'architecture'],
+    'rescate-plataforma-cursos': ['summary', 'outcomes', 'highlights', 'phases'],
   }
   for (const [slug, data] of Object.entries(CASES)) {
     const found = await payload.find({ collection: 'projects', where: { slug: { equals: slug } }, limit: 1, depth: 0 })
