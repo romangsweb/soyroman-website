@@ -2,6 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import { cms } from '@/lib/cms'
 import { MobileMenu, type NavItem } from './MobileMenu'
+import { NavKeys, NavLinks } from './NavLinks'
+import { LogoScreen } from './DotMatrix'
 
 // Respaldo mientras el global "Header" del CMS esté vacío
 const DEFAULT_NAV: NavItem[] = [
@@ -30,36 +32,28 @@ function toNavItems(navItems: any[] | null | undefined): NavItem[] {
 }
 
 export async function HeaderComponent() {
-  const header = await cms.findGlobal({ slug: 'header' })
-  // «Recursos» siempre va al final y destacado, venga o no del CMS
-  const isRecursos = (href: string) => /\/recursos\/?$/.test(href)
-  const items = [...toNavItems(header?.navItems).filter((i) => !isRecursos(i.href)), { href: '/recursos', label: 'Recursos' }]
+  const [header, profile] = await Promise.all([cms.findGlobal({ slug: 'header' }), cms.findGlobal({ slug: 'profile' })])
+  // Recursos y Contacto van aparte, como teclas al final; se quitan de la lista del CMS si vienen ahí
+  const special = (href: string) => /\/(recursos|contacto)\/?$/.test(href)
+  const items = toNavItems(header?.navItems).filter((i) => !special(i.href))
+  const available = (profile as any)?.available !== false
 
   return (
     <header className="sticky top-0 z-50 border-b border-black bg-[#f4f4f4]">
       <div className="container mx-auto max-w-[1920px]">
-        <div className="flex h-12 items-center justify-between border-x border-black bg-white px-4">
-          <Link href="/" className="font-mono text-[10px] uppercase font-bold tracking-widest flex items-center gap-2 hover:text-[#e85a2a] transition-colors">
-            <span className="w-2 h-2 bg-black"></span>
-            SOY_ROMAN
+        <div className="flex h-14 items-stretch border-x border-black bg-white">
+          <Link href="/" className="flex items-center gap-3 px-3 sm:px-4 border-r border-black group" aria-label="Román García · inicio">
+            <LogoScreen />
+            <span className="hidden sm:block font-mono text-[9px] uppercase font-bold tracking-widest leading-relaxed">
+              Román García
+              <span className="block text-[#e85a2a]">Marketing B2B</span>
+            </span>
           </Link>
-
-          <nav className="hidden lg:flex items-center">
-            {items.map((item, i) => (
-              <Link
-                key={`${item.href}-${i}`}
-                href={item.href}
-                className={`font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-12 flex items-center border-l border-black transition-colors ${
-                  item.href === '/recursos' ? 'bg-[#e85a2a] text-white hover:bg-black' : 'hover:bg-[#e85a2a] hover:text-white'
-                }`}
-                {...(item.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          <MobileMenu items={items} />
+          <NavLinks items={items} />
+          <div className="flex items-stretch ml-auto lg:ml-0">
+            <NavKeys available={available} />
+            <MobileMenu items={[...items, { href: '/recursos', label: 'Recursos' }]} />
+          </div>
         </div>
       </div>
     </header>

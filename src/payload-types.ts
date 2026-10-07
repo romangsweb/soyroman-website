@@ -1603,6 +1603,14 @@ export interface Profile {
     | null;
   email?: string | null;
   /**
+   * LED verde en el menú y el pie
+   */
+  available?: boolean | null;
+  /**
+   * Ej.: «Agenda llena hasta noviembre»
+   */
+  availabilityText?: string | null;
+  /**
    * URL de Buildations
    */
   buildationsUrl?: string | null;
@@ -1697,6 +1705,8 @@ export interface ProfileSelect<T extends boolean = true> {
         id?: T;
       };
   email?: T;
+  available?: T;
+  availabilityText?: T;
   buildationsUrl?: T;
   services?:
     | T

@@ -35,7 +35,7 @@ export function MobileMenu({ items }: { items: NavItem[] }) {
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
-        className="font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-12 flex items-center border-l border-black hover:bg-[#e85a2a] hover:text-white transition-colors"
+        className="font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-14 flex items-center border-l border-black hover:bg-[#e85a2a] hover:text-white transition-colors"
       >
         {open ? '[CERRAR]' : '[MENU]'}
       </button>
@@ -43,7 +43,7 @@ export function MobileMenu({ items }: { items: NavItem[] }) {
       <nav
         id={panelId}
         hidden={!open}
-        className="fixed inset-x-0 top-12 bottom-0 z-50 overflow-y-auto border-t border-black bg-[#f4f4f4]"
+        className="fixed inset-x-0 top-14 bottom-0 z-50 overflow-y-auto border-t border-black bg-[#f4f4f4]"
       >
         <ul className="divide-y divide-black border-b border-black bg-white">
           {items.map((item, i) => {

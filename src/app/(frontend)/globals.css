@@ -808,3 +808,8 @@ body::before {
   from { opacity: 0; transform: scaleX(0.4); }
   to { opacity: 1; transform: none; }
 }
+
+/* LED del logo y del pie */
+@keyframes ledrec { 50% { opacity: .15; } }
+/* Ticker del pie: el texto va duplicado, así -50% lo deja en el mismo punto */
+@keyframes tickerscroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }

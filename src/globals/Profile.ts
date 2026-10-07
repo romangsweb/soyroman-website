@@ -87,6 +87,25 @@ export const Profile: GlobalConfig = {
       type: 'email',
     },
     {
+      type: 'row',
+      fields: [
+        {
+          name: 'available',
+          label: 'Aceptando proyectos',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: { width: '30%', description: 'LED verde en el menú y el pie' },
+        },
+        {
+          name: 'availabilityText',
+          label: 'Texto de disponibilidad',
+          type: 'text',
+          defaultValue: 'Aceptando proyectos',
+          admin: { width: '70%', description: 'Ej.: «Agenda llena hasta noviembre»' },
+        },
+      ],
+    },
+    {
       name: 'buildationsUrl',
       type: 'text',
       admin: {
