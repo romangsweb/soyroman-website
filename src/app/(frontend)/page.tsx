@@ -10,6 +10,8 @@ import { PostCover } from '@/components/PostCover'
 import { IconTile } from '@/components/IconTile'
 import { SystemDiagram } from '@/components/SystemDiagram'
 import { ProjectCover } from '@/components/ProjectCover'
+import { ResourceTeaser } from '@/components/ResourceTeaser'
+import { RECURSOS } from '@/data/recursos'
 
 export default async function HomePage() {
   const profile = await cms.findGlobal({ slug: 'profile' })
@@ -171,6 +173,34 @@ export default async function HomePage() {
               )}
             </div>
 
+          </div>
+        </section>
+
+        {/* Recursos: mini aparatos */}
+        <section className="border-b border-black bg-[#a8b1b8] bg-[linear-gradient(rgba(255,255,255,.28)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.28)_1px,transparent_1px)] [background-size:28px_28px]">
+          <div className="grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-black">
+            <div className="md:col-span-4 p-8 md:p-16 bg-[#dcdedb]">
+              <Reveal>
+                <div className="flex justify-between items-start mb-16">
+                  <h2 className="font-mono uppercase tracking-widest text-xs font-bold text-black/50">REC // Recursos</h2>
+                  <Link href="/recursos" className="font-mono uppercase tracking-widest text-[10px] border border-black bg-white px-3 py-1 hover:bg-black hover:text-white transition-colors">
+                    Ver todos
+                  </Link>
+                </div>
+                <h3 className="text-4xl md:text-5xl font-semibold tracking-tight leading-tight mb-6">Calculadoras gratuitas</h3>
+                <p className="font-mono text-sm leading-relaxed text-black/70 max-w-sm">
+                  Herramientas para planear y medir tu marketing B2B con tus propios números: cuántos leads necesitas, cuánto
+                  regresa tu inversión y qué tan madura es tu operación.
+                </p>
+              </Reveal>
+            </div>
+            <div className="md:col-span-8 p-8 md:p-12 grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-10">
+              {RECURSOS.map((r, i) => (
+                <Reveal key={r.slug} delay={i * 0.08}>
+                  <ResourceTeaser r={r} />
+                </Reveal>
+              ))}
+            </div>
           </div>
         </section>
 

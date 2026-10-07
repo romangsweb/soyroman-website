@@ -2,6 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { ResourceStrip } from '@/components/ResourceTeaser'
+import { recursosFor } from '@/data/recursos'
 
 import { cms } from '@/lib/cms'
 import { ArrowUpRight } from '@/components/icons'
@@ -136,6 +138,7 @@ export default async function TermPage({ params }: Args) {
           )}
         </aside>
       </div>
+      <ResourceStrip items={recursosFor('glossary', t.slug)} title={`Herramienta para ${t.term}`} />
     </article>
   )
 }

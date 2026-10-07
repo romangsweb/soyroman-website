@@ -1,6 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
 import { cms } from '@/lib/cms'
+import { ResourceStrip } from '@/components/ResourceTeaser'
+import { recursosFor } from '@/data/recursos'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { RichText } from '@payloadcms/richtext-lexical/react'
@@ -102,6 +104,9 @@ export default async function BlogPostPage({ params }: Args) {
           </div>
         </section>
 
+        <ResourceStrip
+          items={recursosFor('categories', ((post.categories as any[]) || []).map((c: any) => (typeof c === 'object' ? c?.slug : '')).filter(Boolean))}
+        />
       </article>
     </PageTransition>
   )

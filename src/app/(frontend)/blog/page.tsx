@@ -92,6 +92,10 @@ export default async function BlogPage() {
                   <Link href="/notas" className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black">
                     <span className="font-mono text-sm uppercase font-bold group-hover:text-[#e85a2a]">Notas de campo</span>
                   </Link>
+                  <Link href="/recursos" className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black">
+                    <span className="font-mono text-sm uppercase font-bold text-[#e85a2a] group-hover:text-black">Recursos</span>
+                    <span className="font-mono text-[9px] uppercase font-bold bg-[#e85a2a] text-white px-1.5 py-0.5">Calc</span>
+                  </Link>
                 </div>
               </div>
             </div>

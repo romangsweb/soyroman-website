@@ -9,6 +9,8 @@ import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { ArrowUpRight } from '@/components/icons'
 import { FrameworkDiagram } from '@/components/FrameworkDiagram'
+import { ResourceStrip } from '@/components/ResourceTeaser'
+import { recursosFor } from '@/data/recursos'
 
 type Args = {
   params: Promise<{ slug: string }>
@@ -195,6 +197,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
           </div>
         </section>
 
+        <ResourceStrip items={recursosFor('expertise', expertise.slug)} />
       </article>
     </PageTransition>
   )

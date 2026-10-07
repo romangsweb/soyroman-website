@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import { cn } from '@/utilities/ui'
-import { Poppins } from 'next/font/google'
+import { Aldrich, Poppins } from 'next/font/google'
 import React from 'react'
 
 import { Providers } from '@/providers'
@@ -21,9 +21,11 @@ const poppins = Poppins({
   display: 'swap',
 })
 
+const aldrich = Aldrich({ subsets: ['latin'], weight: '400', variable: '--font-aldrich', display: 'swap' })
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className={cn(poppins.variable, 'font-sans light')} lang="es" suppressHydrationWarning>
+    <html className={cn(poppins.variable, aldrich.variable, 'font-sans light')} lang="es" suppressHydrationWarning>
       <head>
         <InitTheme />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />

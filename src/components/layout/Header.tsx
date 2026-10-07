@@ -48,7 +48,9 @@ export async function HeaderComponent() {
               <Link
                 key={`${item.href}-${i}`}
                 href={item.href}
-                className="font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-12 flex items-center border-l border-black hover:bg-[#e85a2a] hover:text-white transition-colors"
+                className={`font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-12 flex items-center border-l border-black transition-colors ${
+                  item.href === '/recursos' ? 'bg-[#e85a2a] text-white hover:bg-black' : 'hover:bg-[#e85a2a] hover:text-white'
+                }`}
                 {...(item.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
               >
                 {item.label}

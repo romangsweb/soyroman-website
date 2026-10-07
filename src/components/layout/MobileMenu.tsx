@@ -57,7 +57,12 @@ export function MobileMenu({ items }: { items: NavItem[] }) {
                   className={`flex items-center justify-between px-6 py-5 font-mono text-sm uppercase font-bold tracking-widest transition-colors hover:bg-[#e85a2a] hover:text-white ${active ? 'text-[#e85a2a]' : ''}`}
                   {...(item.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                 >
-                  <span>{item.label}</span>
+                  <span className="flex items-center gap-3">
+                    {item.label}
+                    {item.href === '/recursos' && (
+                      <span className="text-[9px] bg-[#e85a2a] text-white px-1.5 py-0.5">Calculadoras</span>
+                    )}
+                  </span>
                   <span className="text-[10px] opacity-40">{String(i + 1).padStart(2, '0')}</span>
                 </Link>
               </li>
