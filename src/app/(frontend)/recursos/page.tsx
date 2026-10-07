@@ -3,13 +3,10 @@ import Link from 'next/link'
 import React from 'react'
 
 import { AppHeader } from '@/components/apps/Panels'
+import { RECURSOS } from '@/data/recursos'
 
-const APPS = [
-  { href: '/recursos/embudo-inverso', code: 'EMBUDO I', name: 'Embudo inverso', desc: 'De tu meta de ingresos a los leads, MQL y SQL que necesitas cada mes.' },
-  { href: '/recursos/roas-romi-roi', code: 'RENDIMIENTO', name: 'ROAS · ROMI · ROI', desc: 'Los tres indicadores de retorno con sus fórmulas y tus números.' },
-  { href: '/recursos/madurez-revops', code: 'MADUREZ', name: 'Diagnóstico RevOps', desc: '10 preguntas para medir la madurez de tu operación de revenue.' },
-  { href: '/recursos/icp', code: 'ICP', name: 'Generador de ICP', desc: 'Arma el perfil de tu cliente ideal y descárgalo en PDF.' },
-]
+// Una sola fuente: el catálogo (también alimenta la home, llms.txt y las recomendaciones)
+const APPS = RECURSOS
 
 export default function RecursosPage() {
   return (
@@ -40,5 +37,6 @@ export default function RecursosPage() {
 
 export const metadata: Metadata = {
   title: 'Recursos',
-  description: 'Calculadoras y herramientas gratuitas de marketing B2B: embudo inverso de leads, ROAS, ROMI y ROI.',
+  description:
+    'Calculadoras y herramientas gratuitas de marketing B2B: embudo inverso de leads, presupuesto de marketing, ROAS, ROMI y ROI, diagnóstico RevOps e ICP.',
 }
