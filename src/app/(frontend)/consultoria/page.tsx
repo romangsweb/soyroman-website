@@ -12,7 +12,7 @@ import { AUDIENCE, FAQ, FIT, GETS, NEEDS, NOT_FIT, PRICE_FACTORS, SERVICES, STEP
 import { PERSON_ID, SITE, canonical, ld } from '@/lib/seo'
 
 // Enlace de HubSpot Meetings (Vercel: NEXT_PUBLIC_MEETINGS_URL). Sin él, "Agendar" baja al formulario.
-const MEETINGS = process.env.NEXT_PUBLIC_MEETINGS_URL || ''
+const MEETINGS = process.env.NEXT_PUBLIC_MEETINGS_URL || 'https://meetings.hubspot.com/roman-garcia-solis'
 const tool = (slug: string) => RECURSOS.find((r) => r.slug === slug && r.href)
 const FREE_TOOLS = ['radiografia-stack', 'auditor-aeo', 'embudo-inverso', 'madurez-revops'].map(tool).filter(Boolean) as typeof RECURSOS
 const TOOL_COUNT = RECURSOS.filter((r) => r.href).length
