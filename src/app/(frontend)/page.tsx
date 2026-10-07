@@ -6,7 +6,7 @@ import { ArrowUpRight } from '@/components/icons'
 import { PageTransition, Morph } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
-import { PostCover } from '@/components/PostCover'
+import { ScreenCover, postCategory } from '@/components/ScreenCover'
 import { IconTile } from '@/components/IconTile'
 import { SystemDiagram } from '@/components/SystemDiagram'
 import { ProjectCover } from '@/components/ProjectCover'
@@ -293,11 +293,13 @@ export default async function HomePage() {
               <Reveal delay={i * 0.1} key={post.id} className="group">
                 <Morph name={`post-${post.slug}`}>
                   <Link href={`/blog/${post.slug}`} className="flex flex-col h-full p-8 hover:bg-[#f4f4f4] transition-colors">
-                    <PostCover
-                      cover={post.cover}
-                      seed={post.slug}
+                    <ScreenCover
+                      slug={post.slug}
+                      category={postCategory(post)}
+                      minutes={post.readingTime}
+                      title={post.title}
+                      speed={1.6}
                       className="aspect-[16/9] w-full border border-black mb-8"
-                      sizes="(max-width: 768px) 100vw, 33vw"
                     />
                     <div className="flex justify-between items-start mb-12">
                       <div className="w-12 h-12 border border-black flex items-center justify-center font-mono text-sm group-hover:bg-[#e85a2a] group-hover:text-white group-hover:border-[#e85a2a] transition-colors">

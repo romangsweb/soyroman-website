@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
-import { PostCover } from '@/components/PostCover'
+import { ScreenCover, postCategory } from '@/components/ScreenCover'
 
 export default async function BlogPage() {
   const posts = await cms.find({
@@ -138,12 +138,13 @@ export default async function BlogPage() {
                         </p>
                       )}
                       </div>
-                      <PostCover
-                        cover={post.cover}
-                    seed={post.slug}
+                      <ScreenCover
+                        slug={post.slug}
+                        category={postCategory(post)}
+                        minutes={post.readingTime}
+                        title={post.title}
+                        speed={1.6}
                         className="aspect-[16/9] w-full border border-black group-hover:border-white transition-colors"
-                        sizes="(max-width: 768px) 100vw, 360px"
-                        priority={index === 0}
                       />
                     </Link>
                   </Reveal>

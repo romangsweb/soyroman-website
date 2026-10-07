@@ -9,7 +9,7 @@ Escribe BORRADORES con criterio editorial a partir de editorial_map.py:
   3. Editor     pasada de edición contra una lista de verificación (relleno, frases hechas, repeticiones)
   4. Enriquecer resumen al inicio, enlaces al glosario, llamado a la calculadora y preguntas frecuentes
   5. Calidad    heurística + autoevaluación; si no pasa, una segunda pasada de editor; si sigue sin pasar, llega marcado
-  6. Portada    ComfyUI con motivo por tema (si falla, el sitio dibuja una portada generativa)
+  6. Portada    el sitio dibuja la portada tipo pantalla según el tema (ComfyUI solo con --comfy-cover)
 
 El CMS impone que el bot solo cree borradores: publicar sigue siendo decisión de Román.
 
@@ -667,7 +667,7 @@ def run_one(t, cms, glossary, dry=False, no_cover=False):
         mark = "🚨 " if flags else ""
         send_telegram(
             f"✅ <b>soyroman: borrador listo</b>\n📝 {art['title']}\n🏷 {t['cat']} · {t['fmt']}\n"
-            f"⭐ {score}/10 · {words(art['content'])} palabras · {'con' if cover_id else 'sin'} portada\n"
+            f"⭐ {score}/10 · {words(art['content'])} palabras · portada {'ComfyUI' if cover_id else 'tipo pantalla'}\n"
             f"✍️ [COMPLETAR]: {details['placeholders']} · 🔗 glosario: {len(linked)}\n"
             f"{mark}{', '.join(flags) if flags else 'sin flags'}\n"
             f"{CMS_PUBLIC}/admin/collections/posts/{post_id}"
@@ -682,7 +682,8 @@ def main():
     ap.add_argument("--category", help="limitar a una categoría (slug)")
     ap.add_argument("--topic", help="texto contenido en el tema del mapa")
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--no-cover", action="store_true")
+    ap.add_argument("--comfy-cover", action="store_true",
+                    help="generar portada con ComfyUI (por defecto no: el sitio dibuja la portada tipo pantalla)")
     ap.add_argument("--list", action="store_true", help="estado del mapa editorial")
     args = ap.parse_args()
 
@@ -709,7 +710,7 @@ def main():
         return
     if not args.dry_run:
         send_telegram(f"🖊 <b>soyroman v2: {len(topics)} borrador(es)</b>\n" + "\n".join(f"· {t['title']}" for t in topics))
-    ok = sum(1 for t in topics if run_one(t, cms, glossary, dry=args.dry_run, no_cover=args.no_cover or args.dry_run))
+    ok = sum(1 for t in topics if run_one(t, cms, glossary, dry=args.dry_run, no_cover=not args.comfy_cover or args.dry_run))
     log(f"\nLote terminado: {ok}/{len(topics)} borradores")
 
 

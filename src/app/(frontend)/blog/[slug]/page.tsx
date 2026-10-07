@@ -9,7 +9,8 @@ import { RichText } from '@payloadcms/richtext-lexical/react'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
-import { PostCover, hasCover } from '@/components/PostCover'
+import { hasCover } from '@/components/PostCover'
+import { ScreenCover, postCategory } from '@/components/ScreenCover'
 import { ArrowUpRight } from '@/components/icons'
 
 type Args = { params: Promise<{ slug: string }> }
@@ -88,12 +89,12 @@ export default async function BlogPostPage({ params }: Args) {
 
         {/* Portada */}
         <section className="border-b border-black bg-[#e5e5e5]">
-          <PostCover
-            cover={post.cover}
-            seed={post.slug}
-            priority
-            className={hasCover(post.cover) ? 'aspect-[1344/768] w-full' : 'aspect-[16/9] md:aspect-[21/7] w-full'}
-            sizes="(max-width: 1920px) 100vw, 1920px"
+          <ScreenCover
+            slug={post.slug}
+            category={postCategory(post)}
+            minutes={post.readingTime}
+            title={post.title}
+            className="aspect-[16/9] md:aspect-[21/7] w-full"
           />
         </section>
 

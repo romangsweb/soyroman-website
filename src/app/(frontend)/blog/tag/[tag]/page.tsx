@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 
 import { cms } from '@/lib/cms'
 import { ArrowUpRight } from '@/components/icons'
-import { PostCover } from '@/components/PostCover'
+import { ScreenCover, postCategory } from '@/components/ScreenCover'
 import { Reveal } from '@/components/motion/Reveal'
 
 type Args = { params: Promise<{ tag: string }> }
@@ -76,13 +76,14 @@ export default async function TagPage({ params }: Args) {
                     <h2 className="text-3xl md:text-4xl font-semibold tracking-tight group-hover:text-[#e85a2a] mb-4">{post.title}</h2>
                     {post.excerpt && <p className="font-mono text-sm leading-relaxed opacity-80 max-w-3xl">{post.excerpt}</p>}
                   </div>
-                  <PostCover
-                    cover={post.cover}
-                    seed={post.slug}
-                    className="aspect-[16/9] w-full border border-black group-hover:border-white transition-colors"
-                    sizes="(max-width: 768px) 100vw, 360px"
-                    priority={index === 0}
-                  />
+                  <ScreenCover
+                        slug={post.slug}
+                        category={postCategory(post)}
+                        minutes={post.readingTime}
+                        title={post.title}
+                        speed={1.6}
+                        className="aspect-[16/9] w-full border border-black group-hover:border-white transition-colors"
+                      />
                 </Link>
               </Reveal>
             ))}
