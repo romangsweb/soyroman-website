@@ -101,51 +101,72 @@ const STYLE = `<style>
 .sc-still *{animation:none!important}
 @media (prefers-reduced-motion: reduce){.sc *{animation:none!important}}
 </style>`
-const a = (name: string, dur: number, delay = 0, extra = '') =>
-  `animation:sc-${name} calc(${dur}s * var(--sc,1)) linear calc(${delay}s * var(--sc,1)) infinite;${extra}`
+// Modo fijo (imagen para redes): sin CSS, cada elemento queda "congelado" en su fase.
+let STILL = false
+type AOpts = { origin?: [number, number]; w?: number; fill?: string }
+const a = (name: string, dur: number, delay = 0, o: AOpts = {}) => {
+  if (!STILL) {
+    const origin = o.origin ? `transform-origin:${o.origin[0]}px ${o.origin[1]}px;` : name === 'sweep' ? 'transform-origin:0 0;' : ''
+    const w = o.w ? `--w:${o.w}px;` : ''
+    return ` style="${w}${origin}animation:sc-${name} calc(${dur}s * var(--sc,1)) linear calc(${delay}s * var(--sc,1)) infinite"`
+  }
+  const p = ((((-delay / dur) + 0.35) % 1) + 1) % 1
+  const [ox, oy] = o.origin || [0, 0]
+  switch (name) {
+    case 'walk': return ` transform="translate(${(370 * p).toFixed(1)} 0)"`
+    case 'belt': return ` transform="translate(${(-80 + 500 * p).toFixed(1)} 0)"`
+    case 'drop': return ` transform="translate(0 ${(-40 + 100 * p).toFixed(1)})" opacity="${p < 0.2 ? (p / 0.2).toFixed(2) : (1 - p).toFixed(2)}"`
+    case 'fly': return ` transform="translate(${(300 * p).toFixed(1)} ${(-90 * p).toFixed(1)})" opacity="${(1 - p).toFixed(2)}"`
+    case 'pass': return ` transform="translate(${(66 * (1 - Math.abs(2 * p - 1))).toFixed(1)} 0)"`
+    case 'sweep': return ` transform="rotate(${(360 * p).toFixed(0)})"`
+    case 'pulse': return ` transform="translate(${ox} ${oy}) scale(${(0.4 + 2.2 * p).toFixed(2)}) translate(${-ox} ${-oy})" opacity="${(0.9 * (1 - p)).toFixed(2)}"`
+    case 'fill': return p > 0.5 ? ` fill="${P.or}"` : ''
+    default: return ''
+  }
+}
 
 const SCENES: Record<string, (r: () => number) => string> = {
   'generacion-demanda': () => {
     let s = ''
     const cols = [P.cream, P.blue, P.pink, P.teal, P.yel]
-    for (let i = 0; i < 5; i++) s += `<g style="${a('walk', 6, -i * 1.2)}">${sprite(i % 2 ? PERSON : PERSON2, -40, 175, { a: cols[i], b: cols[i] }, 8)}</g>`
+    for (let i = 0; i < 5; i++) s += `<g ${a('walk', 6, -i * 1.2)}>${sprite(i % 2 ? PERSON : PERSON2, -40, 175, { a: cols[i], b: cols[i] }, 8)}</g>`
     s += `<polygon points="330,150 430,150 395,210 395,250 365,250 365,210" fill="none" stroke="${P.white}" stroke-width="5"/>`
-    for (let i = 0; i < 3; i++) s += `<g style="${a('drop', 2.4, -i * 0.8)}">${sprite(COIN, 368, 240, { a: P.or, b: P.yel }, 5)}</g>`
+    for (let i = 0; i < 3; i++) s += `<g ${a('drop', 2.4, -i * 0.8)}>${sprite(COIN, 368, 240, { a: P.or, b: P.yel }, 5)}</g>`
     return s + `<rect x="440" y="250" width="140" height="10" fill="#2a2e33"/><rect x="440" y="250" width="96" height="10" fill="${P.or}"/><text x="440" y="244" font-size="10" fill="${P.white}" style="${FONT}">PIPELINE</text>`
   },
   'crm-revops': () => {
     let s = `<rect x="60" y="230" width="520" height="12" fill="#2a2e33"/>`
     for (let i = 0; i < 9; i++) s += `<circle cx="${80 + i * 60}" cy="236" r="5" fill="#3a3f45"/>`
-    for (let i = 0; i < 5; i++) s += `<g style="${a('belt', 7, -i * 1.4)}">${sprite(CARD, 60, 184, { a: i === 3 ? P.red : P.cream, b: '#111' }, 8)}</g>`
+    for (let i = 0; i < 5; i++) s += `<g ${a('belt', 7, -i * 1.4)}>${sprite(CARD, 60, 184, { a: i === 3 ? P.red : P.cream, b: '#111' }, 8)}</g>`
     s += `<rect x="330" y="110" width="60" height="60" fill="none" stroke="${P.blue}" stroke-width="4"/><rect x="354" y="170" width="12" height="40" fill="${P.blue}"/>`
     ;['MQL', 'SQL', 'OPP', 'WON'].forEach((t, i) => {
-      s += `<rect x="${110 + i * 110}" y="80" width="90" height="16" fill="#2a2e33" style="${a('fill', 4, i * 0.6)}"/><text x="${110 + i * 110}" y="74" font-size="10" fill="${P.white}" style="${FONT}">${t}</text>`
+      s += `<rect x="${110 + i * 110}" y="80" width="90" height="16" ${a('fill', 4, i * 0.6) || ' fill="#2a2e33"'}/><text x="${110 + i * 110}" y="74" font-size="10" fill="${P.white}" style="${FONT}">${t}</text>`
     })
     return s
   },
   'seo-aeo': (r) => {
     let s = `<g transform="translate(320,190)"><circle r="110" fill="none" stroke="#1f3a2f" stroke-width="2"/><circle r="70" fill="none" stroke="#1f3a2f" stroke-width="2"/><circle r="30" fill="none" stroke="#1f3a2f" stroke-width="2"/>`
-    s += `<g style="${a('sweep', 4)}transform-origin:0 0"><path d="M0 0 L110 0 A110 110 0 0 0 95 -55 Z" fill="${P.teal}" opacity=".35"/><line x1="0" y1="0" x2="110" y2="0" stroke="${P.teal}" stroke-width="3"/></g>`
+    s += `<g ${a('sweep', 4)}><path d="M0 0 L110 0 A110 110 0 0 0 95 -55 Z" fill="${P.teal}" opacity=".35"/><line x1="0" y1="0" x2="110" y2="0" stroke="${P.teal}" stroke-width="3"/></g>`
     for (let i = 0; i < 7; i++) {
       const ang = r() * 6.28, d = 30 + r() * 75
-      s += `<rect x="${(Math.cos(ang) * d - 4).toFixed(1)}" y="${(Math.sin(ang) * d - 4).toFixed(1)}" width="8" height="8" fill="${i < 2 ? P.or : P.white}" style="${a('blink', 2, -r() * 2)}"/>`
+      s += `<rect x="${(Math.cos(ang) * d - 4).toFixed(1)}" y="${(Math.sin(ang) * d - 4).toFixed(1)}" width="8" height="8" fill="${i < 2 ? P.or : P.white}" ${a('blink', 2, -r() * 2)}/>`
     }
     return s + '</g>'
   },
   'paid-media': (r) => {
     let s = sprite(MEGA, 150, 160, { a: P.or }, 10)
-    for (let i = 0; i < 3; i++) s += `<circle cx="230" cy="190" r="30" fill="none" stroke="${P.yel}" stroke-width="4" style="${a('pulse', 2.4, -i * 0.8)}transform-origin:230px 190px"/>`
+    for (let i = 0; i < 3; i++) s += `<circle cx="230" cy="190" r="30" fill="none" stroke="${P.yel}" stroke-width="4" ${a('pulse', 2.4, -i * 0.8, { origin: [230, 190] })}/>`
     for (let i = 0; i < 7; i++) {
       const h = 20 + Math.floor(r() * 90)
-      s += `<rect x="${380 + i * 26}" y="${250 - h}" width="16" height="${h}" fill="${i === 6 ? P.or : P.blue}" style="${a('blink', 1.5 + r(), -r())}"/>`
+      s += `<rect x="${380 + i * 26}" y="${250 - h}" width="16" height="${h}" fill="${i === 6 ? P.or : P.blue}" ${a('blink', 1.5 + r(), -r())}/>`
     }
     return s
   },
   'contenido-email': () => {
     let s = ''
-    ;[180, 150, 200, 120].forEach((w, i) => { s += `<rect x="70" y="${110 + i * 26}" height="10" width="${w}" fill="${P.cream}" style="--w:${w}px;${a('type', 3, i * 0.5)}"/>` })
-    s += `<rect x="70" y="230" width="10" height="16" fill="${P.or}" style="${a('blink', 1)}"/>`
-    for (let i = 0; i < 3; i++) s += `<g style="${a('fly', 3.6, -i * 1.2)}">${sprite(ENV, 280, 230, { a: P.white, b: P.red }, 9)}</g>`
+    ;[180, 150, 200, 120].forEach((w, i) => { s += `<rect x="70" y="${110 + i * 26}" height="10" width="${w}" fill="${P.cream}" ${a('type', 3, i * 0.5, { w })}/>` })
+    s += `<rect x="70" y="230" width="10" height="16" fill="${P.or}" ${a('blink', 1)}/>`
+    for (let i = 0; i < 3; i++) s += `<g ${a('fly', 3.6, -i * 1.2)}>${sprite(ENV, 280, 230, { a: P.white, b: P.red }, 9)}</g>`
     return s
   },
   analitica: (r) => {
@@ -154,38 +175,42 @@ const SCENES: Record<string, (r: () => number) => string> = {
     for (let y = 80; y <= 270; y += 38) s += `<line x1="60" y1="${y}" x2="580" y2="${y}" stroke="#15181b"/>`
     let d = 'M60 250', y = 250
     for (let x = 100; x <= 580; x += 40) { y = Math.max(90, y - 10 - r() * 28 + 8); d += ` L${x} ${y.toFixed(0)}` }
-    return s + `<path d="${d}" fill="none" stroke="${P.teal}" stroke-width="5" stroke-dasharray="900" style="${a('draw', 5)}"/><circle cx="580" cy="${y.toFixed(0)}" r="8" fill="${P.or}" style="${a('blink', 1.2)}"/>`
+    return s + `<path d="${d}" fill="none" stroke="${P.teal}" stroke-width="5" stroke-dasharray="900" ${a('draw', 5)}/><circle cx="580" cy="${y.toFixed(0)}" r="8" fill="${P.or}" ${a('blink', 1.2)}/>`
   },
   'sitios-web': () => {
     let s = `<rect x="150" y="80" width="340" height="200" fill="none" stroke="${P.white}" stroke-width="4"/><rect x="150" y="80" width="340" height="22" fill="${P.white}"/>`
     ;[P.red, P.yel, P.teal].forEach((c, i) => { s += `<circle cx="${166 + i * 16}" cy="91" r="5" fill="${c}"/>` })
     s += `<rect x="180" y="125" width="160" height="12" fill="${P.cream}"/><rect x="180" y="148" width="120" height="8" fill="#3a3f45"/><rect x="180" y="165" width="140" height="8" fill="#3a3f45"/>`
-    s += `<rect x="180" y="210" width="110" height="34" fill="#2a2e33" style="${a('fill', 3)}"/><text x="196" y="232" font-size="13" fill="${P.white}" style="${FONT}">DEMO ▸</text>`
-    s += `<g style="${a('click', 3)}">${sprite(ARROW, 262, 228, { a: '#111', b: P.white }, 4)}</g>`
+    s += `<rect x="180" y="210" width="110" height="34" ${a('fill', 3) || ' fill="#2a2e33"'}/><text x="196" y="232" font-size="13" fill="${P.white}" style="${FONT}">DEMO ▸</text>`
+    s += `<g ${a('click', 3)}>${sprite(ARROW, 262, 228, { a: '#111', b: P.white }, 4)}</g>`
     return s + `<rect x="370" y="125" width="90" height="120" fill="${P.blue}" opacity=".85"/>`
   },
   liderazgo: () => {
     let s = ''
-    ;[P.cream, P.blue, P.pink, P.teal].forEach((c, i) => { s += `<g style="${a('bob', 1.2, -i * 0.3)}">${sprite(PERSON, 140 + i * 95, 150, { a: c, b: c }, 10)}</g>` })
-    return s + `<g style="${a('pass', 2.4)}">${sprite(COIN, 190, 118, { a: P.or, b: P.yel }, 6)}</g><rect x="140" y="230" width="360" height="6" fill="#2a2e33"/>`
+    ;[P.cream, P.blue, P.pink, P.teal].forEach((c, i) => { s += `<g ${a('bob', 1.2, -i * 0.3)}>${sprite(PERSON, 140 + i * 95, 150, { a: c, b: c }, 10)}</g>` })
+    return s + `<g ${a('pass', 2.4)}>${sprite(COIN, 190, 118, { a: P.or, b: P.yel }, 6)}</g><rect x="140" y="230" width="360" height="6" fill="#2a2e33"/>`
   },
   'ia-aplicada': () => {
     let s = sprite(BOT, 250, 120, { a: P.white, b: P.or, c: P.blue }, 17)
     for (let i = 0; i < 8; i++) {
       const ang = (i / 8) * 6.28
-      s += `<rect x="${(309 + Math.cos(ang) * 95).toFixed(1)}" y="${(179 + Math.sin(ang) * 80).toFixed(1)}" width="8" height="8" fill="${i % 3 === 0 ? P.or : P.teal}" style="${a('spark', 1.6, -i * 0.2)}"/>`
+      s += `<rect x="${(309 + Math.cos(ang) * 95).toFixed(1)}" y="${(179 + Math.sin(ang) * 80).toFixed(1)}" width="8" height="8" fill="${i % 3 === 0 ? P.or : P.teal}" ${a('spark', 1.6, -i * 0.2)}/>`
     }
     return s
   },
 }
 
-export type ScreenOptions = { slug: string; category?: string | null; minutes?: number | null; title?: string }
+export type ScreenOptions = { slug: string; category?: string | null; minutes?: number | null; title?: string; still?: boolean; noText?: boolean }
 
-export function screenSvg({ slug, category, minutes, title }: ScreenOptions) {
+export function screenSvg({ slug, category, minutes, title, still = false, noText = false }: ScreenOptions) {
+  STILL = still
   const r = rng(slug || 'soyroman')
   const key = category && SCENES[category] ? category : KEYS[Math.floor(r() * KEYS.length)]
   const m = minutes && minutes > 0 ? Math.min(99, Math.round(minutes)) : 4 + Math.floor(r() * 9)
   const num = `${m}.${Math.floor(r() * 10)}`
   const label = title ? title.replace(/[<&"]/g, '') : key
-  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}" preserveAspectRatio="xMidYMid slice">${STYLE}${background(r)}${SCENES[key](r)}${hud(SCREEN_CODES[key], num)}</svg>`
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}" preserveAspectRatio="xMidYMid slice">${still ? '' : STYLE}${background(r)}${SCENES[key](r)}${hud(SCREEN_CODES[key], num)}</svg>`
+  if (noText) svg = svg.replace(/<text[^>]*>[^<]*<\/text>/g, '').replace(/<rect x="22" y="300"[^>]*\/>/, '')
+  STILL = false
+  return svg
 }
