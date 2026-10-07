@@ -25,6 +25,7 @@ from soyroman_engine import (  # noqa: E402  (reutiliza config, CMS, Ollama y re
     BRAND_PATTERNS,
     CMS,
     CMS_PUBLIC,
+    engine_lock,
     VOICE,
     log,
     ollama_call,
@@ -222,4 +223,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    with engine_lock("glosario"):
+        main()

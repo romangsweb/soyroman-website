@@ -43,3 +43,9 @@ guardarse como borrador (no publicada) para que el bot pueda editarla.
 23 6  * * *   cd /home/hall/homeserver/soyroman-cms && /home/hall/homeserver/venv/bin/python3 tools/content-engine/glossary_engine.py --batch 3 >> /home/hall/homeserver/logs/soyroman-glossary.log 2>&1
 11 9  * * *   cd /home/hall/homeserver/soyroman-cms && /home/hall/homeserver/venv/bin/python3 tools/content-engine/notes_engine.py >> /home/hall/homeserver/logs/soyroman-notes.log 2>&1
 ```
+
+## Fiabilidad
+- **Candado compartido** (`/tmp/soyroman-engines.lock`): los tres motores nunca corren a la vez; si uno está ocupado, el otro espera hasta 45 min.
+- **ComfyUI se apaga** al terminar la portada si el motor lo encendió, para que Ollama recupere la VRAM.
+- **Iterar portadas** sin generar posts:
+  `~/homeserver/venv/bin/python3 tools/content-engine/soyroman_engine.py --cover-only "Título de prueba" --expertise crm-revops`

@@ -25,6 +25,8 @@ Config (Vault hall9000/buildations o .env de buildations_engines):
   MODEL_WRITER, OLLAMA_URL, QDRANT_*, PG_*, TELEGRAM_*, COMFYUI_SERVICE  (compartidas)
 """
 import argparse
+import contextlib
+import fcntl
 import json
 import os
 import random
@@ -181,6 +183,8 @@ PROPER = {
     "Google", "Ads", "Search", "Console", "Analytics", "Tag", "Manager", "Looker", "Studio",
     "LinkedIn", "HubSpot", "Salesforce", "Meta", "Microsoft", "Excel", "WordPress", "Webflow",
     "ChatGPT", "Perplexity", "Gemini", "Claude", "Zapier", "Buildations", "Sales", "Navigator",
+    "Core", "Web", "Vitals", "PageSpeed", "Insights", "YouTube", "Instagram", "Facebook",
+    "Notion", "Slack", "Semrush", "Ahrefs", "Make", "Clarity", "Hotjar", "BigQuery",
 }
 
 
@@ -350,6 +354,35 @@ def brand_check(article):
     return flags, details
 
 
+# ───────────────────────── Candado: un solo motor a la vez ─────────────────────────
+LOCK_FILE = os.environ.get("SOYROMAN_ENGINES_LOCK", "/tmp/soyroman-engines.lock")
+
+
+@contextlib.contextmanager
+def engine_lock(name, wait_minutes=45):
+    """Evita que dos motores (blog, glosario, notas) usen Ollama/ComfyUI al mismo tiempo.
+    Si otro está corriendo, espera hasta `wait_minutes`; si no se libera, sale sin hacer nada."""
+    fh = open(LOCK_FILE, "w")
+    deadline = time.time() + wait_minutes * 60
+    while True:
+        try:
+            fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            break
+        except BlockingIOError:
+            if time.time() > deadline:
+                log(f"[lock] otro motor sigue corriendo tras {wait_minutes} min; {name} no se ejecuta")
+                fh.close()
+                raise SystemExit(0)
+            time.sleep(15)
+    try:
+        fh.write(f"{name} {os.getpid()}\n")
+        fh.flush()
+        yield
+    finally:
+        fcntl.flock(fh, fcntl.LOCK_UN)
+        fh.close()
+
+
 # ───────────────────────── Portada (ComfyUI, mismo servicio que buildations) ─────────────────────────
 def _comfyui_active():
     try:
@@ -375,20 +408,41 @@ def _comfyui_warmup():
     return False
 
 
+def _comfyui_stop():
+    """Apaga ComfyUI para liberar la VRAM (si no, Ollama carga el modelo a medias y va ~10x más lento)."""
+    try:
+        subprocess.run(["sudo", "systemctl", "stop", "comfyui"], capture_output=True, timeout=30)
+        log("  ComfyUI apagado (VRAM liberada)")
+    except Exception as e:
+        log(f"  no se pudo apagar ComfyUI: {e}")
+
+
 def generate_cover(expertise, title):
-    if not _comfyui_active() and not _comfyui_warmup():
+    was_active = _comfyui_active()
+    if not was_active and not _comfyui_warmup():
         log("  ComfyUI no disponible, sin portada")
         return None, None
     prompt = f"{COVER_BASE}, {COVER_BY_EXPERTISE.get(expertise, COVER_BY_EXPERTISE['motores-ia'])}, subtle reference to: {title[:60].lower()}"
     try:
         res = subprocess.run(["bash", cfg.get("COMFYUI_SERVICE"), prompt, IMAGE_STEPS, IMAGE_WIDTH, IMAGE_HEIGHT],
                              capture_output=True, text=True, timeout=600)
-        data = json.loads(res.stdout.strip().split("\n")[-1])
+        last = (res.stdout.strip().split("\n") or [""])[-1]
+        try:
+            data = json.loads(last)
+        except json.JSONDecodeError:
+            log(f"  ComfyUI no devolvió JSON. Última línea: {last[:200]!r} · stderr: {res.stderr.strip()[-200:]!r}")
+            return None, prompt
         path = data.get("image") or data.get("filename")
-        return (path if path and os.path.exists(path) else None), prompt
+        if not path or not os.path.exists(path):
+            log(f"  ComfyUI respondió sin un archivo válido: {json.dumps(data)[:200]}")
+            return None, prompt
+        return path, prompt
     except Exception as e:
         log(f"  comfyui error: {e}")
         return None, prompt
+    finally:
+        if not was_active:  # solo lo apagamos si lo encendimos nosotros
+            _comfyui_stop()
 
 
 # ───────────────────────── Selección de tema ─────────────────────────
@@ -412,7 +466,13 @@ def main():
     ap.add_argument("--expertise", default="", help="slug de Expertise para ligar el post")
     ap.add_argument("--no-cover", action="store_true")
     ap.add_argument("--dry-run", action="store_true", help="genera e imprime; no guarda nada")
+    ap.add_argument("--cover-only", metavar="TITULO", help="solo genera una portada (para iterar el prompt); no usa Ollama ni el CMS")
     args = ap.parse_args()
+
+    if args.cover_only:
+        path, prompt = generate_cover(args.expertise or "motores-ia", args.cover_only)
+        log(json.dumps({"image": path, "prompt": prompt}, ensure_ascii=False, indent=2))
+        return
 
     if args.topic:
         topic, article_type, parent, expertise, trigger = " ".join(args.topic), args.type, "", args.expertise, "manual"
@@ -527,4 +587,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    with engine_lock("blog"):
+        main()
