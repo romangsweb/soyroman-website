@@ -41,6 +41,7 @@ export function AiApp() {
   }, [f, ready, busy])
 
   const max = res ? Math.max(res.mentions, ...res.rivals.map((r) => r.count), 1) : 1
+  const answered = res ? res.answers.filter((a) => !a.failed).length : 5
 
   return (
     <>
@@ -49,7 +50,7 @@ export function AiApp() {
         bottom="IA·05"
         cable="GRATIS"
         message={busy ? 'Preguntando a Gemini (5 preguntas)…'
-          : res ? `${res.domain}: aparece en ${res.mentions} de 5 respuestas`
+          : res ? `${res.domain}: aparece en ${res.mentions} de ${answered} respuestas`
             : 'Cuando alguien le pregunta a la IA por tu servicio, ¿te recomienda?'}
       />
 
@@ -70,13 +71,13 @@ export function AiApp() {
         <div className={`e-lcd${busy ? ' busy' : ''}`}>
           {res ? (
             <>
-              <div className="i-big"><b>{res.mentions} / 5</b><span>respuestas que te mencionan</span></div>
+              <div className="i-big"><b>{res.mentions} / {answered}</b><span>respuestas que te mencionan{answered < 5 ? ` · ${5 - answered} sin respuesta (IA saturada)` : ''}</span></div>
               <div className="i-qs">
                 {res.answers.map((a, i) => (
-                  <button key={a.q} type="button" className={`i-q ${a.mentioned ? 'y' : 'n'}${open === i ? ' on' : ''}`} onClick={() => setOpen(open === i ? null : i)} aria-expanded={open === i}>
+                  <button key={a.q} type="button" disabled={a.failed} className={`i-q ${a.mentioned ? 'y' : 'n'}${open === i ? ' on' : ''}`} onClick={() => setOpen(open === i ? null : i)} aria-expanded={open === i}>
                     P{i + 1} · {a.q}
-                    <b>{a.mentioned ? 'SÍ' : 'NO'}</b>
-                    <small>{a.position ? `lugar ${a.position} de ${a.of}` : a.mentioned ? 'solo como fuente' : 'no apareces'}</small>
+                    <b>{a.failed ? '—' : a.mentioned ? 'SÍ' : 'NO'}</b>
+                    <small>{a.failed ? 'sin respuesta' : a.position ? `lugar ${a.position} de ${a.of}` : a.mentioned ? 'solo como fuente' : 'no apareces'}</small>
                   </button>
                 ))}
               </div>
@@ -133,11 +134,11 @@ export function AiApp() {
       {res && (
         <section className="te-print" aria-hidden="true">
           <span className="tag">soyroman.com · ¿Te recomienda la IA?</span>
-          <h1>{res.domain}: {res.mentions} de 5 respuestas</h1>
+          <h1>{res.domain}: {res.mentions} de {answered} respuestas</h1>
           <p>Servicio: {res.service} · {res.market}. Preguntado a Gemini ({res.model}){res.grounded ? ' con búsqueda en Google' : ', sin búsqueda en vivo,'} el {new Date(res.at).toLocaleDateString('es-MX')}.</p>
           <table>
             <thead><tr><th>Pregunta</th><th>¿Te menciona?</th><th>Lugar</th></tr></thead>
-            <tbody>{res.answers.map((a) => <tr key={a.q}><td>{a.q}</td><td>{a.mentioned ? 'Sí' : 'No'}</td><td>{a.position ? `${a.position} de ${a.of}` : '—'}</td></tr>)}</tbody>
+            <tbody>{res.answers.map((a) => <tr key={a.q}><td>{a.q}</td><td>{a.failed ? 'Sin respuesta' : a.mentioned ? 'Sí' : 'No'}</td><td>{a.position ? `${a.position} de ${a.of}` : '—'}</td></tr>)}</tbody>
           </table>
           <h3>Competidores que menciona</h3>
           <p>{res.rivals.map((r) => `${r.domain} (${r.count}/5)`).join(' · ') || '—'}</p>

@@ -9,7 +9,7 @@ import { AuditError } from './aeoAudit'
  */
 
 export type Market = 'México' | 'Latinoamérica' | 'España'
-export type Answer = { q: string; mentioned: boolean; position: number | null; of: number; text: string; sources: string[] }
+export type Answer = { q: string; mentioned: boolean; position: number | null; of: number; text: string; sources: string[]; failed?: boolean }
 export type AiResult = {
   domain: string
   brand: string
@@ -51,28 +51,41 @@ const label = (d: string) => root(d).split('.')[0]
 
 type Gem = { candidates?: { content?: { parts?: { text?: string }[] }; groundingMetadata?: { groundingChunks?: { web?: { uri?: string; title?: string } }[] } }[] }
 
+// Si un modelo está saturado (503) o sin cuota (429), se intenta con el siguiente
+const MODELS = () => [...new Set([MODEL(), 'gemini-3.5-flash', 'gemini-flash-lite-latest'])]
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
 async function ask(q: string): Promise<{ text: string; sources: string[] }> {
   const key = process.env.GEMINI_API_KEY
   if (!key) throw new AuditError('Esta herramienta no está configurada todavía.')
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL()}:generateContent`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: SYSTEM }] },
-      contents: [{ role: 'user', parts: [{ text: q }] }],
-      ...(GROUNDED() ? { tools: [{ google_search: {} }] } : {}),
-      generationConfig: { temperature: 0.3, maxOutputTokens: 2048 },
-    }),
-    signal: AbortSignal.timeout(45_000),
-    cache: 'no-store',
-  })
-  if (res.status === 429) throw new AuditError('Se agotó la cuota gratuita de hoy. Vuelve a intentarlo mañana.')
-  if (!res.ok) throw new Error(`gemini ${res.status} ${(await res.text()).slice(0, 300)}`)
-  const data = (await res.json()) as Gem
-  const c = data.candidates?.[0]
-  const text = (c?.content?.parts || []).map((p) => p.text || '').join('').trim()
-  const sources = (c?.groundingMetadata?.groundingChunks || []).map((g) => root(g.web?.title || '')).filter((t) => t.includes('.'))
-  return { text, sources: [...new Set(sources)] }
+  let lastStatus = 0
+  for (const model of MODELS()) {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: SYSTEM }] },
+        contents: [{ role: 'user', parts: [{ text: q }] }],
+        ...(GROUNDED() ? { tools: [{ google_search: {} }] } : {}),
+        generationConfig: { temperature: 0.3, maxOutputTokens: 2048 },
+      }),
+      signal: AbortSignal.timeout(25_000),
+      cache: 'no-store',
+    }).catch(() => null) // tiempo agotado: probar el siguiente modelo
+    if (!res) continue
+    lastStatus = res.status
+    if (res.status === 429 || res.status >= 500) {
+      await wait(800)
+      continue
+    }
+    if (!res.ok) throw new Error(`gemini ${model} ${res.status} ${(await res.text()).slice(0, 300)}`)
+    const data = (await res.json()) as Gem
+    const c = data.candidates?.[0]
+    const text = (c?.content?.parts || []).map((p) => p.text || '').join('').trim()
+    const sources = (c?.groundingMetadata?.groundingChunks || []).map((g) => root(g.web?.title || '')).filter((t) => t.includes('.'))
+    return { text, sources: [...new Set(sources)] }
+  }
+  throw new AuditError(lastStatus === 429 ? 'Se agotó la cuota gratuita de hoy. Vuelve a intentarlo mañana.' : 'La IA está saturada en este momento. Intenta de nuevo en unos minutos.')
 }
 
 export async function runAiRecommend(domain: string, brandInput: string, service: string, market: Market): Promise<AiResult> {
@@ -81,12 +94,19 @@ export async function runAiRecommend(domain: string, brandInput: string, service
   const b = brand.toLowerCase()
   const needles = [...new Set([root(domain), b, b.replace(/-/g, ' '), b.replace(/[-\s]/g, '')])].filter((n) => n.length >= 3)
   const qs = questions(service, market)
-  const raw = await Promise.all(qs.map((q) => ask(q)))
+  const settled = await Promise.allSettled(qs.map((q) => ask(q)))
+  const ok = settled.filter((x) => x.status === 'fulfilled').length
+  if (ok < 3) {
+    const err = settled.find((x) => x.status === 'rejected') as PromiseRejectedResult
+    throw err.reason instanceof AuditError ? err.reason : new AuditError('La IA está saturada en este momento. Intenta de nuevo en unos minutos.')
+  }
+  const raw = settled.map((x) => (x.status === 'fulfilled' ? x.value : null))
 
   const rivalCount = new Map<string, number>()
   const sourceCount = new Map<string, number>()
   let quote: string | null = null
   const answers: Answer[] = raw.map((r, i) => {
+    if (!r) return { q: qs[i], mentioned: false, position: null, of: 0, text: '', sources: [], failed: true }
     const low = r.text.toLowerCase()
     // Entidades en orden de aparición: dominios citados en el texto + tu marca
     const found = new Map<string, number>()
@@ -119,7 +139,7 @@ export async function runAiRecommend(domain: string, brandInput: string, service
   const F: { title: string; detail: string }[] = []
   if (!mentions) F.push({ title: 'La IA no te menciona en ninguna respuesta', detail: `Cuando alguien pregunta por ${service} en ${market}, Gemini recomienda a otros. Para la IA, todavía no eres una opción en esta categoría.` })
   const top = rivals[0]
-  if (top && top.count > mentions) F.push({ title: `${top.domain} aparece en ${top.count} de 5 respuestas`, detail: mentions ? `Tú en ${mentions}. Revisa qué publica: casos, precios, comparativas; es lo que la IA encuentra y repite.` : 'Revisa qué publica: casos, precios, comparativas; es lo que la IA encuentra y repite.' })
+  if (top && top.count > mentions) F.push({ title: `${top.domain} aparece en ${top.count} de ${answers.filter((x) => !x.failed).length} respuestas`, detail: mentions ? `Tú en ${mentions}. Revisa qué publica: casos, precios, comparativas; es lo que la IA encuentra y repite.` : 'Revisa qué publica: casos, precios, comparativas; es lo que la IA encuentra y repite.' })
   const late = answers.filter((a) => a.position && a.position > 3)
   if (late.length) F.push({ title: 'Apareces, pero al final de la lista', detail: `En ${late.length} respuesta${late.length > 1 ? 's' : ''} quedas después del tercer lugar: la mayoría de los compradores no llega hasta ahí.` })
   const notYou = sources.filter((s) => !needles.some((n) => s.domain.includes(n))).slice(0, 3)
