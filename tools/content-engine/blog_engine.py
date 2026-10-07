@@ -501,10 +501,64 @@ def lead_answers(md, system):
     return "".join(parts)
 
 
+SENT = re.compile(r"[^.!?\n]+[.!?]")
+
+
+def dedupe_sentences(md, min_words=12):
+    """Quita frases largas que se repiten en el artículo (deja la primera aparición). No toca tablas, listas ni encabezados."""
+    seen, out = set(), []
+    for line in md.split("\n"):
+        if not line.strip() or line.lstrip()[:1] in "|#->*" or re.match(r"\s*\d+\.", line):
+            out.append(line)
+            continue
+        pieces, last, dropped = [], 0, False
+        for m in SENT.finditer(line):
+            pieces.append(line[last:m.start()])  # lo que hay entre frases (espacios, marcadores)
+            sent = m.group(0)
+            key = re.sub(r"\W+", " ", sent.lower()).strip()
+            if len(key.split()) >= min_words and key in seen:
+                dropped = True
+            else:
+                seen.add(key)
+                pieces.append(sent)
+            last = m.end()
+        pieces.append(line[last:])  # resto sin punto final (p. ej. un [COMPLETAR: …])
+        new = re.sub(r"\s{2,}", " ", "".join(pieces)).strip() if dropped else line
+        out.append(new)
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(out))
+
+
+VARIANTS = {
+    "cuando reviso": ["Al revisar", "Si reviso", "Revisando"],
+    "lo que recomiendo": ["Mi recomendación es", "Recomiendo"],
+}
+
+
+def vary_starts(md, keep=2):
+    """Desde la tercera vez, cambia arranques repetidos al inicio de frase ("Cuando reviso…") por variantes."""
+    for phrase, alts in VARIANTS.items():
+        count = 0
+
+        def sub(m):
+            nonlocal count
+            count += 1
+            if count <= keep:
+                return m.group(0)
+            alt = alts[(count - keep - 1) % len(alts)]
+            if phrase == "lo que recomiendo" and alt == "Mi recomendación es":
+                return m.group(1) + alt  # "Lo que recomiendo es…" → se ajusta abajo
+            return m.group(1) + alt
+
+        md = re.sub(rf"(^|[.!?]\s+)(?:{phrase[0].upper()}{phrase[1:]})", sub, md, flags=re.M)
+    md = re.sub(r"Mi recomendación es es\b", "Mi recomendación es", md)
+    md = re.sub(r"Recomiendo es\b", "Recomiendo", md)
+    return md
+
+
 def autofix(md):
     for pat, rep_ in AUTOFIX:
         md = re.sub(pat, rep_, md)
-    return split_leads(sanitize_completar(scrub(md)))
+    return split_leads(vary_starts(dedupe_sentences(sanitize_completar(scrub(md)))))
 
 
 def ensure_completar(md):
@@ -673,7 +727,11 @@ def assess(art, t):
         vals = [float(s.get(k, 0)) for k in keys]
         score = round(sum(vals) / len(vals), 1)
         problems = [p for p in s.get("problemas", []) if isinstance(p, str)][:4]
-        contradictions = [c for c in s.get("contradicciones", []) if isinstance(c, str) and c.strip()][:4]
+        raw = [c for c in s.get("contradicciones", []) if isinstance(c, str) and c.strip()]
+        # El modelo a veces reporta repeticiones como contradicciones: esas restan, pero no ponen tope
+        not_contra = re.compile(r"no contradice|no se contradice|coherente|redundan|se repite|repetici", re.I)
+        contradictions = [c for c in raw if not not_contra.search(c)][:4]
+        problems += [f"repetición: {c[:160]}" for c in raw if not_contra.search(c)][:2]
     except Exception as e:
         log(f"  autoevaluación falló: {e}")
         score, problems = 6.0, []
