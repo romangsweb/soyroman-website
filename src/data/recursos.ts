@@ -112,6 +112,18 @@ export const RECURSOS: Recurso[] = [
     expertise: ['paid-media', 'generacion-demanda-b2b'],
     categories: ['paid-media', 'generacion-demanda'],
   },
+  {
+    slug: 'radiografia-stack',
+    href: '/recursos/radiografia-stack',
+    code: 'STACK',
+    name: 'Radiografía de stack',
+    sub: 'analizador',
+    desc: '¿Qué CMS, analítica, CRM, píxeles y correo usa un sitio? Ocho bandas y un diagnóstico de lo que falta.',
+    preview: { label: 'Bandas', value: '8 · SCAN' },
+    glossary: ['crm', 'seo', 'modelo-de-atribucion', 'lead-scoring', 'landing-page'],
+    expertise: ['web-herramientas', 'crm-revops', 'seo-aeo-geo'],
+    categories: ['sitios-web', 'crm-revops', 'analitica'],
+  },
 ]
 
 export const LIVE = RECURSOS.filter((r) => r.href)

@@ -126,6 +126,9 @@ export function AeoApp() {
               <button type="button" className="btn or" onClick={() => setGate(true)} disabled={!fixes.length}>
                 {fixes.length ? `Plan de correcciones en PDF (${fixes.length}) ▸` : 'Sin correcciones pendientes ✓'}
               </button>
+              <a className="btn" href="/recursos/radiografia-stack" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
+                Ver todo su stack ▸
+              </a>
             </div>
           ))}
         </div>

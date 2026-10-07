@@ -66,9 +66,9 @@ async function assertPublic(url: URL) {
   if (!addrs.length || addrs.some((a) => isPrivateIp(a.address))) throw new AuditError('Ese dominio no apunta a una dirección pública.')
 }
 
-type Res = { status: number; url: string; text: string; ms: number; type: string }
+export type Res = { status: number; url: string; text: string; ms: number; type: string; headers: Record<string, string> }
 
-async function safeFetch(start: string, ua: string, maxHops = 3): Promise<Res> {
+export async function safeFetch(start: string, ua: string, maxHops = 3): Promise<Res> {
   let url = new URL(start)
   const t0 = Date.now()
   for (let hop = 0; hop <= maxHops; hop++) {
@@ -100,12 +100,14 @@ async function safeFetch(start: string, ua: string, maxHops = 3): Promise<Res> {
       }
       text = new TextDecoder().decode(Buffer.concat(chunks.map((c) => Buffer.from(c))))
     }
-    return { status: res.status, url: url.toString(), text, ms: Date.now() - t0, type: res.headers.get('content-type') || '' }
+    const headers: Record<string, string> = {}
+    res.headers.forEach((v, k) => { headers[k.toLowerCase()] = v })
+    return { status: res.status, url: url.toString(), text, ms: Date.now() - t0, type: res.headers.get('content-type') || '', headers }
   }
   throw new AuditError('Demasiadas redirecciones.')
 }
 
-const tryFetch = (u: string, ua = BROWSER_UA) => safeFetch(u, ua).catch(() => null)
+export const tryFetch = (u: string, ua = BROWSER_UA) => safeFetch(u, ua).catch(() => null)
 
 // ───────────────────────── Análisis ─────────────────────────
 type RobotsGroup = { agents: string[]; rules: { allow: boolean; path: string }[] }

@@ -389,3 +389,31 @@
 .te-app .q-plan a{color:inherit}
 .te-app .q-keys{display:flex;gap:10px;margin-top:14px}
 .te-app .q-gate{margin-top:14px;background:#fff;border:2px solid var(--ink);border-radius:8px}
+
+/* ───────── Radiografía de stack (analizador de espectro): prefijo x- ───────── */
+.te-app .x-dev{background:var(--shell);border:2px solid var(--ink);border-radius:18px;box-shadow:8px 8px 0 var(--ink);padding:18px;margin-top:8px}
+.te-app .x-brand{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.te-app .x-brand b{font-size:15px;letter-spacing:.06em;font-weight:400}
+.te-app .x-spec{background:#0b0d0c;border:2px solid var(--ink);border-radius:10px;padding:16px 14px 10px;margin-top:14px}
+.te-app .x-bands{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;align-items:end;height:150px}
+.te-app .x-band{display:flex;flex-direction:column-reverse;gap:3px;height:100%}
+.te-app .x-band i{flex:1;border-radius:1px;background:#1c2024;transition:background .2s}
+.te-app .x-band.ok i.on{background:#3ddc84}
+.te-app .x-band.warn i.on{background:#f2c14e}
+.te-app .x-band.bad i.on{background:var(--or)}
+.te-app .x-spec.busy .x-band i.on{animation:ledrec 1s steps(1) infinite}
+.te-app .x-lab{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;margin-top:8px}
+.te-app .x-lab span{font-size:9px;color:#9aa;text-transform:uppercase;letter-spacing:.04em;text-align:center;overflow:hidden;text-overflow:ellipsis}
+.te-app .x-grid{display:grid;gap:12px;margin-top:16px}
+@media(min-width:880px){.te-app .x-grid{grid-template-columns:1fr 1fr}}
+.te-app .x-card{background:var(--panel);border:2px solid var(--ink);border-radius:10px;padding:12px}
+.te-app .x-card h3{margin:0 0 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:400;display:flex;align-items:center;gap:8px}
+.te-app .x-chips{display:flex;flex-wrap:wrap;gap:6px}
+.te-app .x-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--ink);border-radius:4px;padding:3px 8px;font-size:11px}
+.te-app .x-chip small{color:var(--grey);font-size:9px}
+.te-app .x-none{font-size:11px;color:var(--grey)}
+.te-app .x-dx{margin-top:16px;background:#fff;border:2px solid var(--ink);border-radius:8px;padding:12px 14px;font-size:12px;line-height:1.6}
+.te-app .x-dx h3{margin:0 0 6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:400}
+.te-app .x-dx li{margin-bottom:4px}
+.te-app .x-dx b{color:var(--or);font-weight:400}
+@media(max-width:560px){.te-app .x-lab span{font-size:7px}.te-app .x-bands{gap:4px}}

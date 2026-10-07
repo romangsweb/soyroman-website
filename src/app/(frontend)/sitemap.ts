@@ -26,6 +26,7 @@ const STATIC = [
   '/recursos/auditor-aeo',
   '/recursos/brecha-pipeline',
   '/recursos/cpl-maximo',
+  '/recursos/radiografia-stack',
   '/about',
   '/cv',
   '/uses',
