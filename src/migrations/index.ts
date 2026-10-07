@@ -4,6 +4,7 @@ import * as migration_20261006_232103_glossary_notes from './20261006_232103_glo
 import * as migration_20261007_013652_case_study from './20261007_013652_case_study';
 import * as migration_20261007_131028_expertise_skills from './20261007_131028_expertise_skills';
 import * as migration_20261007_141216_profile_availability from './20261007_141216_profile_availability';
+import * as migration_20261007_164653_ai_visits from './20261007_164653_ai_visits';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20261007_141216_profile_availability.up,
     down: migration_20261007_141216_profile_availability.down,
-    name: '20261007_141216_profile_availability'
+    name: '20261007_141216_profile_availability',
+  },
+  {
+    up: migration_20261007_164653_ai_visits.up,
+    down: migration_20261007_164653_ai_visits.down,
+    name: '20261007_164653_ai_visits'
   },
 ];

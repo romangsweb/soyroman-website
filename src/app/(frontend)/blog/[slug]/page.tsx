@@ -196,7 +196,10 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   return {
     title: meta.title || post.title,
     description,
-    alternates: { canonical: `${SITE}/blog/${slug}` },
+    alternates: {
+      canonical: `${SITE}/blog/${slug}`,
+      types: { 'text/markdown': `${SITE}/blog/${slug}.md` },
+    },
     openGraph: {
       type: 'article',
       url: `${SITE}/blog/${slug}`,

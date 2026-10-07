@@ -46,6 +46,9 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   redirects,
+  async rewrites() {
+    return [{ source: '/blog/:slug.md', destination: '/md/blog/:slug' }]
+  },
   turbopack: {
     root: path.resolve(dirname),
   },

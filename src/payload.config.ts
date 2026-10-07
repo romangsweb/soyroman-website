@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url'
 import { es } from '@payloadcms/translations/languages/es'
 import { en } from '@payloadcms/translations/languages/en'
 
+import { AiVisits } from './collections/AiVisits'
 import { Categories } from './collections/Categories'
 import { Experience } from './collections/Experience'
 import { Expertise } from './collections/Expertise'
@@ -124,6 +125,7 @@ export default buildConfig({
       withFrontendRevalidation,
     ),
     Users,
+    AiVisits,
   ],
   cors: allowedOrigins,
   csrf: allowedOrigins,

@@ -41,6 +41,7 @@ export async function GET() {
     '',
     '## Opcional',
     line('Glosario de marketing B2B', `${SITE}/glosario`),
+    line('Artículos completos en texto', `${SITE}/llms-full.txt`),
     line('RSS del blog', `${SITE}/blog/rss.xml`),
     '',
   ].join('\n')
