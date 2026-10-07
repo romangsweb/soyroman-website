@@ -44,7 +44,7 @@ export function BrandTile({ name, size = 'md', className }: { name: string; size
       className={cn('relative inline-flex items-center justify-center border border-current shrink-0', box, className)}
     >
       <BrandIcon name={name} className={icon} />
-      <span className="absolute -top-px -right-px w-1.5 h-1.5 bg-[#ff3300]" />
+      <span className="absolute -top-px -right-px w-1.5 h-1.5 bg-[#e85a2a]" />
     </span>
   )
 }

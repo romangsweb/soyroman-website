@@ -31,7 +31,7 @@ export default async function NotePage({ params }: Args) {
         <div className="p-8 md:p-16">
           <Link
             href="/notas"
-            className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-12 hover:text-[#ff3300] transition-colors border border-black px-4 py-2 bg-white"
+            className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-12 hover:text-[#e85a2a] transition-colors border border-black px-4 py-2 bg-white"
           >
             <ArrowUpRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
             Volver a notas
@@ -44,7 +44,7 @@ export default async function NotePage({ params }: Args) {
               </time>
             )}
             {cats.map((c: any) => (
-              <Link key={c.id} href={`/blog/tag/${c.slug}`} className="px-3 py-1 border border-black bg-white hover:bg-[#ff3300] hover:text-white hover:border-[#ff3300]">
+              <Link key={c.id} href={`/blog/tag/${c.slug}`} className="px-3 py-1 border border-black bg-white hover:bg-[#e85a2a] hover:text-white hover:border-[#e85a2a]">
                 {c.title}
               </Link>
             ))}
@@ -53,7 +53,7 @@ export default async function NotePage({ params }: Args) {
       </header>
       <section className="bg-white">
         <div className="max-w-3xl p-8 md:p-16">
-          <div className="prose prose-lg text-black prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-headings:font-semibold prose-a:text-[#ff3300] max-w-none">
+          <div className="prose prose-lg text-black prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-headings:font-semibold prose-a:text-[#e85a2a] max-w-none">
             {n.content && <RichText data={n.content} />}
           </div>
         </div>

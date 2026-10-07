@@ -12,14 +12,14 @@ export default async function AboutPage() {
 
   return (
     <PageTransition>
-      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
         <section className="border-b border-black relative bg-[#e5e5e5]">
           <div className="p-8 md:p-16 relative container mx-auto">
             <Reveal duration={1.2}>
               <div className="flex items-center gap-3 mb-16">
-                <div className="w-3 h-3 bg-[#ff3300]"></div>
+                <div className="w-3 h-3 bg-[#e85a2a]"></div>
                 <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
                   SYS.04 // Perfil
                 </p>
@@ -44,7 +44,7 @@ export default async function AboutPage() {
                     {/* Top Bar of the photo frame */}
                     <div className="h-8 border-b border-black flex items-center px-4 justify-between bg-white">
                       <span className="font-mono text-[10px] uppercase font-bold">FOTO.01</span>
-                      <div className="w-2 h-2 bg-[#ff3300] animate-pulse"></div>
+                      <div className="w-2 h-2 bg-[#e85a2a] animate-pulse"></div>
                     </div>
                     {/* Foto (Profile → Photo en el CMS); si no hay, marcador */}
                     <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden bg-white">
@@ -85,7 +85,7 @@ export default async function AboutPage() {
                     </h2>
                     
                     {profile?.longBio && (
-                      <div className="prose prose-lg text-black/80 prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-a:text-[#ff3300] prose-a:font-mono prose-a:text-sm prose-a:uppercase prose-a:font-bold prose-a:border-b prose-a:border-[#ff3300] prose-a:no-underline hover:prose-a:bg-[#ff3300] hover:prose-a:text-white mb-16 max-w-none">
+                      <div className="prose prose-lg text-black/80 prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-a:text-[#e85a2a] prose-a:font-mono prose-a:text-sm prose-a:uppercase prose-a:font-bold prose-a:border-b prose-a:border-[#e85a2a] prose-a:no-underline hover:prose-a:bg-[#e85a2a] hover:prose-a:text-white mb-16 max-w-none">
                         <RichText data={profile.longBio} />
                       </div>
                     )}
@@ -112,7 +112,7 @@ export default async function AboutPage() {
                         return (
                           <span
                             key={interest}
-                            className="font-mono text-[10px] uppercase font-bold tracking-widest px-3 py-1.5 border border-black bg-white hover:bg-[#ff3300] hover:text-white hover:border-[#ff3300] transition-colors cursor-default flex items-center gap-2"
+                            className="font-mono text-[10px] uppercase font-bold tracking-widest px-3 py-1.5 border border-black bg-white hover:bg-[#e85a2a] hover:text-white hover:border-[#e85a2a] transition-colors cursor-default flex items-center gap-2"
                           >
                             <span className="w-1.5 h-1.5 bg-black"></span>
                             {interest}

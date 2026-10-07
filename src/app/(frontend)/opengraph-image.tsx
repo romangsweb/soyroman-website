@@ -25,7 +25,7 @@ export default function OpengraphImage() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{ width: 20, height: 20, background: '#ff3300' }} />
+          <div style={{ width: 20, height: 20, background: '#e85a2a' }} />
           <div style={{ fontSize: 24, letterSpacing: 4, fontWeight: 700, color: 'rgba(0,0,0,0.6)' }}>SOY_ROMAN</div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -37,7 +37,7 @@ export default function OpengraphImage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div style={{ fontSize: 24, letterSpacing: 3, fontWeight: 700 }}>SOYROMAN.COM</div>
           <div style={{ display: 'flex', width: 96, height: 96, border: '3px solid #000', background: '#fff', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ width: 32, height: 32, background: '#ff3300' }} />
+            <div style={{ width: 32, height: 32, background: '#e85a2a' }} />
           </div>
         </div>
       </div>

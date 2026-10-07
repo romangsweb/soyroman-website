@@ -34,7 +34,7 @@ export default async function ProjectDetailPage({ params }: Args) {
 
   return (
     <PageTransition>
-      <div className="bg-black text-white font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-white/20 max-w-[1920px] mx-auto">
+      <div className="bg-black text-white font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-white/20 max-w-[1920px] mx-auto">
         
         {/* Navigation & Header */}
         <section className="border-b border-white/20 relative bg-[#111]">
@@ -43,14 +43,14 @@ export default async function ProjectDetailPage({ params }: Args) {
               <div className="flex flex-col md:flex-row md:items-center justify-between mb-16 gap-8">
                 <Link
                   href="/proyectos"
-                  className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold hover:text-[#ff3300] transition-colors border border-white/20 px-4 py-2 self-start"
+                  className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold hover:text-[#e85a2a] transition-colors border border-white/20 px-4 py-2 self-start"
                 >
                   <ArrowUpRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
                   Volver a proyectos
                 </Link>
                 
                 <div className="flex items-center gap-4">
-                  <span className="font-mono uppercase tracking-widest text-xs font-bold bg-[#ff3300] text-white px-3 py-1">
+                  <span className="font-mono uppercase tracking-widest text-xs font-bold bg-[#e85a2a] text-white px-3 py-1">
                     {project.year}
                   </span>
                   {project.client && (
@@ -82,7 +82,7 @@ export default async function ProjectDetailPage({ params }: Args) {
                 {project.context && (
                   <div className="relative">
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-6 flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 bg-[#ff3300]"></span>
+                      <span className="w-1.5 h-1.5 bg-[#e85a2a]"></span>
                       // Contexto
                     </h2>
                     <p className="font-mono text-sm leading-relaxed opacity-90">
@@ -97,7 +97,7 @@ export default async function ProjectDetailPage({ params }: Args) {
                       <span className="w-1.5 h-1.5 bg-white"></span>
                       // Reto
                     </h2>
-                    <p className="font-mono text-sm leading-relaxed opacity-90 text-[#ff3300]">
+                    <p className="font-mono text-sm leading-relaxed opacity-90 text-[#e85a2a]">
                       {project.problem}
                     </p>
                   </div>
@@ -113,7 +113,7 @@ export default async function ProjectDetailPage({ params }: Args) {
                     <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-8 border-b border-white/20 pb-4">
                       // Estrategia y ejecución
                     </h2>
-                    <div className="prose prose-lg prose-invert prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-a:text-[#ff3300] prose-a:border-b prose-a:border-[#ff3300] prose-a:no-underline hover:prose-a:bg-[#ff3300] hover:prose-a:text-white max-w-none">
+                    <div className="prose prose-lg prose-invert prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-a:text-[#e85a2a] prose-a:border-b prose-a:border-[#e85a2a] prose-a:no-underline hover:prose-a:bg-[#e85a2a] hover:prose-a:text-white max-w-none">
                       <RichText data={project.approach} />
                     </div>
                   </div>
@@ -128,14 +128,14 @@ export default async function ProjectDetailPage({ params }: Args) {
                       {project.results.map((r: any, i: number) => {
                         return (
                           <div key={i} className="p-8 bg-black hover:bg-[#111] transition-colors relative group">
-                            <p className="text-5xl font-mono font-bold mb-4 text-[#ff3300]">
+                            <p className="text-5xl font-mono font-bold mb-4 text-[#e85a2a]">
                               {r.value}
                             </p>
                             <p className="font-mono text-sm font-bold uppercase tracking-widest mb-2">{r.metric}</p>
                             {r.description && (
                               <p className="font-mono text-[10px] uppercase tracking-widest opacity-50">{r.description}</p>
                             )}
-                            <div className="absolute top-4 right-4 w-2 h-2 border border-white/20 group-hover:border-[#ff3300]"></div>
+                            <div className="absolute top-4 right-4 w-2 h-2 border border-white/20 group-hover:border-[#e85a2a]"></div>
                           </div>
                         )
                       })}
@@ -153,7 +153,7 @@ export default async function ProjectDetailPage({ params }: Args) {
                       {stackNames.map((name) => (
                         <span
                           key={name}
-                          className="inline-flex items-center gap-3 pr-4 border border-white/20 font-mono text-[10px] uppercase tracking-widest font-bold hover:border-[#ff3300] transition-colors"
+                          className="inline-flex items-center gap-3 pr-4 border border-white/20 font-mono text-[10px] uppercase tracking-widest font-bold hover:border-[#e85a2a] transition-colors"
                         >
                           <BrandTile name={name} size="sm" className="border-0 border-r border-white/20" />
                           {name}

@@ -8,7 +8,7 @@ import { ArrowUpRight } from '@/components/icons'
 import { SERVICES } from '@/data/services'
 
 const input =
-  'w-full px-4 py-4 bg-[#f4f4f4] border border-black text-sm font-mono focus:outline-none focus:bg-white focus:border-[#ff3300] transition-all'
+  'w-full px-4 py-4 bg-[#f4f4f4] border border-black text-sm font-mono focus:outline-none focus:bg-white focus:border-[#e85a2a] transition-all'
 const label = 'block text-[10px] font-mono font-bold uppercase tracking-widest mb-3 opacity-60'
 
 type Props = { origin?: string; showService?: boolean }
@@ -20,7 +20,7 @@ export function ContactForm({ origin = 'Contacto', showService = true }: Props) 
     return (
       <div role="status" className="border border-black bg-white p-8 md:p-12">
         <div className="flex items-center gap-3 mb-6">
-          <span className="w-3 h-3 bg-[#ff3300]" />
+          <span className="w-3 h-3 bg-[#e85a2a]" />
           <p className="font-mono text-[10px] font-bold uppercase tracking-widest opacity-60">Mensaje recibido</p>
         </div>
         <p className="text-2xl md:text-3xl font-semibold tracking-tight mb-4">Gracias, te respondo pronto.</p>
@@ -79,13 +79,13 @@ export function ContactForm({ origin = 'Contacto', showService = true }: Props) 
       </div>
 
       {state.status === 'error' && (
-        <p role="alert" className="font-mono text-sm text-[#ff3300] border border-[#ff3300] px-4 py-3">{state.message}</p>
+        <p role="alert" className="font-mono text-sm text-[#e85a2a] border border-[#e85a2a] px-4 py-3">{state.message}</p>
       )}
 
       <button
         type="submit"
         disabled={pending}
-        className="w-full group/btn flex items-center justify-between px-8 py-6 bg-black text-white font-mono font-bold uppercase tracking-widest text-xs hover:bg-[#ff3300] transition-colors border border-black disabled:opacity-60 disabled:cursor-wait"
+        className="w-full group/btn flex items-center justify-between px-8 py-6 bg-black text-white font-mono font-bold uppercase tracking-widest text-xs hover:bg-[#e85a2a] transition-colors border border-black disabled:opacity-60 disabled:cursor-wait"
       >
         <span>{pending ? 'Enviando…' : 'Enviar'}</span>
         <ArrowUpRight className="w-5 h-5 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
@@ -93,7 +93,7 @@ export function ContactForm({ origin = 'Contacto', showService = true }: Props) 
 
       <p className="font-mono text-[11px] leading-relaxed opacity-60">
         Al enviar aceptas el{' '}
-        <Link href="/privacidad" className="underline hover:text-[#ff3300]">aviso de privacidad</Link>. Uso tus datos solo
+        <Link href="/privacidad" className="underline hover:text-[#e85a2a]">aviso de privacidad</Link>. Uso tus datos solo
         para responderte.
       </p>
     </form>

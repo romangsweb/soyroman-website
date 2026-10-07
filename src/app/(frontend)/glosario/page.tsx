@@ -45,7 +45,7 @@ export default async function GlosarioPage() {
         <div className="p-8 md:p-16">
           <Reveal duration={1.2}>
             <div className="flex items-center gap-3 mb-16">
-              <div className="w-3 h-3 bg-[#ff3300]" />
+              <div className="w-3 h-3 bg-[#e85a2a]" />
               <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">SYS.09 // Glosario</p>
             </div>
           </Reveal>
@@ -53,7 +53,7 @@ export default async function GlosarioPage() {
             <SplitText text="Glosario" delay={50} />
           </h1>
           <Reveal delay={0.3}>
-            <p className="font-mono text-sm md:text-base leading-relaxed max-w-2xl opacity-80 border-l-2 border-[#ff3300] pl-4">
+            <p className="font-mono text-sm md:text-base leading-relaxed max-w-2xl opacity-80 border-l-2 border-[#e85a2a] pl-4">
               Los términos de marketing B2B, explicados con su fórmula y un ejemplo: KPIs, siglas del embudo, SEO, AEO y
               medición. {items.length > 0 && `${items.length} términos.`}
             </p>

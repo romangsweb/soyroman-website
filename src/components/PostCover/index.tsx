@@ -34,7 +34,7 @@ export function PostCover({ cover, className, priority, sizes, fallback }: Props
         )}
       >
         <span className="w-10 h-10 border border-black bg-[#f4f4f4] flex items-center justify-center">
-          <span className="w-3 h-3 bg-[#ff3300]" />
+          <span className="w-3 h-3 bg-[#e85a2a]" />
         </span>
       </div>
     )

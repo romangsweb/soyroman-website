@@ -43,7 +43,7 @@ export default async function TagPage({ params }: Args) {
         <div className="p-8 md:p-16">
           <Link
             href="/blog"
-            className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-12 hover:text-[#ff3300] transition-colors border border-black px-4 py-2 bg-white"
+            className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-12 hover:text-[#e85a2a] transition-colors border border-black px-4 py-2 bg-white"
           >
             <ArrowUpRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
             Volver al blog
@@ -69,11 +69,11 @@ export default async function TagPage({ params }: Args) {
                 >
                   <div>
                     {post.publishedAt && (
-                      <time className="inline-block font-mono text-[10px] uppercase tracking-widest font-bold bg-black text-white px-2 py-1 mb-6 group-hover:bg-[#ff3300]">
+                      <time className="inline-block font-mono text-[10px] uppercase tracking-widest font-bold bg-black text-white px-2 py-1 mb-6 group-hover:bg-[#e85a2a]">
                         {new Date(post.publishedAt).toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' })}
                       </time>
                     )}
-                    <h2 className="text-3xl md:text-4xl font-semibold tracking-tight group-hover:text-[#ff3300] mb-4">{post.title}</h2>
+                    <h2 className="text-3xl md:text-4xl font-semibold tracking-tight group-hover:text-[#e85a2a] mb-4">{post.title}</h2>
                     {post.excerpt && <p className="font-mono text-sm leading-relaxed opacity-80 max-w-3xl">{post.excerpt}</p>}
                   </div>
                   <PostCover
@@ -97,7 +97,7 @@ export default async function TagPage({ params }: Args) {
               <Link
                 key={t.id}
                 href={`/glosario/${t.slug}`}
-                className="px-3 py-1.5 border border-black bg-white font-mono text-xs font-bold hover:bg-[#ff3300] hover:text-white hover:border-[#ff3300]"
+                className="px-3 py-1.5 border border-black bg-white font-mono text-xs font-bold hover:bg-[#e85a2a] hover:text-white hover:border-[#e85a2a]"
               >
                 {t.term}
               </Link>

@@ -16,7 +16,7 @@ export default async function ExpertisePage() {
 
   return (
     <PageTransition>
-      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
         <section className="border-b border-black relative bg-[#e5e5e5]">
@@ -33,7 +33,7 @@ export default async function ExpertisePage() {
               <SplitText text="Expertise" delay={50} />
             </h1>
             <Reveal delay={0.2}>
-              <p className="font-mono text-sm md:text-base leading-relaxed max-w-2xl opacity-80 border-l-2 border-[#ff3300] pl-4 mb-8">
+              <p className="font-mono text-sm md:text-base leading-relaxed max-w-2xl opacity-80 border-l-2 border-[#e85a2a] pl-4 mb-8">
                 Áreas de especialidad técnica y estratégica para operaciones B2B.
               </p>
             </Reveal>
@@ -51,14 +51,14 @@ export default async function ExpertisePage() {
                     href={`/expertise/${exp.slug}`}
                     className="block bg-[#f4f4f4] p-8 h-full group hover:bg-black hover:text-white transition-colors duration-300 relative overflow-hidden"
                   >
-                    <div className="absolute top-0 right-0 w-2 h-full bg-[#ff3300] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="absolute top-0 right-0 w-2 h-full bg-[#e85a2a] opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     
                     <div className="flex items-center justify-between mb-8 border-b border-black/10 pb-4 group-hover:border-white/20">
                       <IconTile name={exp.slug} />
                       <span className="text-[10px] font-mono opacity-50 uppercase">{String(index + 1).padStart(2, '0')} →</span>
                     </div>
 
-                    <h2 className="text-3xl font-semibold mb-4 tracking-tight group-hover:text-[#ff3300] transition-colors">
+                    <h2 className="text-3xl font-semibold mb-4 tracking-tight group-hover:text-[#e85a2a] transition-colors">
                       {exp.title}
                     </h2>
                     
@@ -72,7 +72,7 @@ export default async function ExpertisePage() {
                       <div className="flex flex-wrap gap-4 mt-auto pt-6 border-t border-black/10 group-hover:border-white/20">
                         {exp.metrics.slice(0, 3).map((m: any, i: number) => (
                           <div key={i} className="flex flex-col">
-                            <span className="font-mono text-lg font-bold text-[#ff3300]">{m.value}</span>
+                            <span className="font-mono text-lg font-bold text-[#e85a2a]">{m.value}</span>
                             <span className="font-mono text-[9px] uppercase tracking-widest opacity-60">{m.label}</span>
                           </div>
                         ))}

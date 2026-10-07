@@ -20,10 +20,10 @@ export function FrameworkDiagram({ steps, title }: { steps: Step[]; title: strin
             <li
               key={i}
               className={`relative border border-black p-5 min-h-[128px] flex flex-col justify-between ${
-                last ? 'bg-[#ff3300] text-white' : 'bg-white'
+                last ? 'bg-[#e85a2a] text-white' : 'bg-white'
               }`}
             >
-              <span className={`font-mono text-xs font-bold tracking-[0.15em] ${last ? 'text-white' : 'text-[#ff3300]'}`}>
+              <span className={`font-mono text-xs font-bold tracking-[0.15em] ${last ? 'text-white' : 'text-[#e85a2a]'}`}>
                 {String(i + 1).padStart(2, '0')}
               </span>
               <span className="font-mono text-xs xl:text-sm font-bold uppercase tracking-wider mt-6 leading-snug">

@@ -28,7 +28,7 @@ export default async function BlogPostPage({ params }: Args) {
 
   return (
     <PageTransition>
-      <article className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <article className="bg-[#f4f4f4] text-black font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
         <header className="border-b border-black relative bg-[#e5e5e5]">
@@ -36,7 +36,7 @@ export default async function BlogPostPage({ params }: Args) {
             <Reveal duration={1.2}>
               <Link
                 href="/blog"
-                className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-16 hover:text-[#ff3300] transition-colors border border-black px-4 py-2 bg-white"
+                className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-16 hover:text-[#e85a2a] transition-colors border border-black px-4 py-2 bg-white"
               >
                 <ArrowUpRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
                 Volver al blog
@@ -60,7 +60,7 @@ export default async function BlogPostPage({ params }: Args) {
                 )}
                 {post.readingTime && (
                   <span className="opacity-60 flex items-center gap-2 border border-black/20 px-3 py-1">
-                    <span className="w-1.5 h-1.5 bg-[#ff3300] animate-pulse"></span>
+                    <span className="w-1.5 h-1.5 bg-[#e85a2a] animate-pulse"></span>
                     {post.readingTime} MIN DE LECTURA
                   </span>
                 )}
@@ -73,7 +73,7 @@ export default async function BlogPostPage({ params }: Args) {
                     <Link
                       key={typeof cat === 'object' ? cat.id : cat}
                       href={`/blog/tag/${typeof cat === 'object' ? cat.slug : cat}`}
-                      className="px-3 py-1 border border-black text-[10px] uppercase tracking-widest font-bold font-mono hover:bg-[#ff3300] hover:border-[#ff3300] hover:text-white transition-colors bg-white"
+                      className="px-3 py-1 border border-black text-[10px] uppercase tracking-widest font-bold font-mono hover:bg-[#e85a2a] hover:border-[#e85a2a] hover:text-white transition-colors bg-white"
                     >
                       {typeof cat === 'object' ? cat.title : cat}
                     </Link>
@@ -95,7 +95,7 @@ export default async function BlogPostPage({ params }: Args) {
         <section className="bg-white">
           <div className="container max-w-4xl p-8 md:p-16 border-x border-black bg-white min-h-screen">
             <Reveal delay={0.4}>
-              <div className="prose prose-lg md:prose-xl text-black prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-[#ff3300] prose-a:font-bold prose-a:border-b prose-a:border-[#ff3300] prose-a:no-underline hover:prose-a:bg-[#ff3300] hover:prose-a:text-white max-w-none">
+              <div className="prose prose-lg md:prose-xl text-black prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-[#e85a2a] prose-a:font-bold prose-a:border-b prose-a:border-[#e85a2a] prose-a:no-underline hover:prose-a:bg-[#e85a2a] hover:prose-a:text-white max-w-none">
                 {post.content && <RichText data={post.content} />}
               </div>
             </Reveal>

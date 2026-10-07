@@ -18,14 +18,14 @@ export default async function ProjectsPage() {
 
   return (
     <PageTransition>
-      <div className="bg-black text-white font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-white/20 max-w-[1920px] mx-auto">
+      <div className="bg-black text-white font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-white/20 max-w-[1920px] mx-auto">
         
         {/* TE Header (Dark Mode) */}
         <section className="border-b border-white/20 relative bg-[#111]">
           <div className="border-t border-white/20 p-8 md:p-16 relative">
             <Reveal duration={1.2}>
               <div className="flex items-center gap-3 mb-16">
-                <div className="w-3 h-3 bg-[#ff3300] animate-pulse"></div>
+                <div className="w-3 h-3 bg-[#e85a2a] animate-pulse"></div>
                 <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-white/60">
                   SYS.07 // Casos
                 </p>
@@ -59,18 +59,18 @@ export default async function ProjectsPage() {
                       <div className="md:col-span-3 relative">
                         <ProjectCover slug={project.slug} color={project.color} className="w-full h-full min-h-[200px] aspect-[16/10] md:aspect-auto" />
                         <div className="absolute top-4 left-4 flex items-center gap-3">
-                          <span className="font-mono text-xs uppercase tracking-widest font-bold bg-white text-black px-2 py-1 inline-block group-hover:bg-[#ff3300] group-hover:text-white transition-colors">
+                          <span className="font-mono text-xs uppercase tracking-widest font-bold bg-white text-black px-2 py-1 inline-block group-hover:bg-[#e85a2a] group-hover:text-white transition-colors">
                             {project.year || '2024'}
                           </span>
                           {project.featured && (
-                            <span className="font-mono text-[10px] uppercase tracking-widest border border-white/20 bg-black px-2 py-1 text-[#ff3300]">Destacado</span>
+                            <span className="font-mono text-[10px] uppercase tracking-widest border border-white/20 bg-black px-2 py-1 text-[#e85a2a]">Destacado</span>
                           )}
                         </div>
                       </div>
                       
                       {/* Middle: Title & Context */}
                       <div className="md:col-span-6 p-8 md:p-12">
-                        <h2 className="text-4xl md:text-5xl font-semibold tracking-tight mb-6 group-hover:text-[#ff3300] transition-colors">
+                        <h2 className="text-4xl md:text-5xl font-semibold tracking-tight mb-6 group-hover:text-[#e85a2a] transition-colors">
                           {project.title}
                         </h2>
                         {project.context && (
@@ -100,7 +100,7 @@ export default async function ProjectsPage() {
                             </div>
                           ))}
                         </div>
-                        <div className="w-12 h-12 border border-white/20 flex items-center justify-center group-hover:border-[#ff3300] group-hover:bg-[#ff3300] group-hover:text-white transition-all mt-auto self-end">
+                        <div className="w-12 h-12 border border-white/20 flex items-center justify-center group-hover:border-[#e85a2a] group-hover:bg-[#e85a2a] group-hover:text-white transition-all mt-auto self-end">
                           <ArrowUpRight className="w-5 h-5" />
                         </div>
                       </div>

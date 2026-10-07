@@ -61,7 +61,7 @@ export function GlossaryIndex({ items, topics }: { items: GlossaryItem[]; topics
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Buscar: ROAS, embudo, atribución…"
-              className="w-full px-4 py-3 bg-[#f4f4f4] border border-black font-mono text-sm focus:outline-none focus:bg-white focus:border-[#ff3300]"
+              className="w-full px-4 py-3 bg-[#f4f4f4] border border-black font-mono text-sm focus:outline-none focus:bg-white focus:border-[#e85a2a]"
             />
           </label>
           <label>
@@ -69,7 +69,7 @@ export function GlossaryIndex({ items, topics }: { items: GlossaryItem[]; topics
             <select
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              className="w-full md:w-64 px-4 py-3 bg-[#f4f4f4] border border-black font-mono text-sm focus:outline-none focus:border-[#ff3300]"
+              className="w-full md:w-64 px-4 py-3 bg-[#f4f4f4] border border-black font-mono text-sm focus:outline-none focus:border-[#e85a2a]"
             >
               <option value="">Todos los temas</option>
               {topics.map((t) => (
@@ -83,7 +83,7 @@ export function GlossaryIndex({ items, topics }: { items: GlossaryItem[]; topics
         <nav aria-label="Letras" className="flex flex-wrap gap-1 font-mono text-[11px] font-bold">
           {ALPHABET.map((l) =>
             letters.includes(l) ? (
-              <a key={l} href={`#letra-${l}`} className="w-7 h-7 flex items-center justify-center border border-black hover:bg-[#ff3300] hover:text-white hover:border-[#ff3300]">
+              <a key={l} href={`#letra-${l}`} className="w-7 h-7 flex items-center justify-center border border-black hover:bg-[#e85a2a] hover:text-white hover:border-[#e85a2a]">
                 {l}
               </a>
             ) : (
@@ -109,7 +109,7 @@ export function GlossaryIndex({ items, topics }: { items: GlossaryItem[]; topics
                 <li key={t.slug}>
                   <Link href={`/glosario/${t.slug}`} className="group block p-6 md:px-12 hover:bg-[#111] hover:text-white transition-colors">
                     <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 mb-2">
-                      <h2 className="text-2xl font-semibold tracking-tight group-hover:text-[#ff3300]">{t.term}</h2>
+                      <h2 className="text-2xl font-semibold tracking-tight group-hover:text-[#e85a2a]">{t.term}</h2>
                       {t.fullName && <span className="font-mono text-xs opacity-60">{t.fullName}</span>}
                     </div>
                     <p className="font-mono text-sm leading-relaxed opacity-80 line-clamp-2 max-w-3xl">{t.definition}</p>

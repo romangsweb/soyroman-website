@@ -43,14 +43,14 @@ export default async function UsesPage() {
 
   return (
     <PageTransition>
-      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
         <section className="border-b border-black relative bg-[#e5e5e5]">
           <div className="p-8 md:p-16 relative container mx-auto">
             <Reveal duration={1.2}>
               <div className="flex items-center gap-3 mb-16">
-                <div className="w-3 h-3 bg-[#ff3300]"></div>
+                <div className="w-3 h-3 bg-[#e85a2a]"></div>
                 <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
                   SYS.06 // Herramientas
                 </p>
@@ -60,7 +60,7 @@ export default async function UsesPage() {
               <SplitText text="Herramientas" delay={50} />
             </h1>
             <Reveal delay={0.2}>
-              <p className="font-mono text-sm md:text-base leading-relaxed max-w-2xl opacity-80 border-l-2 border-[#ff3300] pl-4 mb-8">
+              <p className="font-mono text-sm md:text-base leading-relaxed max-w-2xl opacity-80 border-l-2 border-[#e85a2a] pl-4 mb-8">
                 Inventario de herramientas, software y hardware de uso continuo.
               </p>
             </Reveal>

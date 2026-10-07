@@ -53,7 +53,7 @@ export default async function TermPage({ params }: Args) {
         <div className="p-8 md:p-16">
           <Link
             href="/glosario"
-            className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-12 hover:text-[#ff3300] transition-colors border border-black px-4 py-2 bg-white"
+            className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-12 hover:text-[#e85a2a] transition-colors border border-black px-4 py-2 bg-white"
           >
             <ArrowUpRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
             Volver al glosario
@@ -66,7 +66,7 @@ export default async function TermPage({ params }: Args) {
                 <Link
                   key={c.id}
                   href={`/blog/tag/${c.slug}`}
-                  className="px-3 py-1 border border-black text-[10px] uppercase tracking-widest font-bold font-mono bg-white hover:bg-[#ff3300] hover:border-[#ff3300] hover:text-white transition-colors"
+                  className="px-3 py-1 border border-black text-[10px] uppercase tracking-widest font-bold font-mono bg-white hover:bg-[#e85a2a] hover:border-[#e85a2a] hover:text-white transition-colors"
                 >
                   {c.title}
                 </Link>
@@ -86,7 +86,7 @@ export default async function TermPage({ params }: Args) {
             <Reveal>
               <h2 className="font-mono text-[10px] font-bold uppercase tracking-widest opacity-50 mb-4">// Fórmula</h2>
               <div className="border border-black bg-[#f4f4f4] p-6 md:p-8 relative">
-                <span className="absolute -top-px -right-px w-2 h-2 bg-[#ff3300]" />
+                <span className="absolute -top-px -right-px w-2 h-2 bg-[#e85a2a]" />
                 <p className="font-mono text-base md:text-lg font-bold">{t.formula}</p>
               </div>
             </Reveal>
@@ -112,7 +112,7 @@ export default async function TermPage({ params }: Args) {
               <ul className="divide-y divide-black/10 border-y border-black/10">
                 {related.map((r: any) => (
                   <li key={r.slug}>
-                    <Link href={`/glosario/${r.slug}`} className="flex items-center justify-between py-3 font-semibold hover:text-[#ff3300]">
+                    <Link href={`/glosario/${r.slug}`} className="flex items-center justify-between py-3 font-semibold hover:text-[#e85a2a]">
                       {r.term} <ArrowUpRight className="w-3 h-3" />
                     </Link>
                   </li>
@@ -126,7 +126,7 @@ export default async function TermPage({ params }: Args) {
               <ul className="space-y-4">
                 {posts.map((p: any) => (
                   <li key={p.id}>
-                    <Link href={`/blog/${p.slug}`} className="block font-semibold leading-snug hover:text-[#ff3300]">
+                    <Link href={`/blog/${p.slug}`} className="block font-semibold leading-snug hover:text-[#e85a2a]">
                       {p.title}
                     </Link>
                   </li>

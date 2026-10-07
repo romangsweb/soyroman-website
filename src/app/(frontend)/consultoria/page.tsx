@@ -11,13 +11,13 @@ import { AUDIENCE, SERVICES } from '@/data/services'
 export default function ConsultoriaPage() {
   return (
     <PageTransition>
-      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         {/* Encabezado */}
         <section className="border-b border-black relative bg-[#e5e5e5]">
           <div className="p-8 md:p-16 relative">
             <Reveal duration={1.2}>
               <div className="flex items-center gap-3 mb-16">
-                <div className="w-3 h-3 bg-[#ff3300]" />
+                <div className="w-3 h-3 bg-[#e85a2a]" />
                 <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">SYS.03 // Consultoría</p>
               </div>
             </Reveal>
@@ -25,7 +25,7 @@ export default function ConsultoriaPage() {
               <SplitText text="Consultoría" delay={50} />
             </h1>
             <Reveal delay={0.3}>
-              <p className="font-mono text-sm md:text-base leading-relaxed max-w-3xl opacity-80 border-l-2 border-[#ff3300] pl-4">
+              <p className="font-mono text-sm md:text-base leading-relaxed max-w-3xl opacity-80 border-l-2 border-[#e85a2a] pl-4">
                 {AUDIENCE}
               </p>
             </Reveal>
@@ -41,7 +41,7 @@ export default function ConsultoriaPage() {
                   <div className="lg:col-span-4 flex flex-col gap-6">
                     <div className="flex items-center gap-4">
                       <IconTile name={s.id} size="lg" />
-                      <span className="font-mono font-bold text-lg text-[#ff3300]">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="font-mono font-bold text-lg text-[#e85a2a]">{String(i + 1).padStart(2, '0')}</span>
                     </div>
                     <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">{s.title}</h2>
                     <span className="self-start font-mono text-[10px] font-bold uppercase tracking-widest border border-black px-3 py-1">
@@ -61,7 +61,7 @@ export default function ConsultoriaPage() {
                     </ul>
                     <a
                       href="#cotizar"
-                      className="group inline-flex items-center gap-3 font-mono text-[10px] font-bold uppercase tracking-widest bg-black text-white px-6 py-3 border border-black hover:bg-[#ff3300] hover:border-[#ff3300] transition-colors"
+                      className="group inline-flex items-center gap-3 font-mono text-[10px] font-bold uppercase tracking-widest bg-black text-white px-6 py-3 border border-black hover:bg-[#e85a2a] hover:border-[#e85a2a] transition-colors"
                     >
                       Cotizar
                       <ArrowUpRight className="w-3 h-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />

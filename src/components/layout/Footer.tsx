@@ -14,7 +14,7 @@ export async function FooterComponent() {
           <div className="md:col-span-5 p-8 md:p-12 flex flex-col justify-between">
             <div>
               <Link href="/" className="font-mono text-[10px] uppercase font-bold tracking-widest flex items-center gap-2 mb-6">
-                <span className="w-2 h-2 bg-[#ff3300] animate-pulse"></span>
+                <span className="w-2 h-2 bg-[#e85a2a] animate-pulse"></span>
                 SOY_ROMAN_SYS
               </Link>
               {profile?.shortBio && (
@@ -45,7 +45,7 @@ export async function FooterComponent() {
                   <Link
                     key={i}
                     href={href}
-                    className="font-mono text-[10px] uppercase font-bold tracking-widest py-3 hover:text-[#ff3300] hover:pl-2 transition-all"
+                    className="font-mono text-[10px] uppercase font-bold tracking-widest py-3 hover:text-[#e85a2a] hover:pl-2 transition-all"
                   >
                     {link.label}
                   </Link>

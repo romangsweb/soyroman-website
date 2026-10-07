@@ -24,7 +24,7 @@ export default async function NotasPage() {
         <div className="p-8 md:p-16">
           <Reveal duration={1.2}>
             <div className="flex items-center gap-3 mb-16">
-              <div className="w-3 h-3 bg-[#ff3300]" />
+              <div className="w-3 h-3 bg-[#e85a2a]" />
               <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">SYS.10 // Notas de campo</p>
             </div>
           </Reveal>
@@ -32,7 +32,7 @@ export default async function NotasPage() {
             <SplitText text="Notas de campo" delay={50} />
           </h1>
           <Reveal delay={0.3}>
-            <p className="font-mono text-sm md:text-base leading-relaxed max-w-2xl opacity-80 border-l-2 border-[#ff3300] pl-4">
+            <p className="font-mono text-sm md:text-base leading-relaxed max-w-2xl opacity-80 border-l-2 border-[#e85a2a] pl-4">
               Apuntes cortos de lo que voy encontrando en proyectos reales: errores, hallazgos y lo que cambiaría la
               próxima vez.
             </p>
@@ -53,7 +53,7 @@ export default async function NotasPage() {
                 >
                   <time className="md:col-span-2 font-mono text-[10px] uppercase tracking-widest font-bold opacity-60">{fmt(n.date)}</time>
                   <div className="md:col-span-10">
-                    <h2 className="text-2xl md:text-3xl font-semibold tracking-tight group-hover:text-[#ff3300]">{n.title}</h2>
+                    <h2 className="text-2xl md:text-3xl font-semibold tracking-tight group-hover:text-[#e85a2a]">{n.title}</h2>
                     {(n.categories || []).filter((c: any) => typeof c === 'object').length > 0 && (
                       <p className="mt-3 font-mono text-[10px] uppercase tracking-widest opacity-60">
                         {(n.categories || []).filter((c: any) => typeof c === 'object').map((c: any) => c.title).join(' · ')}

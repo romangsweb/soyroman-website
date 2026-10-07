@@ -35,7 +35,7 @@ export function MobileMenu({ items }: { items: NavItem[] }) {
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
-        className="font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-12 flex items-center border-l border-black hover:bg-[#ff3300] hover:text-white transition-colors"
+        className="font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-12 flex items-center border-l border-black hover:bg-[#e85a2a] hover:text-white transition-colors"
       >
         {open ? '[CERRAR]' : '[MENU]'}
       </button>
@@ -54,7 +54,7 @@ export function MobileMenu({ items }: { items: NavItem[] }) {
                   href={item.href}
                   onClick={() => setOpen(false)}
                   aria-current={active ? 'page' : undefined}
-                  className={`flex items-center justify-between px-6 py-5 font-mono text-sm uppercase font-bold tracking-widest transition-colors hover:bg-[#ff3300] hover:text-white ${active ? 'text-[#ff3300]' : ''}`}
+                  className={`flex items-center justify-between px-6 py-5 font-mono text-sm uppercase font-bold tracking-widest transition-colors hover:bg-[#e85a2a] hover:text-white ${active ? 'text-[#e85a2a]' : ''}`}
                   {...(item.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                 >
                   <span>{item.label}</span>

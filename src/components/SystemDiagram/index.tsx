@@ -32,16 +32,16 @@ export function SystemDiagram({ className }: { className?: string }) {
         <g transform="translate(206,128)">
           <rect width="110" height="78" fill="#000" />
           <text x="14" y="34" fill="#fff">SITIO</text>
-          <text x="14" y="56" fill="#ff3300" fontSize="10">FORMULARIOS</text>
+          <text x="14" y="56" fill="#e85a2a" fontSize="10">FORMULARIOS</text>
         </g>
         <g transform="translate(372,128)">
           <rect width="124" height="78" fill="#fff" stroke="#000" strokeWidth="2" />
-          <rect x="118" y="-1" width="7" height="7" fill="#ff3300" />
+          <rect x="118" y="-1" width="7" height="7" fill="#e85a2a" />
           <text x="14" y="34">CRM</text>
           <text x="14" y="56" fill="rgba(0,0,0,.55)" fontSize="10">MQL → SQL</text>
         </g>
         <g transform="translate(372,300)">
-          <rect width="124" height="64" fill="#ff3300" />
+          <rect width="124" height="64" fill="#e85a2a" />
           <text x="14" y="38" fill="#fff">PIPELINE</text>
         </g>
         <g transform="translate(206,300)">
@@ -61,7 +61,7 @@ export function SystemDiagram({ className }: { className?: string }) {
         <path d="M261 300 V206" strokeDasharray="4 3" />
       </g>
 
-      <g fill="#ff3300" className="motion-reduce:hidden">
+      <g fill="#e85a2a" className="motion-reduce:hidden">
         {[
           ['sd-p1', '3.2s', '0s'],
           ['sd-p2', '3.6s', '-0.8s'],

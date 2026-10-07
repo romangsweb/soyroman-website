@@ -39,7 +39,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
 
   return (
     <PageTransition>
-      <article className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <article className="bg-[#f4f4f4] text-black font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
         <header className="border-b border-black relative bg-[#e5e5e5]">
@@ -47,7 +47,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
             <Reveal duration={1.2}>
               <Link
                 href="/consultoria"
-                className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-16 hover:text-[#ff3300] transition-colors border border-black bg-white px-4 py-2"
+                className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-16 hover:text-[#e85a2a] transition-colors border border-black bg-white px-4 py-2"
               >
                 <ArrowUpRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
                 Volver a expertise
@@ -60,7 +60,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
 
             {expertise.thesis && (
               <Reveal delay={0.2}>
-                <p className="font-mono text-sm leading-relaxed max-w-3xl opacity-80 mb-8 border-l-2 border-[#ff3300] pl-4">
+                <p className="font-mono text-sm leading-relaxed max-w-3xl opacity-80 mb-8 border-l-2 border-[#e85a2a] pl-4">
                   {expertise.thesis}
                 </p>
               </Reveal>
@@ -89,7 +89,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-black border border-black">
                       {expertise.metrics.map((m: any, i: number) => (
                         <div key={i} className="bg-white p-6 relative group overflow-hidden hover:bg-[#111] hover:text-white transition-colors">
-                          <p className="text-4xl font-mono font-bold mb-2 group-hover:text-[#ff3300] transition-colors">{m.value}</p>
+                          <p className="text-4xl font-mono font-bold mb-2 group-hover:text-[#e85a2a] transition-colors">{m.value}</p>
                           <p className="text-[10px] font-mono font-bold uppercase tracking-widest">{m.label}</p>
                           {m.description && (
                             <p className="text-[10px] font-mono opacity-60 mt-2">{m.description}</p>
@@ -112,7 +112,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
                         return (
                           <span
                             key={typeof tool === 'object' ? tool.id : tool}
-                            className="px-3 py-1 border border-black text-[10px] font-mono font-bold uppercase tracking-widest hover:bg-[#ff3300] hover:text-white hover:border-[#ff3300] transition-colors bg-white"
+                            className="px-3 py-1 border border-black text-[10px] font-mono font-bold uppercase tracking-widest hover:bg-[#e85a2a] hover:text-white hover:border-[#e85a2a] transition-colors bg-white"
                           >
                             {name}
                           </span>
@@ -131,7 +131,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
                     <div className="space-y-0 divide-y divide-black/10">
                       {expertise.framework.map((step: any, i: number) => (
                         <div key={i} className="flex gap-6 py-6 first:pt-0">
-                          <span className="font-mono font-bold text-lg text-[#ff3300]">
+                          <span className="font-mono font-bold text-lg text-[#e85a2a]">
                             {String(i + 1).padStart(2, '0')}
                           </span>
                           <div>
@@ -161,7 +161,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
 
                 {/* Prose Content */}
                 {expertise.content && (
-                  <div className="prose prose-lg md:prose-xl text-black prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-[#ff3300] prose-a:font-bold prose-a:border-b prose-a:border-[#ff3300] prose-a:no-underline hover:prose-a:bg-[#ff3300] hover:prose-a:text-white max-w-none">
+                  <div className="prose prose-lg md:prose-xl text-black prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-[#e85a2a] prose-a:font-bold prose-a:border-b prose-a:border-[#e85a2a] prose-a:no-underline hover:prose-a:bg-[#e85a2a] hover:prose-a:text-white max-w-none">
                     <RichText data={expertise.content} />
                   </div>
                 )}
@@ -179,7 +179,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
                           href={`/blog/${post.slug}`}
                           className="group flex flex-col gap-2 p-6 hover:bg-[#111] hover:text-white transition-colors duration-300 relative"
                         >
-                          <div className="absolute top-0 left-0 w-1 h-full opacity-0 group-hover:opacity-100 transition-opacity bg-[#ff3300]"></div>
+                          <div className="absolute top-0 left-0 w-1 h-full opacity-0 group-hover:opacity-100 transition-opacity bg-[#e85a2a]"></div>
                           <h3 className="font-semibold text-2xl tracking-tight mb-2 group-hover:translate-x-2 transition-transform">{post.title}</h3>
                           {post.excerpt && (
                             <p className="font-mono text-xs opacity-60 line-clamp-2">{post.excerpt}</p>

@@ -34,7 +34,7 @@ type Props = {
 }
 
 export function ProjectCover({ slug, color, className, label = true }: Props) {
-  const accent = color && /^#[0-9a-f]{3,8}$/i.test(color) ? color : '#ff3300'
+  const accent = color && /^#[0-9a-f]{3,8}$/i.test(color) ? color : '#e85a2a'
   const r = seeded(slug)
   const shapes: React.ReactNode[] = []
   const n = 6 + Math.floor(r() * 5)

@@ -28,14 +28,14 @@ export default async function BlogPage() {
 
   return (
     <PageTransition>
-      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
         <section className="border-b border-black relative bg-[#e5e5e5]">
           <div className="p-8 md:p-16 relative">
             <Reveal duration={1.2}>
               <div className="flex items-center gap-3 mb-16">
-                <div className="w-3 h-3 bg-[#ff3300] animate-pulse"></div>
+                <div className="w-3 h-3 bg-[#e85a2a] animate-pulse"></div>
                 <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
                   SYS.08 // Blog
                 </p>
@@ -69,8 +69,8 @@ export default async function BlogPage() {
                       href="/blog"
                       className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black transition-colors"
                     >
-                      <span className="font-mono text-sm uppercase font-bold group-hover:text-[#ff3300] transition-colors">Todos</span>
-                      <span className="w-1.5 h-1.5 bg-[#ff3300] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                      <span className="font-mono text-sm uppercase font-bold group-hover:text-[#e85a2a] transition-colors">Todos</span>
+                      <span className="w-1.5 h-1.5 bg-[#e85a2a] opacity-0 group-hover:opacity-100 transition-opacity"></span>
                     </Link>
                     {categories.docs.map((cat: any) => (
                       <Link
@@ -78,7 +78,7 @@ export default async function BlogPage() {
                         href={`/blog/tag/${cat.slug}`}
                         className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black transition-colors"
                       >
-                        <span className="font-mono text-sm uppercase font-bold group-hover:text-[#ff3300] transition-colors">{cat.title}</span>
+                        <span className="font-mono text-sm uppercase font-bold group-hover:text-[#e85a2a] transition-colors">{cat.title}</span>
                         <span className="w-1.5 h-1.5 bg-black opacity-0 group-hover:opacity-100 transition-opacity"></span>
                       </Link>
                     ))}
@@ -87,10 +87,10 @@ export default async function BlogPage() {
                 <h3 className="font-mono font-bold uppercase tracking-widest text-[10px] mt-12 mb-4 opacity-50">// También</h3>
                 <div className="flex flex-col gap-2">
                   <Link href="/glosario" className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black">
-                    <span className="font-mono text-sm uppercase font-bold group-hover:text-[#ff3300]">Glosario</span>
+                    <span className="font-mono text-sm uppercase font-bold group-hover:text-[#e85a2a]">Glosario</span>
                   </Link>
                   <Link href="/notas" className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black">
-                    <span className="font-mono text-sm uppercase font-bold group-hover:text-[#ff3300]">Notas de campo</span>
+                    <span className="font-mono text-sm uppercase font-bold group-hover:text-[#e85a2a]">Notas de campo</span>
                   </Link>
                 </div>
               </div>
@@ -108,7 +108,7 @@ export default async function BlogPage() {
                       <div>
                       <div className="flex items-center gap-6 font-mono text-[10px] uppercase tracking-widest font-bold opacity-60 mb-6 group-hover:text-white">
                         {post.publishedAt && (
-                          <time className="bg-black text-white px-2 py-1 group-hover:bg-[#ff3300] transition-colors">
+                          <time className="bg-black text-white px-2 py-1 group-hover:bg-[#e85a2a] transition-colors">
                             {new Date(post.publishedAt).toLocaleDateString('es-ES', {
                               year: 'numeric',
                               month: '2-digit',
@@ -118,13 +118,13 @@ export default async function BlogPage() {
                         )}
                         {post.readingTime && (
                           <span className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 bg-[#ff3300]"></span>
+                            <span className="w-1.5 h-1.5 bg-[#e85a2a]"></span>
                             {post.readingTime} MIN
                           </span>
                         )}
                       </div>
 
-                      <h2 className="text-3xl md:text-5xl font-semibold tracking-tight group-hover:text-[#ff3300] transition-colors mb-6">
+                      <h2 className="text-3xl md:text-5xl font-semibold tracking-tight group-hover:text-[#e85a2a] transition-colors mb-6">
                         {post.title}
                       </h2>
                       

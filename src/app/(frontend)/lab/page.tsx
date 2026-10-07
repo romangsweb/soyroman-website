@@ -23,7 +23,7 @@ export default async function LabPage() {
 
   return (
     <PageTransition>
-      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
         <section className="border-b border-black relative bg-[#e5e5e5]">
@@ -53,7 +53,7 @@ export default async function LabPage() {
           <div className="container mx-auto p-8 md:p-16 border-x border-black bg-white min-h-[50vh]">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-black border border-black">
               {labs.docs.map((lab: any, index: number) => {
-                const color = statusColors[lab.status] || '#ff3300'
+                const color = statusColors[lab.status] || '#e85a2a'
                 
                 return (
                   <Reveal key={lab.id} delay={index * 0.1}>
@@ -69,7 +69,7 @@ export default async function LabPage() {
                       </div>
                       
                       <Link href={`/lab/${lab.slug}`} className="flex-1 group/link">
-                        <h2 className="text-2xl font-semibold mb-4 tracking-tight group-hover/link:text-[#ff3300] transition-colors">
+                        <h2 className="text-2xl font-semibold mb-4 tracking-tight group-hover/link:text-[#e85a2a] transition-colors">
                           {lab.title}
                         </h2>
                       </Link>
@@ -95,7 +95,7 @@ export default async function LabPage() {
                               href={link.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[10px] font-mono font-bold uppercase tracking-widest hover:text-[#ff3300] transition-colors"
+                              className="text-[10px] font-mono font-bold uppercase tracking-widest hover:text-[#e85a2a] transition-colors"
                             >
                               [{link.label || link.type}]
                             </a>

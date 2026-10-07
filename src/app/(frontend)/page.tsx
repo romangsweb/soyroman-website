@@ -35,7 +35,7 @@ export default async function HomePage() {
 
   return (
     <PageTransition>
-      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white overflow-hidden min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#e85a2a] selection:text-white overflow-hidden min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Hero */}
         <section className="border-b border-black relative bg-[#e5e5e5]">
@@ -45,7 +45,7 @@ export default async function HomePage() {
             <div className="md:col-span-7 p-8 md:p-16 border-b md:border-b-0 md:border-r border-black bg-[#f4f4f4] relative">
               <Reveal duration={1.2}>
                 <div className="flex items-center gap-3 mb-16">
-                  <div className="w-3 h-3 bg-[#ff3300]"></div>
+                  <div className="w-3 h-3 bg-[#e85a2a]"></div>
                   <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
                     {profile?.role || 'Director de Marketing B2B'}
                   </p>
@@ -82,15 +82,15 @@ export default async function HomePage() {
               href="/consultoria"
               className="col-span-2 sm:col-span-6 group p-6 md:px-16 flex items-center gap-5 border-b sm:border-b-0 border-black hover:bg-[#f4f4f4] transition-colors"
             >
-              <span className="w-4 h-4 bg-[#ff3300] border border-black animate-pulse shrink-0" />
+              <span className="w-4 h-4 bg-[#e85a2a] border border-black animate-pulse shrink-0" />
               <span className="font-mono text-xs md:text-sm uppercase tracking-widest font-bold">Aceptando proyectos</span>
-              <span className="ml-auto inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest font-bold text-black/60 group-hover:text-[#ff3300]">
+              <span className="ml-auto inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest font-bold text-black/60 group-hover:text-[#e85a2a]">
                 Ver servicios <ArrowUpRight className="w-3 h-3" />
               </span>
             </Link>
             <Link
               href="/contacto"
-              className="sm:col-span-3 p-6 flex items-center justify-center gap-2 hover:bg-[#ff3300] hover:text-white transition-colors group"
+              className="sm:col-span-3 p-6 flex items-center justify-center gap-2 hover:bg-[#e85a2a] hover:text-white transition-colors group"
             >
               <span className="font-mono uppercase tracking-widest text-[10px] font-bold">Contacto</span>
               <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -114,7 +114,7 @@ export default async function HomePage() {
                   <Reveal delay={i * 0.1} key={i} className="p-8 md:p-12 flex flex-col justify-between aspect-square group hover:bg-[#f4f4f4] transition-colors duration-300 relative">
                     <div className="absolute top-4 right-4 font-mono text-[10px] opacity-40 uppercase">M-{i+1}</div>
                     <div className="mt-auto">
-                      <p className="text-5xl md:text-7xl font-semibold tracking-tighter mb-4 text-black group-hover:text-[#ff3300] transition-colors">{metric.value}</p>
+                      <p className="text-5xl md:text-7xl font-semibold tracking-tighter mb-4 text-black group-hover:text-[#e85a2a] transition-colors">{metric.value}</p>
                       <p className="font-mono uppercase tracking-[0.1em] text-xs font-bold opacity-60">{metric.label}</p>
                     </div>
                   </Reveal>
@@ -161,7 +161,7 @@ export default async function HomePage() {
               {expertises.docs.length % 2 === 1 && (
                 <Link
                   href="/expertise"
-                  className="group flex flex-col justify-between p-10 bg-[#f4f4f4] hover:bg-[#ff3300] hover:text-white transition-colors duration-300"
+                  className="group flex flex-col justify-between p-10 bg-[#f4f4f4] hover:bg-[#e85a2a] hover:text-white transition-colors duration-300"
                 >
                   <span className="font-mono text-[10px] uppercase tracking-widest font-bold opacity-60">Expertise</span>
                   <span className="mt-12 inline-flex items-center gap-3 text-2xl font-semibold tracking-tight">
@@ -184,7 +184,7 @@ export default async function HomePage() {
                   <h2 className="font-mono uppercase tracking-widest text-xs font-bold text-white/50">
                     SYS.02 // Casos
                   </h2>
-                  <Link href="/proyectos" className="font-mono uppercase tracking-widest text-[10px] text-white hover:text-[#ff3300] transition-colors border border-white/20 px-3 py-1">
+                  <Link href="/proyectos" className="font-mono uppercase tracking-widest text-[10px] text-white hover:text-[#e85a2a] transition-colors border border-white/20 px-3 py-1">
                     Ver todos
                   </Link>
                 </div>
@@ -208,7 +208,7 @@ export default async function HomePage() {
                       />
                       <div className="flex flex-col gap-2 mb-6 sm:mb-0 sm:mr-auto">
                         <div className="flex items-center gap-4">
-                          <span className="font-mono uppercase tracking-widest text-xs font-bold bg-white text-black group-hover:bg-[#ff3300] group-hover:text-white px-2 py-0.5 transition-colors">
+                          <span className="font-mono uppercase tracking-widest text-xs font-bold bg-white text-black group-hover:bg-[#e85a2a] group-hover:text-white px-2 py-0.5 transition-colors">
                             {project.year || '2024'}
                           </span>
                           <span className="font-mono text-xs opacity-60 uppercase tracking-widest">
@@ -223,7 +223,7 @@ export default async function HomePage() {
                       <div className="flex items-center gap-8 shrink-0">
                         {project.results && project.results.slice(0, 1).map((r: any, idx: number) => (
                           <div key={idx} className="text-right hidden sm:block">
-                            <p className="text-2xl font-mono font-bold group-hover:text-[#ff3300] transition-colors">{r.value}</p>
+                            <p className="text-2xl font-mono font-bold group-hover:text-[#e85a2a] transition-colors">{r.value}</p>
                             <p className="font-mono text-[10px] uppercase tracking-widest opacity-60">{r.metric}</p>
                           </div>
                         ))}
@@ -270,7 +270,7 @@ export default async function HomePage() {
                       sizes="(max-width: 768px) 100vw, 33vw"
                     />
                     <div className="flex justify-between items-start mb-12">
-                      <div className="w-12 h-12 border border-black flex items-center justify-center font-mono text-sm group-hover:bg-[#ff3300] group-hover:text-white group-hover:border-[#ff3300] transition-colors">
+                      <div className="w-12 h-12 border border-black flex items-center justify-center font-mono text-sm group-hover:bg-[#e85a2a] group-hover:text-white group-hover:border-[#e85a2a] transition-colors">
                         P{i+1}
                       </div>
                       <div className="text-right">
@@ -286,7 +286,7 @@ export default async function HomePage() {
                     </div>
                     
                     <div className="mt-auto">
-                      <h4 className="text-xl font-semibold tracking-tight leading-snug mb-4 group-hover:text-[#ff3300] transition-colors">
+                      <h4 className="text-xl font-semibold tracking-tight leading-snug mb-4 group-hover:text-[#e85a2a] transition-colors">
                         {post.title}
                       </h4>
                       {post.excerpt && (
@@ -301,7 +301,7 @@ export default async function HomePage() {
         </section>
 
         {/* TE Footer / CTA */}
-        <section className="bg-[#ff3300] text-white">
+        <section className="bg-[#e85a2a] text-white">
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-black border-b border-black">
             <div className="p-16 md:p-32 flex flex-col justify-center items-center text-center">
               <Reveal>

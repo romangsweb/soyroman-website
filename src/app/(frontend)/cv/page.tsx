@@ -18,7 +18,7 @@ export default async function CVPage() {
 
   return (
     <PageTransition>
-      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
         <section className="border-b border-black relative bg-[#e5e5e5]">
@@ -26,7 +26,7 @@ export default async function CVPage() {
             <Reveal duration={1.2}>
               <div className="flex items-center justify-between mb-16">
                 <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-[#ff3300]"></div>
+                  <div className="w-3 h-3 bg-[#e85a2a]"></div>
                   <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
                     SYS.05 // Trayectoria
                   </p>
@@ -77,7 +77,7 @@ export default async function CVPage() {
                             ? new Date(exp.endDate).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit' })
                             : 'ACT'}
                         </p>
-                        <div className={`w-3 h-3 border border-black ${!exp.endDate ? 'bg-[#ff3300] animate-pulse' : 'bg-transparent'}`}></div>
+                        <div className={`w-3 h-3 border border-black ${!exp.endDate ? 'bg-[#e85a2a] animate-pulse' : 'bg-transparent'}`}></div>
                       </div>
                       <span className="font-mono text-[10px] uppercase font-bold text-black/40">Registro {String(index + 1).padStart(3, '0')}</span>
                     </div>
@@ -85,7 +85,7 @@ export default async function CVPage() {
                     {/* Right: Info */}
                     <div className="md:col-span-9 p-8 md:p-12 relative z-10">
                       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-                        <h2 className="text-3xl md:text-5xl font-semibold tracking-tight group-hover:text-[#ff3300] transition-colors">
+                        <h2 className="text-3xl md:text-5xl font-semibold tracking-tight group-hover:text-[#e85a2a] transition-colors">
                           {exp.position}
                         </h2>
                         <span className="font-mono uppercase tracking-widest text-sm font-bold opacity-60 bg-white border border-black px-3 py-1 self-start md:self-auto">
@@ -98,7 +98,7 @@ export default async function CVPage() {
                           <ul className="space-y-4">
                             {exp.achievements.map((a: any, i: number) => (
                               <li key={i} className="text-base md:text-lg leading-relaxed flex gap-4 font-light text-black/80">
-                                <span className="font-mono text-[#ff3300] shrink-0 font-bold mt-1">{'>'}</span>
+                                <span className="font-mono text-[#e85a2a] shrink-0 font-bold mt-1">{'>'}</span>
                                 {a.text}
                               </li>
                             ))}

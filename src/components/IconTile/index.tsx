@@ -62,7 +62,7 @@ export function IconTile({ name, size = 'md', accent = true, className }: Props)
   return (
     <span className={cn('relative inline-flex items-center justify-center border border-current shrink-0', box, className)}>
       <Icon size={px} strokeWidth={1.5} aria-hidden="true" />
-      {accent && <span className="absolute -top-px -right-px w-1.5 h-1.5 bg-[#ff3300]" />}
+      {accent && <span className="absolute -top-px -right-px w-1.5 h-1.5 bg-[#e85a2a]" />}
     </span>
   )
 }

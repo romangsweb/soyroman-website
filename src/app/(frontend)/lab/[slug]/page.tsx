@@ -24,7 +24,7 @@ export default async function LabDetailPage({ params }: Args) {
 
   return (
     <PageTransition>
-      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#ff3300] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
+      <div className="bg-[#f4f4f4] text-black font-sans selection:bg-[#e85a2a] selection:text-white min-h-screen border-x border-black max-w-[1920px] mx-auto">
         
         {/* TE Header */}
         <section className="border-b border-black relative bg-[#e5e5e5]">
@@ -32,7 +32,7 @@ export default async function LabDetailPage({ params }: Args) {
             <Reveal duration={1.2}>
               <Link
                 href="/lab"
-                className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-16 hover:text-[#ff3300] transition-colors border border-black px-4 py-2 bg-white"
+                className="group inline-flex items-center gap-2 uppercase tracking-widest text-[10px] font-mono font-bold mb-16 hover:text-[#e85a2a] transition-colors border border-black px-4 py-2 bg-white"
               >
                 <ArrowUpRight className="w-3 h-3 rotate-180 group-hover:-translate-x-1 transition-transform" />
                 Volver al laboratorio
@@ -59,7 +59,7 @@ export default async function LabDetailPage({ params }: Args) {
             <Reveal delay={0.3}>
               <div className="max-w-4xl">
                 {lab.description && (
-                  <div className="prose prose-lg text-black prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-[#ff3300] prose-a:font-bold prose-a:border-b prose-a:border-[#ff3300] prose-a:no-underline hover:prose-a:bg-[#ff3300] hover:prose-a:text-white max-w-none">
+                  <div className="prose prose-lg text-black prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-[#e85a2a] prose-a:font-bold prose-a:border-b prose-a:border-[#e85a2a] prose-a:no-underline hover:prose-a:bg-[#e85a2a] hover:prose-a:text-white max-w-none">
                     <RichText data={lab.description} />
                   </div>
                 )}
@@ -71,7 +71,7 @@ export default async function LabDetailPage({ params }: Args) {
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-6 py-3 border border-black text-[10px] uppercase font-mono font-bold tracking-widest hover:bg-[#ff3300] hover:border-[#ff3300] hover:text-white transition-colors bg-[#f4f4f4]"
+                        className="inline-flex items-center gap-2 px-6 py-3 border border-black text-[10px] uppercase font-mono font-bold tracking-widest hover:bg-[#e85a2a] hover:border-[#e85a2a] hover:text-white transition-colors bg-[#f4f4f4]"
                       >
                         {link.label || link.type} <ArrowUpRight className="w-3 h-3" />
                       </a>

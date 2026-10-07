@@ -38,7 +38,7 @@ export async function HeaderComponent() {
     <header className="sticky top-0 z-50 border-b border-black bg-[#f4f4f4]">
       <div className="container mx-auto max-w-[1920px]">
         <div className="flex h-12 items-center justify-between border-x border-black bg-white px-4">
-          <Link href="/" className="font-mono text-[10px] uppercase font-bold tracking-widest flex items-center gap-2 hover:text-[#ff3300] transition-colors">
+          <Link href="/" className="font-mono text-[10px] uppercase font-bold tracking-widest flex items-center gap-2 hover:text-[#e85a2a] transition-colors">
             <span className="w-2 h-2 bg-black"></span>
             SOY_ROMAN
           </Link>
@@ -48,7 +48,7 @@ export async function HeaderComponent() {
               <Link
                 key={`${item.href}-${i}`}
                 href={item.href}
-                className="font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-12 flex items-center border-l border-black hover:bg-[#ff3300] hover:text-white transition-colors"
+                className="font-mono text-[9px] uppercase font-bold tracking-widest px-4 h-12 flex items-center border-l border-black hover:bg-[#e85a2a] hover:text-white transition-colors"
                 {...(item.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
               >
                 {item.label}
