@@ -88,6 +88,18 @@ export const RECURSOS: Recurso[] = [
     expertise: ['seo-aeo-geo', 'web-herramientas'],
     categories: ['seo-aeo', 'sitios-web'],
   },
+  {
+    slug: 'brecha-pipeline',
+    href: '/recursos/brecha-pipeline',
+    code: 'PIPE',
+    name: 'Brecha de pipeline',
+    sub: 'secuenciador',
+    desc: '¿Llegas a la meta del trimestre con lo que tienes abierto? Forecast ponderado, cobertura y el pipeline que te falta.',
+    preview: { label: 'Brecha', value: '$172k' },
+    glossary: ['forecast', 'pipeline', 'win-rate', 'velocidad-del-pipeline', 'embudo-de-ventas'],
+    expertise: ['crm-revops', 'liderazgo-equipos'],
+    categories: ['crm-revops', 'analitica'],
+  },
 ]
 
 export const LIVE = RECURSOS.filter((r) => r.href)

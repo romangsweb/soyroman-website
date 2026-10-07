@@ -345,3 +345,47 @@
 .te-app .s-bots span.no{background:var(--or);color:#fff}
 .te-app .s-keys{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
 .te-app .s-gate{margin-top:14px;background:#fff;border:2px solid var(--ink);border-radius:8px}
+
+/* ───────── Brecha de pipeline (secuenciador): prefijo q- ───────── */
+.te-app .q-dev{background:var(--shell);border:2px solid var(--ink);border-radius:18px;box-shadow:8px 8px 0 var(--ink);padding:18px;margin-top:8px}
+.te-app .q-brand{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.te-app .q-brand b{font-size:15px;letter-spacing:.06em;font-weight:400}
+.te-app .q-rec{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--or);animation:ledrec 1.4s steps(1) infinite;vertical-align:0}
+@media (prefers-reduced-motion:reduce){.te-app .q-rec{animation:none}}
+.te-app .q-lcd{background:#0b0d0c;border:2px solid var(--ink);border-radius:8px;padding:14px;color:#ff7a3d;font-variant-numeric:tabular-nums}
+.te-app .q-lcd .t{font-size:10px;letter-spacing:.18em;color:#9a5a3e;text-transform:uppercase}
+.te-app .q-lcd .v{font-size:clamp(24px,4vw,36px);margin:4px 0 10px;text-shadow:0 0 12px #ff7a3d55}
+.te-app .q-lcd .v span{font-size:.5em;color:#9a5a3e}
+.te-app .q-tape{position:relative;height:34px;border:1px solid #3a2a22;border-radius:4px;overflow:hidden;background:repeating-linear-gradient(90deg,#141615 0 9px,#101211 9px 10px)}
+.te-app .q-tape i{position:absolute;top:0;bottom:0;transition:width .25s,left .25s}
+.te-app .q-tape .won{background:#ff7a3d}
+.te-app .q-tape .wt{background:repeating-linear-gradient(45deg,#ff7a3d 0 4px,#7a3a20 4px 8px)}
+.te-app .q-tape .goal{width:2px;background:#fff;box-shadow:0 0 6px #fff}
+.te-app .q-lg{display:flex;flex-wrap:wrap;gap:14px;font-size:10px;margin-top:8px;color:#e9b49a;text-transform:uppercase;letter-spacing:.08em}
+.te-app .q-r{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 0;font-size:13px}
+.te-app .q-r dt{color:#7d4a34;font-size:10px;text-transform:uppercase;letter-spacing:.1em}
+.te-app .q-r dd{margin:0;color:#f0b394}
+.te-app .q-r dd.neg{color:#fff;background:var(--or);display:inline-block;padding:0 4px}
+.te-app .q-top{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin:14px 0}
+.te-app .q-f{background:var(--row);border:1.5px solid var(--ink);border-radius:6px;padding:8px;font-size:11px}
+.te-app .q-f small{display:block;color:var(--grey);font-size:9px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.te-app .q-f small b{color:var(--ink);font-weight:400}
+.te-app .q-f input,.te-app .q-st input[type=number]{width:100%;font:inherit;font-size:14px;border:1.5px solid var(--ink);border-radius:4px;padding:5px 6px;text-align:right;background:#fff}
+.te-app .q-seq{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media(max-width:760px){.te-app .q-seq{grid-template-columns:repeat(2,minmax(0,1fr))}.te-app .q-r{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.te-app .q-st{background:var(--panel);border:2px solid var(--ink);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.te-app .q-st label{font-size:10px;color:var(--grey);text-transform:uppercase;letter-spacing:.08em;display:grid;gap:4px}
+.te-app .q-st label b{color:var(--ink);font-weight:400}
+.te-app .q-st input[type=range]{width:100%;accent-color:var(--or)}
+.te-app .q-h{display:flex;gap:6px;align-items:center;font-size:11px}
+.te-app .q-name{flex:1;min-width:0;font:inherit;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:0;border-bottom:1.5px dashed var(--grey);background:transparent;padding:2px 0}
+.te-app .q-name:focus{outline:none;border-bottom-color:var(--or)}
+.te-app .q-steps{display:grid;grid-template-columns:repeat(10,1fr);gap:3px}
+.te-app .q-steps i{aspect-ratio:1;border-radius:2px;background:#c8cbc7;border:1px solid #9aa0a3}
+.te-app .q-steps i.on{background:var(--or);border-color:var(--ink)}
+.te-app .q-w{font-size:11px}
+.te-app .q-plan{margin:16px 0 0;background:#fff;border:2px solid var(--ink);border-radius:8px;padding:12px 14px;font-size:12px;line-height:1.6}
+.te-app .q-plan b{color:var(--or);font-weight:400}
+.te-app .q-plan a{color:inherit}
+.te-app .q-keys{display:flex;gap:10px;margin-top:14px}
+.te-app .q-gate{margin-top:14px;background:#fff;border:2px solid var(--ink);border-radius:8px}

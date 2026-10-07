@@ -24,6 +24,7 @@ const STATIC = [
   '/recursos/icp',
   '/recursos/presupuesto-marketing',
   '/recursos/auditor-aeo',
+  '/recursos/brecha-pipeline',
   '/about',
   '/cv',
   '/uses',
