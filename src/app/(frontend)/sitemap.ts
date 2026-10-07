@@ -31,6 +31,7 @@ const STATIC = [
   '/recursos/salud-correo',
   '/recursos/comparador-competidores',
   '/recursos/te-recomienda-la-ia',
+  '/recursos/explorador-busquedas',
   '/about',
   '/cv',
   '/uses',

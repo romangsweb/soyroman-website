@@ -172,6 +172,18 @@ export const RECURSOS: Recurso[] = [
     expertise: ['seo-aeo-geo', 'generacion-demanda-b2b'],
     categories: ['seo-aeo', 'ia-aplicada'],
   },
+  {
+    slug: 'explorador-busquedas',
+    href: '/recursos/explorador-busquedas',
+    code: 'KW',
+    name: 'Explorador de búsquedas',
+    sub: 'autocompletado + IA',
+    desc: '¿Qué busca la gente alrededor de tu tema? Búsquedas y preguntas reales de Google, agrupadas por intención, con ideas de contenido.',
+    preview: { label: 'Búsquedas', value: '146' },
+    glossary: ['seo', 'aeo', 'contenido', 'buyer-persona'],
+    expertise: ['seo-aeo-geo', 'generacion-demanda-b2b'],
+    categories: ['seo-aeo', 'contenido-email'],
+  },
 ]
 
 export const LIVE = RECURSOS.filter((r) => r.href)
