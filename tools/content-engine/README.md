@@ -63,3 +63,23 @@ guardarse como borrador (no publicada) para que el bot pueda editarla.
 - **ComfyUI se apaga** al terminar la portada si el motor lo encendió, para que Ollama recupere la VRAM.
 - **Iterar portadas** sin generar posts:
   `~/homeserver/venv/bin/python3 tools/content-engine/soyroman_engine.py --cover-only "Título de prueba" --expertise crm-revops`
+
+## Seed del CMS (en Hall)
+Idempotente: crea o actualiza perfil, expertise, temas, proyectos, herramientas y menús, y solo llena campos vacíos de
+lo que se edita a mano (frameworks, competencias, casos). Al terminar revalida el sitio.
+```bash
+cd ~/homeserver/soyroman-cms && git pull
+set -a; . ./.env.hall; set +a
+docker run --rm --network soyroman-cms_default -v "$PWD":/app -v /app/node_modules -w /app \
+  -e PAYLOAD_SECRET="$PAYLOAD_SECRET" -e FRONTEND_URL="$FRONTEND_URL" -e REVALIDATE_SECRET="$REVALIDATE_SECRET" \
+  -e DATABASE_URI="postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@soyroman-db:5432/$POSTGRES_DB" \
+  node:22-alpine sh -c 'corepack enable && corepack prepare pnpm@10 --activate >/dev/null && pnpm install --frozen-lockfile --silent && NODE_ENV=production pnpm seed' 2>&1 | tail -15
+unset POSTGRES_PASSWORD PAYLOAD_SECRET REVALIDATE_SECRET
+```
+
+## Portadas: estilo «Señal»
+Cables y conectores de colores sobre negro, un acomodo por tema (`COVER_BY_CATEGORY` en `soyroman_engine.py`).
+Probar sin escribir artículos:
+```bash
+~/homeserver/venv/bin/python3 tools/content-engine/soyroman_engine.py --cover-only "prueba" --expertise crm-revops
+```

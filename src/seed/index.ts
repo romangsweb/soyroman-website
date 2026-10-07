@@ -856,6 +856,25 @@ async function seed() {
     },
   })
 
+  // El seed escribe con disableRevalidate (para no disparar un aviso por documento);
+  // al final se pide una sola revalidación para que el sitio muestre lo nuevo de inmediato.
+  const frontend = process.env.FRONTEND_URL
+  const secret = process.env.REVALIDATE_SECRET
+  if (frontend && secret) {
+    try {
+      const res = await fetch(`${frontend.replace(/\/$/, '')}/next/revalidate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-revalidate-secret': secret },
+        body: JSON.stringify({ tags: ['cms'] }),
+      })
+      console.log(`  revalidación del sitio: ${res.status}`)
+    } catch (e) {
+      console.warn('  no se pudo revalidar el sitio:', (e as Error).message)
+    }
+  } else {
+    console.warn('  sin FRONTEND_URL o REVALIDATE_SECRET: el sitio se actualizará al vencer la caché (hasta 1 h)')
+  }
+
   console.log('✅ Seed complete!')
   process.exit(0)
 }

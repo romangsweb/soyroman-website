@@ -57,44 +57,41 @@ IMAGE_STEPS, IMAGE_WIDTH, IMAGE_HEIGHT = "28", "1344", "768"
 # ───────────────────────── Portadas: diseño industrial minimalista ─────────────────────────
 # Lenguaje visual descrito en términos genéricos: sin marcas, logos ni productos reales.
 COVER_BASE = (
-    "minimalist industrial design product render, compact hardware device with "
-    "rounded rectangular aluminum body, matte light grey (#e5e5e5) surface, "
-    "precise black hairline engraved pictograms and dot-grid markings, "
-    "a single signal-orange (#e85a2a) knob or button as the only color accent, "
-    "modular knobs, sliders and tiny LED dots, flat geometric icon language, "
-    "orthographic three-quarter view on seamless light grey studio background, "
-    "soft even studio light, crisp shadows, swiss grid composition, generous negative space, "
-    "original fictional design, no text, no letters, no numbers, no logos, no brand marks, "
-    "not a real existing product"
+    "editorial macro studio photograph, colorful braided cables and audio patch cables with polished metal connectors, "
+    "arranged on a pure black seamless background, dramatic soft rim light, glossy specular highlights on the cable jackets, "
+    "shallow depth of field, minimal composition with generous negative space, high-end product photography, "
+    "one signal-orange (#e85a2a) cable or connector as accent, "
+    "no devices, no instruments, no synthesizer, no keyboard, no knobs, no screens, no text, no letters, no numbers, no logos"
 )
-COVER_BY_EXPERTISE = {
-    "crm-revops": "device with a circular dial and stacked pipeline-like sliders, pictograms of funnels and connected nodes",
-    "generacion-demanda-b2b": "device with a signal meter and waveform display, pictograms of arrows converging into a target",
-    "seo-aeo-geo": "device with a radar-like round screen and a magnifier pictogram, concentric circle markings",
-    "paid-media": "device with a large rotary budget dial and bar-meter LEDs, pictogram of a megaphone",
-    "web-herramientas": "device shaped like a tiny modular screen terminal, grid of square keys, browser-window pictogram",
-    "liderazgo-equipos": "set of three small modular devices docked together on a rail, people pictograms as simple dots",
-    "motores-ia": "device with an exposed circuit-grid top plate and a single glowing orange core, node graph pictograms",
-}
-# Motivo por tema del blog (las 9 categorías del CMS). El motor v2 usa estos.
+# Estilo «Señal»: solo cables y conectores sobre negro; cada tema acomoda los cables a su manera.
 COVER_BY_CATEGORY = {
-    "generacion-demanda": "device with a signal meter and waveform display, pictograms of arrows converging into a target",
-    "crm-revops": "device with a circular dial and stacked pipeline-like sliders, pictograms of funnels and connected nodes",
-    "seo-aeo": "device with a radar-like round screen and a magnifier pictogram, concentric circle markings",
-    "paid-media": "device with a large rotary budget dial and bar-meter LEDs, pictogram of a megaphone",
-    "contenido-email": "device like a compact typewriter-terminal with a paper slot, envelope and paragraph pictograms",
-    "analitica": "device with a small black display showing a bar chart pictogram, rows of measurement LEDs and a gauge",
-    "sitios-web": "device shaped like a tiny modular screen terminal, grid of square keys, browser-window pictogram",
-    "liderazgo": "set of three small modular devices docked together on a rail, people pictograms as simple dots",
-    "ia-aplicada": "device with an exposed circuit-grid top plate and a single glowing orange core, node graph pictograms",
+    "generacion-demanda": "many thin cables in cobalt, mint, amber and bone converging from the left into one thick braided orange cable on the right",
+    "crm-revops": "six cables running in perfectly parallel lanes through a brushed aluminum cable comb, bone, cobalt and one orange cable",
+    "seo-aeo": "one thick cobalt cable splitting into a fan of fiber optic strands with glowing mint tips and a few orange tips",
+    "paid-media": "a tightly coiled amber spiral cable like a compressed spring ending in a single orange jack connector",
+    "contenido-email": "bone cables laid in straight horizontal lines like lines of text, one coral cable forming a loose loop",
+    "analitica": "a teal cable tracing a rising trend line across a faint grid, small connectors marking data points, one orange",
+    "sitios-web": "a minimal light grey patch plate with a few sockets, three cables plugged in: cobalt, mint and orange",
+    "liderazgo": "four cables in cobalt, orange, mint and bone braided together into one rope crossing the frame",
+    "ia-aplicada": "a tangle of fine plum, mint and bone filaments on the left resolving into straight parallel lines on the right, one orange filament",
+}
+# Compatibilidad con el motor v1 (usa slugs de Expertise)
+COVER_BY_EXPERTISE = {
+    "crm-revops": COVER_BY_CATEGORY["crm-revops"],
+    "generacion-demanda-b2b": COVER_BY_CATEGORY["generacion-demanda"],
+    "seo-aeo-geo": COVER_BY_CATEGORY["seo-aeo"],
+    "paid-media": COVER_BY_CATEGORY["paid-media"],
+    "web-herramientas": COVER_BY_CATEGORY["sitios-web"],
+    "liderazgo-equipos": COVER_BY_CATEGORY["liderazgo"],
+    "motores-ia": COVER_BY_CATEGORY["ia-aplicada"],
 }
 # Variaciones de composición para que las portadas no salgan todas iguales
 COVER_COMPOSITIONS = [
-    "orthographic three-quarter view, device centered",
-    "top-down flat lay view, device slightly rotated, lots of negative space",
-    "low front view, device on the left third, empty space on the right",
-    "close-up macro detail of the controls, shallow depth of field",
-    "two related devices side by side, one larger, isometric view",
+    "centered composition",
+    "cables entering from the left edge, empty space on the right",
+    "top-down flat lay",
+    "low angle close-up of the connectors",
+    "diagonal composition from bottom left to top right",
 ]
 
 # ───────────────────────── Voz y reglas ─────────────────────────
@@ -461,8 +458,7 @@ def generate_cover(key, title):
         log("  ComfyUI no disponible, sin portada")
         return None, None
     motif = COVER_BY_CATEGORY.get(key) or COVER_BY_EXPERTISE.get(key) or COVER_BY_EXPERTISE["motores-ia"]
-    base = COVER_BASE.replace("orthographic three-quarter view", random.choice(COVER_COMPOSITIONS))
-    prompt = f"{base}, {motif}, subtle reference to: {title[:60].lower()}"
+    prompt = f"{COVER_BASE}, {motif}, {random.choice(COVER_COMPOSITIONS)}"
     try:
         res = subprocess.run(["bash", cfg.get("COMFYUI_SERVICE"), prompt, IMAGE_STEPS, IMAGE_WIDTH, IMAGE_HEIGHT],
                              capture_output=True, text=True, timeout=600)
