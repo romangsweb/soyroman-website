@@ -82,17 +82,24 @@ REGLAS DEL BLOG:
 - Español de México sin anglicismos innecesarios: "dirección" (no C-suite), "embudo" (no funnel), "hallazgos" (no insights), "interacción" (no engagement), "desempeño" (no performance). El presupuesto se defiende ante dirección general o finanzas (CFO), no ante el CTO.
 - Nada de llamados de venta tipo "Descubre", "Conoce" o "No te pierdas".
 - Varía cómo introduces tu criterio: la misma frase de arranque (por ejemplo "Cuando reviso…") no puede aparecer más de dos veces en el artículo.
-- Montos siempre en dólares: "USD 20,000". Nunca pesos."""
+- Montos siempre en dólares: "USD 20,000". Nunca pesos.
+- El ESCENARIO numérico se usa como máximo en 2 secciones; no repitas las mismas cifras sección tras sección.
+- No recomiendes repetir palabras clave ni forzar menciones de marca: los buscadores y las IA lo castigan.
+- En los ejemplos no menciones marcas propias (Buildations, soyroman): usa empresas genéricas ("una empresa de software B2B").
+- No atribuyas a una herramienta funciones que no tiene. Si no estás seguro de qué mide, describe el método sin nombrarla."""
 
 # Anglicismos y muletillas que no deben aparecer (la calificación los penaliza)
 BANNED = {
     r"\bC-?suite\b": "dirección", r"\bfunnel\b": "embudo", r"\binsights?\b": "hallazgos",
     r"\bengagement\b": "interacción", r"\bperformance\b": "desempeño", r"\bDescubre\b": "(quitar)",
+    r"\btrade-?offs?\b": "dilema", r"\brankear\b": "posicionarse", r"\bBing AI\b": "Copilot",
 }
 # Arreglos automáticos seguros (los demás los corrige el editor)
 AUTOFIX = [
     (r"\bal C-?suite\b", "a la dirección"), (r"\bdel C-?suite\b", "de la dirección"),
     (r"\b[Ee]l C-?suite\b", "la dirección"), (r"\b(el|del|al) funnel\b", r"\1 embudo"), (r"\bfunnel\b", "embudo"),
+    (r"\btrade-?offs\b", "dilemas"), (r"\btrade-?off\b", "dilema"), (r"\bTrade-?off\b", "Dilema"),
+    (r"\brankear\b", "posicionarse"), (r"\bBing AI\b", "Copilot de Microsoft"),
 ]
 
 # Definiciones verificadas: mandan sobre las del glosario si hay diferencia
@@ -367,7 +374,18 @@ def defs_block(t, glossary):
             txt = re.sub(r"\s+", " ", str(d["definition"]))[:320]
             formula = f" Fórmula: {d['formula']}" if d.get("formula") else ""
             lines.append(f"- {d['term']}: {txt}{formula}")
+    lines += [f"- {f}" for f in TOPIC_FACTS.get(t.get("cat", ""), [])]
     return "\n".join(lines) or "- (sin definiciones específicas para este tema)"
+
+
+# Hechos verificados por tema (se agregan a las definiciones del artículo)
+TOPIC_FACTS = {
+    "seo-aeo": [
+        "Search Console no reporta citas en respuestas de IA: mide clics, impresiones y posición en Google.",
+        "Las citas en IA se miden consultando los asistentes con búsqueda (ChatGPT, Claude, Perplexity, Copilot) o con las visitas de sus bots en los registros del servidor.",
+        "Repetir palabras clave o forzar menciones de marca no mejora la presencia en IA; ayudan la respuesta directa, la estructura y las fuentes verificables.",
+    ],
+}
 
 
 FIRST_PERSON = re.compile(r"\b(yo|mi|mis|me|recomiendo|prefiero|reviso|uso|suelo|pido|empiezo|veo|he visto|aprendí|trabajo con)\b", re.I)
@@ -426,10 +444,67 @@ def sanitize_completar(md):
     return "\n".join(out)
 
 
+FIRST_SENTENCE = re.compile(r"^(.+?[.!?])\s+(?=[A-ZÁÉÍÓÚÑ¿¡])", re.S)
+
+
+def split_leads(md, max_words=60, lead_max=45):
+    """Si el primer párrafo de una sección ## es largo, separa su primera frase como párrafo propio (respuesta primero)."""
+    parts = re.split(r"(?m)^(## .+)$", md)
+    for i in range(1, len(parts), 2):
+        if parts[i].lower().startswith("## preguntas frecuentes"):
+            continue
+        body = parts[i + 1]
+        m = re.match(r"(\n+)([^\n]+)", body)
+        if not m:
+            continue
+        first = m.group(2)
+        if first.lstrip()[:1] in "|->#*" or re.match(r"\s*\d+\.", first) or len(first.split()) <= max_words:
+            continue
+        s1 = FIRST_SENTENCE.match(first)
+        if s1 and len(s1.group(1).split()) <= lead_max:
+            rest = first[s1.end():]
+            parts[i + 1] = m.group(1) + s1.group(1) + "\n\n" + rest + body[m.end():]
+    return "".join(parts)
+
+
+LEAD = """Escribe 1 o 2 frases (máximo 45 palabras en total) que respondan directamente a este encabezado,
+usando solo lo que dice la sección. Deben entenderse solas, sin el resto del artículo. Sin cifras nuevas.
+Devuelve solo las frases.
+
+ENCABEZADO: {heading}
+
+SECCIÓN:
+{body}"""
+
+
+def lead_answers(md, system):
+    """Para secciones cuyo primer párrafo sigue largo tras split_leads: pide al modelo 1-2 frases de respuesta y las antepone."""
+    parts = re.split(r"(?m)^(## .+)$", md)
+    fixed = 0
+    for i in range(1, len(parts), 2):
+        if parts[i].lower().startswith("## preguntas frecuentes"):
+            continue
+        m = re.match(r"(\n+)([^\n]+)", parts[i + 1])
+        if not m or len(m.group(2).split()) <= 60 or m.group(2).lstrip()[:1] in "|->#*":
+            continue
+        try:
+            lead = ollama_call(system, LEAD.format(heading=parts[i][3:].strip(), body=parts[i + 1][:3000]),
+                               predict=200, temperature=0.3).strip().strip('"')
+        except Exception as e:
+            log(f"  respuesta inicial falló: {e}")
+            continue
+        if 5 <= len(lead.split()) <= 60 and "\n" not in lead:
+            parts[i + 1] = m.group(1) + autofix(lead) + "\n\n" + parts[i + 1][len(m.group(1)):]
+            fixed += 1
+    if fixed:
+        log(f"  respuestas iniciales agregadas: {fixed}")
+    return "".join(parts)
+
+
 def autofix(md):
     for pat, rep_ in AUTOFIX:
         md = re.sub(pat, rep_, md)
-    return sanitize_completar(scrub(md))
+    return split_leads(sanitize_completar(scrub(md)))
 
 
 def ensure_completar(md):
@@ -448,8 +523,33 @@ def ensure_completar(md):
         if len(frase) > 20 and nota and frase in md:
             md = md.replace(frase, f"{frase} [COMPLETAR: {nota}]", 1)
             n += 1
+    if n == 0:
+        md = completar_fallback(md)
+        n = md.count("[COMPLETAR:")
     log(f"  [COMPLETAR] insertados: {n}")
     return md
+
+
+def completar_fallback(md):
+    """Si el modelo no logró marcar ninguno: uno al final del primer párrafo de la sección con más primera persona."""
+    parts = re.split(r"(?m)^(## .+)$", md)
+    best, best_i = -1, None
+    for i in range(1, len(parts), 2):
+        if parts[i].lower().startswith("## preguntas frecuentes"):
+            continue
+        score = len(FIRST_PERSON.findall(parts[i + 1]))
+        if score > best:
+            best, best_i = score, i
+    if best_i is None:
+        return md
+    heading = parts[best_i][3:].strip()
+    body = parts[best_i + 1]
+    m = re.search(r"\n\n([^\n|#>-][^\n]+)", body)
+    if not m:
+        return md
+    note = f" [COMPLETAR: un ejemplo real tuyo sobre «{heading[:60]}» (caso, decisión o cifra propia)]"
+    parts[best_i + 1] = body[:m.end()] + note + body[m.end():]
+    return "".join(parts)
 
 
 def link_terms(md, slugs, glossary):
@@ -522,6 +622,7 @@ def write_article(t, glossary=None):
     draft = autofix(draft)
     log("[3/5] editor")
     edited = sanitize_completar(ensure_completar(autofix(edit(draft, t, defs=defs))))
+    edited = lead_answers(edited, system)
 
     faq = []
     if brief.get("faq"):
