@@ -20,6 +20,8 @@ const STATIC = [
   '/recursos',
   '/recursos/embudo-inverso',
   '/recursos/roas-romi-roi',
+  '/recursos/madurez-revops',
+  '/recursos/icp',
   '/about',
   '/cv',
   '/uses',

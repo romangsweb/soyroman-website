@@ -7,8 +7,8 @@ import { AppHeader } from '@/components/apps/Panels'
 const APPS = [
   { href: '/recursos/embudo-inverso', code: 'EMBUDO I', name: 'Embudo inverso', desc: 'De tu meta de ingresos a los leads, MQL y SQL que necesitas cada mes.' },
   { href: '/recursos/roas-romi-roi', code: 'RENDIMIENTO', name: 'ROAS · ROMI · ROI', desc: 'Los tres indicadores de retorno con sus fórmulas y tus números.' },
-  { href: null, code: 'MADUREZ', name: 'Diagnóstico RevOps', desc: '10 preguntas para medir la madurez de tu operación de revenue.' },
-  { href: null, code: 'ICP', name: 'Generador de ICP', desc: 'Arma el perfil de tu cliente ideal y descárgalo en PDF.' },
+  { href: '/recursos/madurez-revops', code: 'MADUREZ', name: 'Diagnóstico RevOps', desc: '10 preguntas para medir la madurez de tu operación de revenue.' },
+  { href: '/recursos/icp', code: 'ICP', name: 'Generador de ICP', desc: 'Arma el perfil de tu cliente ideal y descárgalo en PDF.' },
 ]
 
 export default function RecursosPage() {
