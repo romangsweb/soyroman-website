@@ -49,13 +49,17 @@ type CruxDate = { year: number; month: number; day: number }
 
 /** Datos de usuarios reales del origen. `null` si el sitio no tiene suficiente tráfico en Chrome. */
 export async function cruxField(domain: string, strategy: Strategy): Promise<Field | null> {
-  const res = await fetch(`https://chromeuxreport.googleapis.com/v1/records:queryRecord?key=${key()}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ origin: `https://${domain}`, formFactor: strategy === 'mobile' ? 'PHONE' : 'DESKTOP', metrics: CRUX_KEYS.map((m) => m[1]) }),
-    signal: AbortSignal.timeout(8000),
-    cache: 'no-store',
-  })
+  const query = (host: string) =>
+    fetch(`https://chromeuxreport.googleapis.com/v1/records:queryRecord?key=${key()}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ origin: `https://${host}`, formFactor: strategy === 'mobile' ? 'PHONE' : 'DESKTOP', metrics: CRUX_KEYS.map((m) => m[1]) }),
+      signal: AbortSignal.timeout(8000),
+      cache: 'no-store',
+    })
+  let res = await query(domain)
+  // Muchos sitios redirigen a www: CrUX guarda los datos con el origen final
+  if (res.status === 404 && !domain.startsWith('www.')) res = await query(`www.${domain}`)
   if (res.status === 404) return null
   if (!res.ok) throw new Error(`crux ${res.status}`)
   const data = (await res.json()) as { record?: { metrics?: Record<string, CruxMetric>; collectionPeriod?: { firstDate: CruxDate; lastDate: CruxDate } } }
@@ -81,7 +85,7 @@ type LhAudit = { title?: string; score?: number | null; displayValue?: string; n
 
 /** Prueba de laboratorio de PageSpeed Insights (tarda entre 10 y 40 s). */
 export async function psiLab(domain: string, strategy: Strategy): Promise<Lab> {
-  const qs = new URLSearchParams({ url: `https://${domain}/`, strategy, category: 'performance', locale: 'es', key: key() })
+  const qs = new URLSearchParams({ url: `https://${domain}/`, strategy, category: 'performance', locale: 'es-419', key: key() })
   const res = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${qs}`, { signal: AbortSignal.timeout(55_000), cache: 'no-store' })
   if (!res.ok) {
     const body = await res.text().catch(() => '')
