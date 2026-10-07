@@ -756,6 +756,59 @@ async function seed() {
   ]
   for (const tool of toolsData) await upsert('tools', { name: { equals: tool.name } }, tool)
 
+  // Expertise: competencias, entregables y herramientas (solo si están vacíos, para no pisar lo editado a mano)
+  const S = (...xs: [string, number][]) => xs.map(([name, level]) => ({ name, level: String(level) }))
+  const EXPERTISE_EXTRA: Record<string, { skills: any[]; deliverables: string[]; tools: string[] }> = {
+    'generacion-demanda-b2b': {
+      skills: S(['Estrategia para ciclos largos', 5], ['MQL, SQL y SLA', 5], ['Eventos medidos a pipeline', 4], ['Nurturing y automatización', 4], ['Outbound coordinado con SDR', 4], ['ABM', 3]),
+      deliverables: ['Plan de demanda calculado desde la meta de ingresos', 'Definición de MQL, SQL y SLA firmada por marketing y ventas', 'Programa de nurturing por etapa de compra', 'Tablero de pipeline generado por canal'],
+      tools: ['HubSpot', 'LinkedIn Sales Navigator', 'Apollo', 'Zapier', 'Make', 'GA4'],
+    },
+    'seo-aeo-geo': {
+      skills: S(['SEO técnico', 4], ['Contenido para buscadores e IA', 4], ['Datos estructurados', 4], ['Migraciones sin perder tráfico', 4], ['Medición de visibilidad en IA', 3]),
+      deliverables: ['Auditoría técnica priorizada', 'Arquitectura de contenido por intención de búsqueda', 'Datos estructurados para servicios, artículos y preguntas frecuentes', 'Medición mensual de visibilidad en buscadores y motores de IA'],
+      tools: ['Search Console', 'Semrush', 'Ahrefs', 'Screaming Frog', 'PageSpeed Insights', 'GA4', 'Claude'],
+    },
+    'paid-media': {
+      skills: S(['Estrategia orientada a pipeline', 4], ['Medición y atribución', 4], ['Landing de campaña', 4], ['Operación de Google Ads', 3], ['Operación de LinkedIn Ads', 3]),
+      deliverables: ['Estrategia y presupuesto por canal desde la meta de pipeline', 'Estructura de campañas y audiencias por cuenta', 'Landing pages de campaña conectadas al CRM', 'Reporte de costo por oportunidad y ROMI'],
+      tools: ['Estrategia de paid media B2B', 'Google Ads (operación)', 'LinkedIn Ads (operación)', 'Meta Ads', 'Google Tag Manager (web y server-side)', 'GA4'],
+    },
+    'crm-revops': {
+      skills: S(['Implementación de HubSpot', 5], ['Migración de CRM', 5], ['Modelado de pipeline (MEDDIC)', 5], ['Depuración de datos', 5], ['Atribución y reporting', 4], ['Automatización por API', 4]),
+      deliverables: ['Auditoría del CRM con plan de depuración priorizado', 'Modelo de pipeline con criterios de salida por etapa', 'Migración entre CRMs con historial y propiedades mapeadas', 'Tablero de forecast y atribución para dirección'],
+      tools: ['HubSpot', 'HubSpot API + Python', 'Modelo MEDDIC', 'Dynamics 365 / Dynamics CRM', 'Zapier', 'Make', 'BigQuery', 'Metabase'],
+    },
+    'web-herramientas': {
+      skills: S(['Sitios B2B', 5], ['Landing interactivas y calculadoras', 5], ['Integración formulario–CRM', 5], ['WordPress', 5], ['Next.js y headless', 4], ['CRO', 3]),
+      deliverables: ['Sitio B2B diseñado desde las preguntas del comprador', 'Calculadoras y herramientas interactivas que captan leads', 'Formularios integrados al CRM sin pérdida de datos', 'Medición de conversiones por página'],
+      tools: ['WordPress + Divi 5', 'Next.js + Payload CMS', 'Vercel', 'Kinsta', 'Cloudflare (DNS, Workers, Tunnel)', 'Figma', 'Microsoft Clarity', 'Hotjar'],
+    },
+    'liderazgo-equipos': {
+      skills: S(['Coordinación marketing–ventas', 5], ['Equipos de hasta 6 personas', 4], ['Planeación y OKRs', 4], ['Contratación y onboarding', 3]),
+      deliverables: ['Estructura de roles con un número del embudo por persona', 'Rituales semanales con ventas y tablero común', 'Plan trimestral con objetivos ligados al pipeline'],
+      tools: ['Notion', 'Asana', 'Monday', 'Slack', 'HubSpot'],
+    },
+    'motores-ia': {
+      skills: S(['Infraestructura propia', 5], ['Automatización con n8n', 4], ['Modelos locales (LLM)', 4], ['RAG y bases vectoriales', 3], ['Generación de imágenes', 3]),
+      deliverables: ['Motores de IA corriendo en infraestructura propia', 'Automatizaciones de contenido y datos con revisión humana', 'Monitoreo, seguridad y respaldos del entorno'],
+      tools: ['Ollama', 'Qdrant', 'n8n', 'ComfyUI', 'PostgreSQL / SQL', 'Docker', 'Claude', 'Langfuse'],
+    },
+  }
+  for (const [slug, extra] of Object.entries(EXPERTISE_EXTRA)) {
+    const found = await payload.find({ collection: 'expertise', where: { slug: { equals: slug } }, limit: 1, depth: 0 })
+    const doc = found.docs[0] as any
+    if (!doc) continue
+    const patch: any = {}
+    if (!doc.skills?.length) patch.skills = extra.skills
+    if (!doc.deliverables?.length) patch.deliverables = extra.deliverables.map((item) => ({ item }))
+    if (!doc.tools?.length) {
+      const tools = await payload.find({ collection: 'tools', where: { name: { in: extra.tools } }, limit: 50, depth: 0 })
+      if (tools.docs.length) patch.tools = tools.docs.map((t: any) => t.id)
+    }
+    if (Object.keys(patch).length) await payload.update({ collection: 'expertise', id: doc.id, data: patch, context: ctx })
+  }
+
   // Herramientas viejas del seed anterior que cambiaron de nombre
   for (const old of ['GTM Server-Side', 'Cloudflare (Workers, DNS)', 'Payload CMS', 'PostgreSQL', 'Google Ads', 'LinkedIn Ads', 'CrowdSec']) {
     const found = await payload.find({ collection: 'tools', where: { name: { equals: old } }, limit: 1, depth: 0 })

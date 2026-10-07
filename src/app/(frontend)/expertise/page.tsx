@@ -6,6 +6,8 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { IconTile } from '@/components/IconTile'
+import { BrandTile } from '@/components/BrandIcon'
+import { MiniMeter, skillList } from '@/components/Expertise'
 
 export default async function ExpertisePage() {
   const expertises = await cms.find({
@@ -23,7 +25,7 @@ export default async function ExpertisePage() {
           <div className="p-8 md:p-16 relative container mx-auto">
             <Reveal duration={1.2}>
               <div className="flex items-center gap-3 mb-16">
-                <div className="w-3 h-3 bg-[#0A32B8]"></div>
+                <div className="w-3 h-3 bg-[#e85a2a]"></div>
                 <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
                   SYS.02 // Especialidades
                 </p>
@@ -68,6 +70,23 @@ export default async function ExpertisePage() {
                       </p>
                     )}
                     
+                    {skillList(exp.skills).length > 0 && (
+                      <div className="grid gap-2 mb-6">
+                        {skillList(exp.skills).sort((a, b) => b.level - a.level).slice(0, 3).map((sk) => (
+                          <div key={sk.name} className="grid grid-cols-[1fr_90px] gap-3 items-center font-mono text-[10px] uppercase tracking-wider">
+                            <span>{sk.name}</span>
+                            <MiniMeter level={sk.level} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {Array.isArray(exp.tools) && exp.tools.some((t: any) => typeof t === 'object') && (
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        {exp.tools.filter((t: any) => typeof t === 'object').slice(0, 6).map((t: any) => (
+                          <BrandTile key={t.id} name={t.name} size="sm" />
+                        ))}
+                      </div>
+                    )}
                     {exp.metrics && exp.metrics.length > 0 && (
                       <div className="flex flex-wrap gap-4 mt-auto pt-6 border-t border-black/10 group-hover:border-white/20">
                         {exp.metrics.slice(0, 3).map((m: any, i: number) => (

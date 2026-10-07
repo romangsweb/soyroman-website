@@ -280,6 +280,22 @@ export interface Expertise {
       }[]
     | null;
   tools?: (number | Tool)[] | null;
+  /**
+   * Subcompetencias del área con su nivel. Se dibujan como consola de mezcla.
+   */
+  skills?:
+    | {
+        name: string;
+        level: '1' | '2' | '3' | '4' | '5';
+        id?: string | null;
+      }[]
+    | null;
+  deliverables?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
   content?: {
     root: {
       type: string;
@@ -1066,6 +1082,19 @@ export interface ExpertiseSelect<T extends boolean = true> {
         id?: T;
       };
   tools?: T;
+  skills?:
+    | T
+    | {
+        name?: T;
+        level?: T;
+        id?: T;
+      };
+  deliverables?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
   content?: T;
   updatedAt?: T;
   createdAt?: T;

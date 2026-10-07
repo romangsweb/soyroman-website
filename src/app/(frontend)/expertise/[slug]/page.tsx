@@ -9,6 +9,7 @@ import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { ArrowUpRight } from '@/components/icons'
 import { FrameworkDiagram } from '@/components/FrameworkDiagram'
+import { DeliverablesAndCases, SkillMixer, ToolMeters } from '@/components/Expertise'
 import { ResourceStrip } from '@/components/ResourceTeaser'
 import { recursosFor } from '@/data/recursos'
 
@@ -27,6 +28,15 @@ export default async function ExpertiseDetailPage({ params }: Args) {
 
   const expertise = result.docs[0]
   if (!expertise) notFound()
+
+  // Casos ligados a esta área
+  const projects = await cms.find({
+    collection: 'projects',
+    where: { expertises: { in: [expertise.id] } },
+    sort: '-year',
+    limit: 4,
+    depth: 0,
+  })
 
   // Related posts
   const relatedPosts = await cms.find({
@@ -73,6 +83,8 @@ export default async function ExpertiseDetailPage({ params }: Args) {
 
         {/* Framework dibujado */}
         <FrameworkDiagram steps={(expertise.framework as any[]) || []} title={expertise.title} />
+        <SkillMixer title={expertise.title} skills={(expertise as any).skills} />
+        <ToolMeters tools={expertise.tools as any[]} />
 
         {/* Main Content Area */}
         <section className="border-b border-black bg-white">
@@ -102,51 +114,6 @@ export default async function ExpertiseDetailPage({ params }: Args) {
                   </div>
                 )}
 
-                {/* Tools */}
-                {expertise.tools && (expertise.tools as any[]).length > 0 && (
-                  <div className="p-8 md:p-16 border-t border-black bg-[#f4f4f4]">
-                    <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-6">
-                      // Tecnologías
-                    </h2>
-                    <div className="flex flex-wrap gap-2">
-                      {(expertise.tools as any[]).map((tool: any) => {
-                        const name = typeof tool === 'object' ? tool.name : tool
-                        return (
-                          <span
-                            key={typeof tool === 'object' ? tool.id : tool}
-                            className="px-3 py-1 border border-black text-[10px] font-mono font-bold uppercase tracking-widest hover:bg-[#e85a2a] hover:text-white hover:border-[#e85a2a] transition-colors bg-white"
-                          >
-                            {name}
-                          </span>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Framework */}
-                {expertise.framework && expertise.framework.some((st: any) => st.description) && (
-                  <div className="p-8 md:p-16 border-t border-black bg-white flex-1">
-                    <h2 className="font-mono font-bold text-[10px] uppercase tracking-widest opacity-50 mb-8 border-b border-black/10 pb-4">
-                      // Pasos
-                    </h2>
-                    <div className="space-y-0 divide-y divide-black/10">
-                      {expertise.framework.map((step: any, i: number) => (
-                        <div key={i} className="flex gap-6 py-6 first:pt-0">
-                          <span className="font-mono font-bold text-lg text-[#e85a2a]">
-                            {String(i + 1).padStart(2, '0')}
-                          </span>
-                          <div>
-                            <h3 className="font-mono font-bold text-sm tracking-tight mb-2 uppercase">{step.step}</h3>
-                            {step.description && (
-                              <p className="font-mono text-xs opacity-70 leading-relaxed">{step.description}</p>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </Reveal>
             </div>
 
@@ -197,6 +164,7 @@ export default async function ExpertiseDetailPage({ params }: Args) {
           </div>
         </section>
 
+        <DeliverablesAndCases deliverables={(expertise as any).deliverables} projects={projects.docs as any[]} />
         <ResourceStrip items={recursosFor('expertise', expertise.slug)} />
       </article>
     </PageTransition>

@@ -802,3 +802,9 @@ body::before {
   from { top: -8px; }
   to { top: 100%; }
 }
+
+/* LED de la consola de competencias */
+@keyframes ledon {
+  from { opacity: 0; transform: scaleX(0.4); }
+  to { opacity: 1; transform: none; }
+}
