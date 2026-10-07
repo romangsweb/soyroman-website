@@ -6,6 +6,7 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { ArrowUpRight } from '@/components/icons'
+import { canonical } from '@/lib/seo'
 
 export default async function CVPage() {
   const profile = await cms.findGlobal({ slug: 'profile' })
@@ -119,6 +120,7 @@ export default async function CVPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/cv'),
   title: 'Trayectoria',
   description: 'Trayectoria profesional de Román García — Director de Marketing B2B.',
 }

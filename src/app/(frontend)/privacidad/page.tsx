@@ -1,5 +1,6 @@
 import React from 'react'
 import type { Metadata } from 'next'
+import { canonical } from '@/lib/seo'
 
 /*
  * Aviso de privacidad simplificado (LFPDPPP, México).
@@ -50,6 +51,7 @@ export default function PrivacidadPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/privacidad'),
   title: 'Aviso de privacidad',
   description: 'Aviso de privacidad de soyroman.com.',
 }

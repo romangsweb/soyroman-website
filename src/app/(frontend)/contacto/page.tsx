@@ -4,6 +4,7 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { ContactForm } from '@/components/ContactForm'
+import { canonical } from '@/lib/seo'
 
 export default function ContactoPage() {
   return (
@@ -85,6 +86,7 @@ export default function ContactoPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/contacto'),
   title: 'Contacto',
   description: 'Contacta con Román García para proyectos de marketing B2B.',
 }

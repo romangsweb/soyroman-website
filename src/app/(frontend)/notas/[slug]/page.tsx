@@ -6,6 +6,7 @@ import { RichText } from '@payloadcms/richtext-lexical/react'
 
 import { cms } from '@/lib/cms'
 import { ArrowUpRight } from '@/components/icons'
+import { canonical } from '@/lib/seo'
 
 type Args = { params: Promise<{ slug: string }> }
 
@@ -65,7 +66,7 @@ export default async function NotePage({ params }: Args) {
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug } = await params
   const n = await getNote(slug)
-  return n ? { title: n.title } : {}
+  return n ? { title: n.title, alternates: canonical(`/notas/${slug}`) } : {}
 }
 
 export async function generateStaticParams() {

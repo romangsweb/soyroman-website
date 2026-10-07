@@ -12,6 +12,7 @@ import { ProjectCover } from '@/components/ProjectCover'
 import { BrandTile } from '@/components/BrandIcon'
 import { Media } from '@/components/Media'
 import { Architecture, CaseClose, CaseSummary, Highlights, Outcomes, Phases, filled } from '@/components/CaseStudy'
+import { canonical } from '@/lib/seo'
 
 type Args = { params: Promise<{ slug: string }> }
 
@@ -227,6 +228,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const project = result.docs[0]
   if (!project) return {}
   return {
+    alternates: canonical(`/proyectos/${slug}`),
     title: project.title,
     description: project.context || undefined,
   }

@@ -7,6 +7,7 @@ import { ArrowUpRight } from '@/components/icons'
 import { ContactForm } from '@/components/ContactForm'
 import { IconTile } from '@/components/IconTile'
 import { AUDIENCE, SERVICES } from '@/data/services'
+import { canonical } from '@/lib/seo'
 
 export default function ConsultoriaPage() {
   return (
@@ -94,6 +95,7 @@ export default function ConsultoriaPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/consultoria'),
   title: 'Consultoría',
   description:
     'Consultoría de generación de demanda, CRM, SEO y AEO para pymes en crecimiento: diagnóstico, implementación y mentoría.',

@@ -4,6 +4,7 @@ import React from 'react'
 
 import { AppHeader } from '@/components/apps/Panels'
 import { RECURSOS } from '@/data/recursos'
+import { canonical } from '@/lib/seo'
 
 // Una sola fuente: el catálogo (también alimenta la home, llms.txt y las recomendaciones)
 const APPS = RECURSOS
@@ -36,6 +37,7 @@ export default function RecursosPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/recursos'),
   title: 'Recursos',
   description:
     'Calculadoras y herramientas gratuitas de marketing B2B: embudo inverso de leads, presupuesto de marketing, ROAS, ROMI y ROI, diagnóstico RevOps e ICP.',

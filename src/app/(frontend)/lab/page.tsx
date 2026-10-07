@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
+import { canonical } from '@/lib/seo'
 
 export default async function LabPage() {
   const labs = await cms.find({ collection: 'lab', limit: 50, depth: 1 })
@@ -116,6 +117,7 @@ export default async function LabPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/lab'),
   title: 'Lab',
   description: 'Proyectos personales, experimentos y herramientas de Román García.',
 }

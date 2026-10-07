@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import React, { Suspense } from 'react'
 
 import { BudgetApp } from '@/components/apps/BudgetApp'
+import { canonical } from '@/lib/seo'
 
 export default function PresupuestoPage() {
   return (
@@ -21,6 +22,7 @@ export default function PresupuestoPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/recursos/presupuesto-marketing'),
   title: 'Planificador de presupuesto de marketing B2B',
   description:
     'Calcula tu presupuesto anual de marketing B2B desde tu meta de ingresos: inversión por canal, CAC, ROMI y adelanto de caja.',

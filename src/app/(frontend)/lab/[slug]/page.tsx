@@ -8,6 +8,7 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { ArrowUpRight } from '@/components/icons'
+import { canonical } from '@/lib/seo'
 
 type Args = { params: Promise<{ slug: string }> }
 
@@ -97,5 +98,5 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   })
   const lab = result.docs[0]
   if (!lab) return {}
-  return { title: lab.title }
+  return { title: lab.title, alternates: canonical(`/lab/${slug}`) }
 }

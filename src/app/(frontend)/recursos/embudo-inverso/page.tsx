@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { FunnelApp } from '@/components/apps/FunnelApp'
+import { canonical } from '@/lib/seo'
 
 export default function EmbudoInversoPage() {
   return (
@@ -18,6 +19,7 @@ export default function EmbudoInversoPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/recursos/embudo-inverso'),
   title: 'Calculadora de embudo inverso',
   description: 'Calcula cuántos leads, MQL, SQL y visitas necesitas al mes para llegar a tu meta de ingresos B2B.',
 }

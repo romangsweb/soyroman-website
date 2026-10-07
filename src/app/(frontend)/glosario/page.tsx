@@ -6,6 +6,7 @@ import { GlossaryIndex, type GlossaryItem } from '@/components/GlossaryIndex'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { getServerSideURL } from '@/utilities/getURL'
+import { canonical } from '@/lib/seo'
 
 export default async function GlosarioPage() {
   const res = await cms.find({ collection: 'glossary', limit: 500, depth: 1, sort: 'term' })
@@ -66,6 +67,7 @@ export default async function GlosarioPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/glosario'),
   title: 'Glosario de marketing B2B',
   description:
     'Qué es ROAS, ROMI, MQL, CAC, CTR y más: glosario de marketing B2B con definiciones claras, fórmulas y ejemplos.',

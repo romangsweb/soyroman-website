@@ -7,6 +7,7 @@ import { cms } from '@/lib/cms'
 import { ArrowUpRight } from '@/components/icons'
 import { ScreenCover, postCategory } from '@/components/ScreenCover'
 import { Reveal } from '@/components/motion/Reveal'
+import { canonical } from '@/lib/seo'
 
 type Args = { params: Promise<{ tag: string }> }
 
@@ -116,6 +117,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const category = await getCategory(tag)
   if (!category) return {}
   return {
+    alternates: canonical(`/blog/tag/${tag}`),
     title: `${category.title} — Blog`,
     description: `Artículos y términos de marketing B2B sobre ${category.title.toLowerCase()}.`,
   }

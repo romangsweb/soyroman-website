@@ -12,6 +12,7 @@ import { FrameworkDiagram } from '@/components/FrameworkDiagram'
 import { DeliverablesAndCases, SkillMixer, ToolMeters } from '@/components/Expertise'
 import { ResourceStrip } from '@/components/ResourceTeaser'
 import { recursosFor } from '@/data/recursos'
+import { canonical } from '@/lib/seo'
 
 type Args = {
   params: Promise<{ slug: string }>
@@ -182,6 +183,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   if (!expertise) return {}
 
   return {
+    alternates: canonical(`/expertise/${slug}`),
     title: expertise.title,
     description: expertise.thesis || expertise.summary || undefined,
   }

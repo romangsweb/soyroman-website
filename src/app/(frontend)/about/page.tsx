@@ -6,6 +6,7 @@ import { Media } from '@/components/Media'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
+import { canonical } from '@/lib/seo'
 
 export default async function AboutPage() {
   const profile = await cms.findGlobal({ slug: 'profile' })
@@ -134,6 +135,7 @@ export default async function AboutPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/about'),
   title: 'Sobre mí',
   description: 'Román García: director de marketing B2B que también construye la infraestructura (CRM, datos y web).',
 }

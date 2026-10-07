@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import { cms } from '@/lib/cms'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
+import { canonical } from '@/lib/seo'
 
 const fmt = (d?: string | null) =>
   d ? new Date(d).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: '2-digit' }) : ''
@@ -71,6 +72,7 @@ export default async function NotasPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/notas'),
   title: 'Notas de campo',
   description: 'Apuntes cortos de proyectos reales de marketing B2B, CRM y operación digital.',
 }

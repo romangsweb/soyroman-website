@@ -9,6 +9,7 @@ import { cms } from '@/lib/cms'
 import { ArrowUpRight } from '@/components/icons'
 import { Reveal } from '@/components/motion/Reveal'
 import { getServerSideURL } from '@/utilities/getURL'
+import { canonical } from '@/lib/seo'
 
 type Args = { params: Promise<{ slug: string }> }
 
@@ -148,6 +149,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const t = await getTerm(slug)
   if (!t) return {}
   return {
+    alternates: canonical(`/glosario/${slug}`),
     title: `Qué es ${t.term}${t.fullName ? ` (${t.fullName})` : ''}`,
     description: t.definition?.slice(0, 160),
   }

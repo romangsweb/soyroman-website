@@ -1,6 +1,9 @@
 export const SITE = 'https://soyroman.com'
 export const PERSON_ID = `${SITE}/#person`
 
+/** alternates.canonical absoluto para una ruta del sitio. */
+export const canonical = (path: string) => ({ canonical: path === '/' ? SITE : `${SITE}${path}` })
+
 /** Grafo JSON-LD serializado y seguro para incrustar en <script>. */
 export const ld = (...nodes: object[]) =>
   JSON.stringify({ '@context': 'https://schema.org', '@graph': nodes }).replace(/</g, '\\u003c')

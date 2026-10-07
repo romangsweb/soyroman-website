@@ -12,6 +12,7 @@ import { SystemDiagram } from '@/components/SystemDiagram'
 import { ProjectCover } from '@/components/ProjectCover'
 import { ResourceTeaser } from '@/components/ResourceTeaser'
 import { RECURSOS } from '@/data/recursos'
+import { canonical } from '@/lib/seo'
 
 export default async function HomePage() {
   const profile = await cms.findGlobal({ slug: 'profile' })
@@ -361,6 +362,7 @@ export default async function HomePage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/'),
   title: { absolute: 'Román García — Director de marketing B2B' },
   description:
     'Director de marketing B2B: generación de demanda digital, CRM y RevOps, SEO y AEO, y la infraestructura técnica que los sostiene.',

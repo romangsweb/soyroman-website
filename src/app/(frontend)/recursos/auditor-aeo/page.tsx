@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { AeoApp } from '@/components/apps/AeoApp'
+import { canonical } from '@/lib/seo'
 
 export default function AuditorAeoPage() {
   return (
@@ -18,6 +19,7 @@ export default function AuditorAeoPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/recursos/auditor-aeo'),
   title: 'Auditor AEO: ¿tu sitio está listo para la IA?',
   description:
     'Revisa gratis si ChatGPT, Claude, Perplexity y Google pueden leer y citar tu sitio: robots.txt, bots de IA, llms.txt, datos estructurados y más.',

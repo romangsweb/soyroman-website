@@ -8,6 +8,7 @@ import { SplitText } from '@/components/motion/SplitText'
 import { IconTile } from '@/components/IconTile'
 import { BrandTile } from '@/components/BrandIcon'
 import { MiniMeter, skillList } from '@/components/Expertise'
+import { canonical } from '@/lib/seo'
 
 export default async function ExpertisePage() {
   const expertises = await cms.find({
@@ -110,6 +111,7 @@ export default async function ExpertisePage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/expertise'),
   title: 'Expertise',
   description: 'Áreas de especialización: SEO, Paid Media, RevOps, MarTech, liderazgo B2B y más.',
 }

@@ -8,6 +8,7 @@ import { SplitText } from '@/components/motion/SplitText'
 import { ArrowUpRight } from '@/components/icons'
 import { ProjectCover } from '@/components/ProjectCover'
 import { BrandTile } from '@/components/BrandIcon'
+import { canonical } from '@/lib/seo'
 
 export default async function ProjectsPage() {
   const projects = await cms.find({
@@ -119,6 +120,7 @@ export default async function ProjectsPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/proyectos'),
   title: 'Proyectos',
   description: 'Casos de marketing B2B: sitios, migraciones de CRM, RevOps e infraestructura, con lo que se hizo y lo que se aprendió.',
 }

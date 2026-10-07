@@ -7,6 +7,7 @@ import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { ScreenCover, postCategory } from '@/components/ScreenCover'
 import { Subscribe } from '@/components/Subscribe'
+import { canonical } from '@/lib/seo'
 
 export default async function BlogPage() {
   const posts = await cms.find({
@@ -164,6 +165,7 @@ export default async function BlogPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/blog'),
   title: 'Blog',
   description: 'Artículos sobre marketing B2B, SEO, Paid Media, RevOps y tecnología.',
 }

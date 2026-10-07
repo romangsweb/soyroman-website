@@ -6,6 +6,7 @@ import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { IconTile } from '@/components/IconTile'
 import { BrandTile } from '@/components/BrandIcon'
+import { canonical } from '@/lib/seo'
 
 export default async function UsesPage() {
   const tools = await cms.find({
@@ -115,6 +116,7 @@ export default async function UsesPage() {
 }
 
 export const metadata: Metadata = {
+  alternates: canonical('/uses'),
   title: 'Herramientas (/uses)',
   description: 'Herramientas, software y hardware que uso — Román García.',
 }
