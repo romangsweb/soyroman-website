@@ -142,3 +142,19 @@ export async function submitSubscriber(_prev: LeadState, form: FormData): Promis
     consent,
   )
 }
+
+/**
+ * Lead previo a correr una herramienta con costo (el correo se pide antes del resultado).
+ * Lo llama la ruta del servidor, no el navegador.
+ */
+export async function recordToolRun(email: string, tool: string, summary: string): Promise<LeadState> {
+  if (!EMAIL.test(email)) return { status: 'error', message: 'Revisa tu correo.' }
+  return sendToHubspot(
+    [
+      { objectTypeId: '0-1', name: 'email', value: email.toLowerCase().slice(0, 200) },
+      { objectTypeId: '0-1', name: 'message', value: `[Recurso: ${tool}]\n${summary.slice(0, 2000)}` },
+    ],
+    `Recurso · ${tool}`,
+    'https://soyroman.com/recursos',
+  )
+}

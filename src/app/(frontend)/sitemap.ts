@@ -30,6 +30,7 @@ const STATIC = [
   '/recursos/velocidad-real',
   '/recursos/salud-correo',
   '/recursos/comparador-competidores',
+  '/recursos/te-recomienda-la-ia',
   '/about',
   '/cv',
   '/uses',

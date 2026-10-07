@@ -160,6 +160,18 @@ export const RECURSOS: Recurso[] = [
     expertise: ['seo-aeo-geo', 'web-herramientas', 'generacion-demanda-b2b'],
     categories: ['sitios-web', 'seo-aeo', 'analitica'],
   },
+  {
+    slug: 'te-recomienda-la-ia',
+    href: '/recursos/te-recomienda-la-ia',
+    code: 'IA·REC',
+    name: '¿Te recomienda la IA?',
+    sub: '5 preguntas en vivo',
+    desc: 'Cuando alguien pregunta a la IA por tu servicio, ¿te menciona? Menciones, lugar, competidores y fuentes que consulta.',
+    preview: { label: 'Menciones', value: '1 / 5' },
+    glossary: ['seo', 'aeo', 'geo'],
+    expertise: ['seo-aeo-geo', 'generacion-demanda-b2b'],
+    categories: ['seo-aeo', 'ia-aplicada'],
+  },
 ]
 
 export const LIVE = RECURSOS.filter((r) => r.href)

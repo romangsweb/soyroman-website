@@ -15,18 +15,29 @@ const GOOD: Record<FieldMetric['id'], string> = { lcp: '2.5 s', inp: '200 ms', c
 const fmt = (m: FieldMetric) => (m.unit === '' ? m.p75.toFixed(2) : m.p75 >= 1000 ? `${(m.p75 / 1000).toFixed(1)} s` : `${Math.round(m.p75)} ms`)
 const secs = (ms: number) => `${(ms / 1000).toFixed(1)} s`
 
-function Gauge({ m, label }: { m?: FieldMetric; label: string }) {
+type G = { v: string; status: 'ok' | 'warn' | 'bad'; p: number } | null
+
+/** Valor de campo (usuarios reales) para un velocímetro. */
+const fieldG = (m?: FieldMetric): G => (m ? { v: fmt(m), status: m.status, p: Math.min(1, m.p75 / (POOR[m.id] * 1.25)) } : null)
+/** Valor de laboratorio (simulado) cuando el sitio no tiene datos de campo. TBT sustituye a INP, que no se mide en laboratorio. */
+const labG = (v: number | null, good: number, poor: number, kind: 'ms' | 'cls'): G =>
+  v === null ? null : {
+    v: kind === 'cls' ? v.toFixed(2) : v >= 1000 ? `${(v / 1000).toFixed(1)} s` : `${Math.round(v)} ms`,
+    status: v <= good ? 'ok' : v <= poor ? 'warn' : 'bad',
+    p: Math.min(1, v / (poor * 1.25)),
+  }
+
+function Gauge({ g, label, sim }: { g: G; label: string; sim?: boolean }) {
   const L = Math.PI * 50
-  const p = m ? Math.min(1, m.p75 / (POOR[m.id] * 1.25)) : 0
   return (
-    <div className={`v-g ${m?.status || 'off'}`}>
+    <div className={`v-g ${g?.status || 'off'}`}>
       <svg viewBox="0 0 120 70" aria-hidden="true">
         <path d="M10 62 A50 50 0 0 1 110 62" fill="none" stroke="#1c2024" strokeWidth="10" />
-        {m && <path d="M10 62 A50 50 0 0 1 110 62" fill="none" stroke={COLOR[m.status]} strokeWidth="10" strokeDasharray={`${L * p} ${L}`} />}
+        {g && <path d="M10 62 A50 50 0 0 1 110 62" fill="none" stroke={COLOR[g.status]} strokeWidth="10" strokeDasharray={`${L * g.p} ${L}`} />}
       </svg>
-      <div className="v">{m ? fmt(m) : '—'}</div>
+      <div className="v">{g ? g.v : '—'}</div>
       <div className="l">{label}</div>
-      <div className="t">{m ? STATUS_TXT[m.status] : 'SIN DATOS'}</div>
+      <div className="t">{g ? `${STATUS_TXT[g.status]}${sim ? ' · SIMULADO' : ''}` : 'SIN DATOS'}</div>
     </div>
   )
 }
@@ -138,9 +149,19 @@ export function SpeedApp() {
 
         <div className={`v-lcd${busy === 'field' ? ' busy' : ''}`}>
           <div className="v-gauges">
-            <Gauge m={lcp} label="LCP · carga" />
-            <Gauge m={inp} label="INP · interacción" />
-            <Gauge m={cls} label="CLS · estabilidad" />
+            {field === null && lab ? (
+              <>
+                <Gauge g={labG(lab.core.lcp, 2500, 4000, 'ms')} label="LCP · carga" sim />
+                <Gauge g={labG(lab.core.tbt, 200, 600, 'ms')} label="TBT · bloqueo" sim />
+                <Gauge g={labG(lab.core.cls, 0.1, 0.25, 'cls')} label="CLS · estabilidad" sim />
+              </>
+            ) : (
+              <>
+                <Gauge g={fieldG(lcp)} label="LCP · carga" />
+                <Gauge g={fieldG(inp)} label="INP · interacción" />
+                <Gauge g={fieldG(cls)} label="CLS · estabilidad" />
+              </>
+            )}
           </div>
           {field && (
             <div className="v-dist">
@@ -156,7 +177,12 @@ export function SpeedApp() {
               {field.period && <p className="v-per">Periodo: {field.period} · bueno = menos de {GOOD.lcp} (LCP), {GOOD.inp} (INP), {GOOD.cls} (CLS)</p>}
             </div>
           )}
-          {field === null && <p className="v-per">Sin datos de usuarios reales para este sitio.</p>}
+          {field === null && (
+            <p className="v-per">
+              {lab ? 'Sin datos de usuarios reales: los velocímetros muestran la prueba de laboratorio (TBT sustituye a INP, que solo se mide con visitas reales).'
+                : busy === 'lab' ? 'Sin datos de usuarios reales: esperando la prueba de laboratorio…' : 'Sin datos de usuarios reales para este sitio.'}
+            </p>
+          )}
         </div>
         <p className="s-help">Los datos de campo vienen del informe público de Chrome (CrUX); la prueba de laboratorio la corre Google con PageSpeed Insights. No guarda el dominio.</p>
 

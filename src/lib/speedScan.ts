@@ -18,7 +18,12 @@ export type FieldMetric = {
   dist: [number, number, number] // % bueno, mejorable, lento
 }
 export type Field = { metrics: FieldMetric[]; passes: boolean | null; period: string }
-export type Lab = { score: number; metrics: { label: string; value: string }[]; fixes: { title: string; ms: number }[] }
+export type Lab = {
+  score: number
+  metrics: { label: string; value: string }[]
+  fixes: { title: string; ms: number }[]
+  core: { lcp: number | null; tbt: number | null; cls: number | null } // valores simulados para los velocímetros cuando no hay datos de campo
+}
 
 // Umbrales oficiales de Core Web Vitals (bueno / lento)
 export const LIMITS: Record<FieldMetric['id'], [number, number]> = {
@@ -112,5 +117,11 @@ export async function psiLab(domain: string, strategy: Strategy): Promise<Lab> {
     .filter((f) => f.title && f.ms >= 100 && !seen.has(f.title) && seen.add(f.title))
     .sort((x, y) => y.ms - x.ms)
     .slice(0, 6)
-  return { score: Math.round((lh.categories?.performance?.score ?? 0) * 100), metrics, fixes }
+  const num = (id: string) => (typeof A[id]?.numericValue === 'number' ? A[id].numericValue! : null)
+  return {
+    score: Math.round((lh.categories?.performance?.score ?? 0) * 100),
+    metrics,
+    fixes,
+    core: { lcp: num('largest-contentful-paint'), tbt: num('total-blocking-time'), cls: num('cumulative-layout-shift') },
+  }
 }
