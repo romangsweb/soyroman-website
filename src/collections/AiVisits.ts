@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { authenticated } from '../access/authenticated'
+import { adminOrBot, authenticated } from '../access/authenticated'
 
 /** Visitas de bots de IA registradas por el proxy del frontend. Nunca pasan por GA4. */
 export const AiVisits: CollectionConfig = {
@@ -15,7 +15,7 @@ export const AiVisits: CollectionConfig = {
     // Solo el frontend, con un secreto compartido (no usa la API key del bot de contenido)
     create: ({ req }) =>
       Boolean(process.env.INGEST_SECRET) && req.headers.get('x-ingest-secret') === process.env.INGEST_SECRET,
-    read: authenticated,
+    read: adminOrBot, // el bot de Hall la copia a marketing-hall (signals.py)
     update: () => false,
     delete: authenticated,
   },
