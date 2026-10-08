@@ -1,7 +1,9 @@
 'use server'
 
 import { cookies, headers } from 'next/headers'
+import { after } from 'next/server'
 
+import { notifyHall } from '@/lib/hallHook'
 import { cleanItems, sendReport, type ReportItem } from '@/lib/reportEmail'
 
 /**
@@ -148,16 +150,36 @@ export async function submitToolLead(_prev: LeadState, form: FormData): Promise<
     }),
   ]
   const result = await sendToHubspot(fields, `Recurso · ${tool}`, 'https://soyroman.com/recursos', TOOLS_GUID)
-  // Reporte por correo (solo herramientas, no el CV), si HubSpot aceptó el lead
   const slug = clean(form.get('sr_recurso'), 40)
+  let items: ReportItem[] = []
+  try {
+    items = cleanItems(JSON.parse(clean(form.get('sr_report'), 3000) || '[]'))
+  } catch {
+    items = []
+  }
+  const score = Number(clean(form.get('sr_puntaje'), 3))
+  // Expediente en HubSpot vía Hall (después de responder, para no hacer esperar a nadie)
+  if (result.status === 'ok') {
+    const page = (await headers()).get('referer') || undefined
+    after(() =>
+      notifyHall({
+        event: 'tool_lead',
+        email,
+        name,
+        company: company || undefined,
+        tool,
+        slug: slug || undefined,
+        domain: clean(form.get('sr_dominio'), 120) || undefined,
+        score: clean(form.get('sr_puntaje'), 3) && Number.isFinite(score) ? score : null,
+        finding: clean(form.get('sr_hallazgo'), 240) || undefined,
+        summary,
+        items,
+        page,
+      }),
+    )
+  }
+  // Reporte por correo (solo herramientas, no el CV), si HubSpot aceptó el lead
   if (result.status === 'ok' && slug && slug !== 'cv' && (await canSendReport())) {
-    let items: ReportItem[] = []
-    try {
-      items = cleanItems(JSON.parse(clean(form.get('sr_report'), 3000) || '[]'))
-    } catch {
-      items = []
-    }
-    const score = Number(clean(form.get('sr_puntaje'), 3))
     await sendReport({
       to: email,
       name,
@@ -223,6 +245,21 @@ export async function recordToolRun(email: string, tool: string, summary: string
     'https://soyroman.com/recursos',
     TOOLS_GUID,
   ).then(async (r) => {
+    if (r.status === 'ok') {
+      after(() =>
+        notifyHall({
+          event: 'tool_lead',
+          email: email.toLowerCase(),
+          tool,
+          slug: meta?.slug,
+          domain: meta?.domain,
+          score: meta?.score ?? null,
+          finding: meta?.finding,
+          summary: summary.slice(0, 2000),
+          items: cleanItems(meta?.items),
+        }),
+      )
+    }
     if (r.status === 'ok' && meta) {
       await sendReport({ to: email, tool, slug: meta.slug, domain: meta.domain, score: meta.score ?? null, items: cleanItems(meta.items) })
     }
