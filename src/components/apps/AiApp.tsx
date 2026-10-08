@@ -137,7 +137,7 @@ export function AiApp() {
       {res && (
         <section className="te-print" aria-hidden="true">
           <span className="tag">soyroman.com · ¿Te recomienda la IA?</span>
-          <h1>{res.domain}: {res.mentions} de {answered} respuestas</h1>
+          <h2 className="pt">{res.domain}: {res.mentions} de {answered} respuestas</h2>
           <p>Servicio: {res.service} · {res.market}. Preguntado a Gemini ({res.model}){res.grounded ? ' con búsqueda en Google' : ', sin búsqueda en vivo,'} el {new Date(res.at).toLocaleDateString('es-MX')}.</p>
           <table>
             <thead><tr><th>Pregunta</th><th>¿Te menciona?</th><th>Lugar</th></tr></thead>

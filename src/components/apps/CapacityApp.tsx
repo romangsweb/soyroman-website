@@ -134,7 +134,7 @@ export function CapacityApp() {
 
       <section className="te-print" aria-hidden="true">
         <span className="tag">soyroman.com · Capacidad comercial</span>
-        <h1>{o.sdr} SDR y {o.ae} vendedores para {show(v.goal, '$')} al año</h1>
+        <h2 className="pt">{o.sdr} SDR y {o.ae} vendedores para {show(v.goal, '$')} al año</h2>
         <table>
           <thead><tr><th>Supuesto</th><th>Valor</th></tr></thead>
           <tbody>{KNOBS.filter((k) => !(k.id.endsWith('Cost') && !v[k.id])).map((k) => <tr key={k.id}><td>{k.label}</td><td>{show(v[k.id], k.unit)}</td></tr>)}</tbody>

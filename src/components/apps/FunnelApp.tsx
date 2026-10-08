@@ -131,7 +131,7 @@ export function FunnelApp() {
 
       <section className="te-print" aria-hidden="true">
         <span className="tag">soyroman.com · Embudo inverso</span>
-        <h1>Plan de demanda para ${fmt(v.goal)} al año</h1>
+        <h2 className="pt">Plan de demanda para ${fmt(v.goal)} al año</h2>
         <p>Ticket promedio ${fmt(v.ticket)} · {fmt(o.won * 12, 0)} negocios al año</p>
         <table>
           <thead><tr><th>Etapa</th><th>Por mes</th><th>Por año</th><th>Tasa a la siguiente etapa</th></tr></thead>

@@ -144,7 +144,7 @@ export function LtvApp() {
 
       <section className="te-print" aria-hidden="true">
         <span className="tag">soyroman.com · LTV:CAC y payback</span>
-        <h1>LTV:CAC de {fmt(o.ratio, 1)}:1 · payback {pay == null ? `de más de ${HORIZON} meses` : `de ${pay} meses`}</h1>
+        <h2 className="pt">LTV:CAC de {fmt(o.ratio, 1)}:1 · payback {pay == null ? `de más de ${HORIZON} meses` : `de ${pay} meses`}</h2>
         <table>
           <thead><tr><th>Supuesto</th><th>Valor</th></tr></thead>
           <tbody>

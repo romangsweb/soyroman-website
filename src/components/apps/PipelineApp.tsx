@@ -187,7 +187,7 @@ export function PipelineApp() {
 
       <section className="te-print" aria-hidden="true">
         <span className="tag">soyroman.com · Brecha de pipeline</span>
-        <h1>Forecast del trimestre: {usd(o.forecast)} de {usd(v.goal)}</h1>
+        <h2 className="pt">Forecast del trimestre: {usd(o.forecast)} de {usd(v.goal)}</h2>
         <p>Ganado {usd(v.won)} · brecha {o.gap ? usd(o.gap) : 'ninguna'} · cobertura {fmt(o.coverage, 1)}x</p>
         <table>
           <thead><tr><th>Etapa</th><th>Monto abierto</th><th>Prob. en el trimestre</th><th>Ponderado</th></tr></thead>

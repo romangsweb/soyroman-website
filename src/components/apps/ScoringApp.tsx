@@ -262,7 +262,7 @@ export function ScoringApp() {
 
       <section className="te-print" aria-hidden="true">
         <span className="tag">soyroman.com · Lead scoring</span>
-        <h1>Modelo de lead scoring · umbral {m.mql} puntos</h1>
+        <h2 className="pt">Modelo de lead scoring · umbral {m.mql} puntos</h2>
         <p>Pasa a ventas (MQL) cuando suma {m.mql} puntos y al menos {m.fitMin} de perfil.</p>
         {(['fit', 'eng'] as Group[]).map((g) => (
           <table key={g}>

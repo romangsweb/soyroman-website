@@ -172,7 +172,7 @@ export function MaturityApp() {
 
       <section className="te-print" aria-hidden="true">
         <span className="tag">soyroman.com · Diagnóstico de madurez RevOps</span>
-        <h1>Madurez RevOps: {total}/100 · {band(total)}</h1>
+        <h2 className="pt">Madurez RevOps: {total}/100 · {band(total)}</h2>
         <table>
           <thead><tr><th>Área</th><th>Puntuación</th><th>Recomendación</th></tr></thead>
           <tbody>

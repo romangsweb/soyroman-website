@@ -143,7 +143,7 @@ export function AeoApp() {
       {audit && (
         <section className="te-print" aria-hidden="true">
           <span className="tag">soyroman.com · Auditor AEO</span>
-          <h1>{audit.domain}: {audit.score}/100</h1>
+          <h2 className="pt">{audit.domain}: {audit.score}/100</h2>
           <p>{verdict(audit.score)} · revisado el {new Date(audit.at).toLocaleDateString('es-MX')}</p>
           <table>
             <thead><tr><th>Prueba</th><th>Resultado</th><th>Puntos</th></tr></thead>

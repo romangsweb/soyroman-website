@@ -236,7 +236,7 @@ export function SpeedApp() {
       {has && (
         <section className="te-print" aria-hidden="true">
           <span className="tag">soyroman.com · Velocidad real</span>
-          <h1>Velocidad de {site} ({strategy === 'mobile' ? 'móvil' : 'escritorio'})</h1>
+          <h2 className="pt">Velocidad de {site} ({strategy === 'mobile' ? 'móvil' : 'escritorio'})</h2>
           <p>Medido el {new Date().toLocaleDateString('es-MX')}. Datos de campo: Chrome UX Report{field?.period ? ` (${field.period})` : ''}. Laboratorio: PageSpeed Insights.</p>
           {field && (
             <table>

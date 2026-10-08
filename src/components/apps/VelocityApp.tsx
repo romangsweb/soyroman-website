@@ -163,7 +163,7 @@ export function VelocityApp() {
 
       <section className="te-print" aria-hidden="true">
         <span className="tag">soyroman.com · Velocidad de pipeline</span>
-        <h1>{usd(vel)} por día · {usd(q)} en el trimestre</h1>
+        <h2 className="pt">{usd(vel)} por día · {usd(q)} en el trimestre</h2>
         <table>
           <thead><tr><th>Palanca</th><th>Hoy</th><th>Para llegar a la meta ({usd(v.goal)})</th></tr></thead>
           <tbody>{lev.map((l) => <tr key={l.id}><td>{l.label}</td><td>{showKnob(l.cur, NOW.find((k) => k.id === l.id)!.unit)}</td><td>{l.impossible ? 'no alcanza sola' : showKnob(l.to, NOW.find((k) => k.id === l.id)!.unit)}</td></tr>)}</tbody>

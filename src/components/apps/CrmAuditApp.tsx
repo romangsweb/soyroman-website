@@ -162,7 +162,7 @@ export function CrmAuditApp() {
       {res && (
         <section className="te-print" aria-hidden="true">
           <span className="tag">soyroman.com · Auditoría de CRM</span>
-          <h1>Salud de la base: {res.score}/100</h1>
+          <h2 className="pt">Salud de la base: {res.score}/100</h2>
           <p>{n.toLocaleString('es-MX')} contactos analizados en el navegador el {new Date().toLocaleDateString('es-MX')}. El archivo no se subió a ningún servidor.</p>
           <table>
             <thead><tr><th>Indicador</th><th>Resultado</th></tr></thead>

@@ -134,7 +134,7 @@ export function MailApp() {
       {res && (
         <section className="te-print" aria-hidden="true">
           <span className="tag">soyroman.com · Salud del correo</span>
-          <h1>Salud del correo de {res.domain}</h1>
+          <h2 className="pt">Salud del correo de {res.domain}</h2>
           <p>Revisado el {new Date(res.at).toLocaleDateString('es-MX')} con registros DNS públicos.</p>
           <table>
             <thead><tr><th>Control</th><th>Estado</th></tr></thead>

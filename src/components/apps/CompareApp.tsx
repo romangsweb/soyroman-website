@@ -177,7 +177,7 @@ export function CompareApp() {
       {res && (
         <section className="te-print" aria-hidden="true">
           <span className="tag">soyroman.com · Comparador de competidores</span>
-          <h1>{res.sides.map((s) => s.domain).join(' vs ')}</h1>
+          <h2 className="pt">{res.sides.map((s) => s.domain).join(' vs ')}</h2>
           <p>Revisado el {new Date(res.at).toLocaleDateString('es-MX')} con información pública.</p>
           <table>
             <thead><tr><th />{res.sides.map((s) => <th key={s.domain}>{s.domain}</th>)}</tr></thead>

@@ -128,7 +128,7 @@ export function StackApp() {
       {res && (
         <section className="te-print" aria-hidden="true">
           <span className="tag">soyroman.com · Radiografía de stack</span>
-          <h1>Stack de marketing de {res.domain}</h1>
+          <h2 className="pt">Stack de marketing de {res.domain}</h2>
           <p>Revisado el {new Date(res.at).toLocaleDateString('es-MX')} con información pública (HTML, encabezados y DNS).</p>
           <table>
             <thead><tr><th>Banda</th><th>Estado</th><th>Detectado</th></tr></thead>

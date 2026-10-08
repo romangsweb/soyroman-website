@@ -222,7 +222,7 @@ export function BudgetApp() {
 
       <section className="te-print" aria-hidden="true">
         <span className="tag">soyroman.com · Planificador de presupuesto</span>
-        <h1>Presupuesto de marketing para {usd(v.goal)} al año</h1>
+        <h2 className="pt">Presupuesto de marketing para {usd(v.goal)} al año</h2>
         <p>Ticket {usd(v.ticket)} · {fmt(o.customers, 0)} clientes nuevos · lead → cliente {fmt(v.conv, 2)}% · ciclo de {v.cycle} meses</p>
         <table>
           <thead><tr><th>Concepto</th><th>Por mes</th><th>Por año</th><th>% del total</th></tr></thead>

@@ -197,7 +197,7 @@ export function IcpApp() {
 
       <section className="te-print" aria-hidden="true">
         <span className="tag">soyroman.com · Perfil de cliente ideal</span>
-        <h1>Tu cliente ideal</h1>
+        <h2 className="pt">Tu cliente ideal</h2>
         {card}
         <h3>Implicaciones</h3>
         <ul>{imp.map((x) => <li key={x}>{x}</li>)}</ul>

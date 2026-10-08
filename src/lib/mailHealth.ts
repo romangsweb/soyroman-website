@@ -34,7 +34,8 @@ const txtOrNull = (host: string) =>
   )
 
 // Quién envía: por MX, por SPF y por selector DKIM conocido. dkim [] = usa selectores propios, no se puede verificar.
-const SENDERS: { name: string; mx?: RegExp; spf?: RegExp; dkim: string[] }[] = [
+// byDkim: servicios que envían desde un subdominio propio (su SPF no está en la raíz); se detectan solo por su DKIM.
+const SENDERS: { name: string; mx?: RegExp; spf?: RegExp; dkim: string[]; byDkim?: boolean }[] = [
   { name: 'Google Workspace', mx: /google\.com|googlemail\.com/i, spf: /_spf\.google\.com/i, dkim: ['google'] },
   { name: 'Microsoft 365', mx: /outlook\.com/i, spf: /spf\.protection\.outlook\.com/i, dkim: ['selector1', 'selector2'] },
   { name: 'Zoho', mx: /zoho\./i, spf: /zoho/i, dkim: ['zoho', 'zmail'] },
@@ -47,6 +48,7 @@ const SENDERS: { name: string; mx?: RegExp; spf?: RegExp; dkim: string[] }[] = [
   { name: 'Amazon SES', spf: /amazonses\.com/i, dkim: [] },
   { name: 'Salesforce', spf: /salesforce\.com|exacttarget/i, dkim: [] },
   { name: 'Postmark', spf: /mtasv\.net/i, dkim: [] },
+  { name: 'Resend', dkim: ['resend'], byDkim: true },
   { name: 'Proofpoint', mx: /pphosted\.com/i, dkim: [] },
   { name: 'Mimecast', mx: /mimecast/i, dkim: [] },
 ]
@@ -142,7 +144,8 @@ export async function runMailHealth(domain: string, customSelector = ''): Promis
   for (const s of SENDERS) {
     const byMx = !!(s.mx && s.mx.test(mxStr))
     const bySpf = !!(s.spf && s.spf.test(spfRec))
-    if (!byMx && !bySpf) continue
+    const byKey = !!(s.byDkim && s.dkim.some((x) => dkim.includes(x)))
+    if (!byMx && !bySpf && !byKey) continue
     const owner = custom && dkim.includes(custom) ? SELECTOR_OWNER.find(([re]) => re.test(custom))?.[1] : undefined
     const sel = [...new Set([...s.dkim.filter((x) => dkim.includes(x)), ...(owner === s.name ? [custom] : [])])]
     senders.push({

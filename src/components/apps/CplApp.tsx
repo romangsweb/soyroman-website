@@ -110,7 +110,7 @@ export function CplApp() {
 
       <section className="te-print" aria-hidden="true">
         <span className="tag">soyroman.com · CPL máximo</span>
-        <h1>Lo máximo que puedes pagar por un lead: {money(o.cplMax)}</h1>
+        <h2 className="pt">Lo máximo que puedes pagar por un lead: {money(o.cplMax)}</h2>
         <p>Ticket {money(v.ticket)} · margen {fmt(v.margin)}% · {fmt(v.share)}% del margen para adquirir · lead → cliente {fmt(v.conv, 2)}%</p>
         <table>
           <thead><tr><th>Eslabón</th><th>Máximo</th><th>Cómo se calcula</th></tr></thead>

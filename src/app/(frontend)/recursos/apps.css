@@ -177,7 +177,7 @@
   body *{visibility:hidden}
   .te-print,.te-print *{visibility:visible}
   .te-print{display:block;position:absolute;left:0;top:0;width:100%;padding:24px;font-family:var(--font-aldrich),sans-serif;color:#000}
-  .te-print h1{font-size:28px;margin:0 0 4px}
+  .te-print h1,.te-print .pt{font-size:28px;margin:0 0 4px}
   .te-print table{width:100%;border-collapse:collapse;margin-top:18px}
   .te-print td,.te-print th{border-bottom:1px solid #999;padding:8px 4px;text-align:left;font-size:13px}
   .te-print .tag{display:inline-block;background:#e85a2a;color:#fff;padding:3px 8px;font-size:11px;-webkit-print-color-adjust:exact;print-color-adjust:exact}

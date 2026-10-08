@@ -142,7 +142,7 @@ export function KeywordApp() {
       {res && (
         <section className="te-print" aria-hidden="true">
           <span className="tag">soyroman.com · Explorador de búsquedas</span>
-          <h1>Mapa de búsquedas: {res.seed}</h1>
+          <h2 className="pt">Mapa de búsquedas: {res.seed}</h2>
           <p>{COUNTRY_LABEL[res.country]} · autocompletado de Google, {new Date(res.at).toLocaleDateString('es-MX')}. {total} búsquedas reales; la señal indica popularidad relativa, no volumen.</p>
           {res.clusters.length > 0 && (
             <table>
