@@ -78,7 +78,10 @@ export function StackApp() {
           </div>
           <div className="x-lab">{['CMS', 'Analítica', 'CRM', 'Publicidad', 'Conversión', 'Privacidad', 'Infraestructura', 'Correo'].map((l) => <span key={l}>{l}</span>)}</div>
         </div>
-        <p className="s-help">Solo lee información pública: el HTML de la portada, sus encabezados y los registros DNS del dominio. No guarda el dominio.</p>
+        <p className="s-help">
+          Solo lee información pública: el HTML de la portada, sus encabezados, los registros DNS y el contenedor público de Google Tag Manager. No guarda el dominio.
+          {res?.gtm?.length ? ` · Tag Manager: ${res.gtm.map((g) => `${g.id} ${g.read ? 'leído' : 'no se pudo leer'}`).join(', ')}.` : ''}
+        </p>
 
         {res && (
           <>
@@ -125,7 +128,7 @@ export function StackApp() {
           </table>
           <h3>Diagnóstico y qué hacer, en orden de impacto</h3>
           <ol>{res.findings.map((f) => <li key={f.title}><b>{f.title}.</b> {f.detail} <i>Qué hacer:</i> {f.fix}</li>)}</ol>
-          <p>La detección se basa en señales públicas y puede no ver herramientas que se cargan desde Tag Manager.</p>
+          <p>La detección se basa en señales públicas: el HTML, los encabezados, el DNS y el contenedor de Google Tag Manager{res.gtm?.length ? ` (${res.gtm.map((g) => g.id).join(', ')})` : ''}. Las herramientas que se cargan por otros medios pueden no aparecer.</p>
           <p>¿Quieres revisarlo juntos? contacto@soyroman.com · soyroman.com/consultoria</p>
         </section>
       )}
