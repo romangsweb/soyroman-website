@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 
 import { Gate } from './Gate'
 import { Knob } from './Knob'
 import { Osc, OscLabel } from './Osc'
 import { Scope } from './Scope'
+import { ShareButton, decodeState, encodeState, query } from './share'
 import { useToolTracking } from './useToolTracking'
 
 const SIZES = ['1–10', '11–50', '51–200', '201–1,000', '1,000+']
@@ -45,6 +46,23 @@ export function IcpApp() {
   const [s, setS] = useState(0)
   const [gate, setGate] = useState(false)
   const [icp, setIcp] = useState<Icp>({ industria: '', tam: 2, ticket: 25000, ciclo: 4, decide: '', evalua: '', dolor: '', disparador: '' })
+  useEffect(() => {
+    const x = decodeState<Partial<Icp>>(query().get('s'))
+    if (!x || typeof x !== 'object') return
+    const str = (v: unknown, n: number) => (typeof v === 'string' ? v.slice(0, n) : '')
+    const num = (v: unknown, min: number, max: number, d: number) => (typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max ? v : d)
+    setIcp((c) => ({
+      industria: str(x.industria, 80) || c.industria,
+      tam: num(x.tam, 0, SIZES.length - 1, c.tam),
+      ticket: num(x.ticket, 0, 1e9, c.ticket),
+      ciclo: num(x.ciclo, 0, 60, c.ciclo),
+      decide: str(x.decide, 80) || c.decide,
+      evalua: str(x.evalua, 80) || c.evalua,
+      dolor: str(x.dolor, 400) || c.dolor,
+      disparador: str(x.disparador, 120) || c.disparador,
+    }))
+    setS(STEPS.length - 1)
+  }, [])
   useToolTracking('Generador de ICP', icp, gate)
   const set = <K extends keyof Icp>(k: K, v: Icp[K]) => setIcp((x) => ({ ...x, [k]: v }))
 
@@ -172,6 +190,7 @@ export function IcpApp() {
             {card}
             <p className="lead">Implicaciones</p>
             <ul>{imp.map((x) => <li key={x}>{x}</li>)}</ul>
+            {s === STEPS.length - 1 && <ShareButton tool="Generador de ICP" params={() => ({ s: encodeState(icp) })} />}
           </>
         )}
       </div>

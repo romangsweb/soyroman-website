@@ -10,6 +10,7 @@ import { Benchmarks } from './Benchmarks'
 import { Gate } from './Gate'
 import { BUDGET_REF, SOURCES } from '@/data/benchmarks'
 import { CHANNELS, DEFAULTS, FIELDS, budget, type BudgetIn } from './budget'
+import { ShareButton } from './share'
 import { useToolTracking } from './useToolTracking'
 
 const usd = (x: number) => `$${fmt(Math.round(x))}`
@@ -20,10 +21,10 @@ function useInitial(): BudgetIn {
   const sp = useSearchParams()
   return useMemo(() => {
     const out = { ...DEFAULTS }
-    for (const id of ['goal', 'ticket', 'conv'] as const) {
-      const n = Number(sp.get(id))
-      const f = FIELDS.find((x) => x.id === id)!
-      if (Number.isFinite(n) && n >= f.min && n <= f.max) out[id] = n
+    for (const f of FIELDS) {
+      if (!sp.has(f.id)) continue
+      const n = Number(sp.get(f.id))
+      if (Number.isFinite(n) && n >= f.min && n <= f.max) (out as Record<string, number>)[f.id] = n
     }
     return out
   }, [sp])
@@ -212,6 +213,7 @@ export function BudgetApp() {
           ) : (
             <div className="m-keys">
               <button type="button" className="btn or" onClick={() => setGate(true)}>Plan en PDF ▸</button>
+              <ShareButton tool="Presupuesto" params={() => Object.fromEntries(FIELDS.map((f) => [f.id, (v as Record<string, number>)[f.id]]))} />
               <Link className="btn" href="/recursos/embudo-inverso">◂ Embudo inverso</Link>
             </div>
           )}

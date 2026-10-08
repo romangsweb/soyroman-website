@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState, useEffect } from 'react'
 
 import { Gate } from './Gate'
 import { Knob } from './Knob'
 import { Osc, OscLabel } from './Osc'
 import { Scope } from './Scope'
+import { ShareButton, query } from './share'
 import { useToolTracking } from './useToolTracking'
 
 const LEVELS: [string, string][] = [
@@ -47,6 +48,18 @@ export function MaturityApp() {
   const [gain, setGain] = useState(6)
   const [freq, setFreq] = useState(4)
   const [gate, setGate] = useState(false)
+  useEffect(() => {
+    const q = query()
+    const a = q.get('a') || ''
+    if (a.length === Q.length && /^[1-5]+$/.test(a)) {
+      setAns(a.split('').map(Number))
+      setDone(true)
+    }
+    const g = Number(q.get('g'))
+    const f = Number(q.get('f'))
+    if (Number.isInteger(g) && g >= 1 && g <= 20) setGain(g)
+    if (Number.isInteger(f) && f >= 1 && f <= 20) setFreq(f)
+  }, [])
   useToolTracking('Diagnóstico RevOps', ans, done)
 
   const per = useMemo(
@@ -148,7 +161,10 @@ export function MaturityApp() {
                   <li key={w.area}><b>{w.area} ({w.score}/100).</b> {RECS[w.area]}</li>
                 ))}
               </ol>
-              <button type="button" className="btn or" onClick={() => setGate(true)}>Descargar el diagnóstico en PDF ▸</button>
+              <div className="btnrow">
+                <button type="button" className="btn or" onClick={() => setGate(true)}>Descargar el diagnóstico en PDF ▸</button>
+                <ShareButton tool="Diagnóstico RevOps" params={() => ({ a: ans.join(''), g: gain, f: freq })} />
+              </div>
             </>
           )}
         </div>

@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 
 import type { MailResult } from '@/lib/mailHealth'
 import { AppHeader } from './Panels'
 import { Gate } from './Gate'
 import { NextTool, saveSharedDomain, useSharedDomain } from './sharedDomain'
+import { ShareButton, query, useAutoRun } from './share'
 import { useToolTracking } from './useToolTracking'
 
 const IDLE = ['MX', 'SPF', 'DKIM', 'DMARC', 'MTA-STS', 'TLS-RPT', 'BIMI', 'LISTAS']
@@ -15,6 +16,7 @@ export function MailApp() {
   const [domain, setDomain] = useState('')
   useSharedDomain(setDomain)
   const [selector, setSelector] = useState('')
+  useEffect(() => setSelector((query().get('sel') || '').slice(0, 63)), [])
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [res, setRes] = useState<MailResult | null>(null)
@@ -41,6 +43,7 @@ export function MailApp() {
       setBusy(false)
     }
   }, [domain, selector, busy])
+  useAutoRun(Boolean(domain.trim()), scan)
 
   const print = useCallback(() => {
     setGate(false)
@@ -121,6 +124,7 @@ export function MailApp() {
               <div className="s-keys">
                 <button type="button" className="btn or" onClick={() => setGate(true)}>Guía de configuración en PDF ▸</button>
                 <NextTool current="salud-correo" domain={res.domain} />
+                <ShareButton tool="Salud del correo" params={() => ({ d: res.domain, sel: selector.trim() || undefined, auto: 1 })} />
               </div>
             )}
           </>

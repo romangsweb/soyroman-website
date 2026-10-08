@@ -1,13 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState, useEffect } from 'react'
 
 import { Device, ListMode, defaults, fmt, type Param, type Values } from './Device'
 import { AppHeader, Library } from './Panels'
 import { Benchmarks } from './Benchmarks'
 import { Gate } from './Gate'
 import { CHANNEL_COSTS, SOURCES } from '@/data/benchmarks'
+import { ShareButton, readParamValues } from './share'
 import { useToolTracking } from './useToolTracking'
 
 // Valores por defecto = los del Embudo inverso y el Planificador, para que las tres herramientas cuadren
@@ -25,6 +26,7 @@ const money = (x: number) => (Math.abs(x) < 10 ? `$${fmt(x, 2)}` : `$${fmt(Math.
 
 export function CplApp() {
   const [v, setV] = useState<Values>(() => defaults(PARAMS))
+  useEffect(() => setV((x) => ({ ...x, ...readParamValues(PARAMS) })), [])
   const [gate, setGate] = useState(false)
   useToolTracking('CPL máximo', v, gate)
 
@@ -100,6 +102,7 @@ export function CplApp() {
           <ListMode params={PARAMS} values={v} onChange={setV} />
           <div style={{ display: 'flex', gap: 10, marginTop: 18, flexWrap: 'wrap' }}>
             <Link className="btn" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }} href="/recursos/embudo-inverso">◂ Mejorar la conversión</Link>
+            <ShareButton tool="CPL máximo" params={() => v} />
             <Link className="btn or" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }} href={`/recursos/presupuesto-marketing?ticket=${v.ticket}&conv=${v.conv}`}>Presupuesto ▸</Link>
           </div>
         </div>

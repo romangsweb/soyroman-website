@@ -6,6 +6,7 @@ import type { Audit, Check } from '@/lib/aeoAudit'
 import { AppHeader } from './Panels'
 import { Gate } from './Gate'
 import { NextTool, saveSharedDomain, useSharedDomain } from './sharedDomain'
+import { ShareButton, useAutoRun } from './share'
 import { useToolTracking } from './useToolTracking'
 
 const GROUPS: Check['group'][] = ['Acceso', 'Lectura', 'Estructura']
@@ -44,6 +45,7 @@ export function AeoApp() {
       setBusy(false)
     }
   }, [domain, busy])
+  useAutoRun(Boolean(domain.trim()), scan)
 
   const print = useCallback(() => {
     setGate(false)
@@ -132,6 +134,7 @@ export function AeoApp() {
                 {fixes.length ? `Plan de correcciones en PDF (${fixes.length}) ▸` : 'Sin correcciones pendientes ✓'}
               </button>
               <NextTool current="auditor-aeo" domain={audit.domain} />
+                <ShareButton tool="Auditor AEO" params={() => ({ d: audit.domain, auto: 1 })} />
             </div>
           ))}
         </div>

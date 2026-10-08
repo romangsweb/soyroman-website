@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 
 import type { Side } from '@/lib/compare'
 import { AppHeader } from './Panels'
 import { Gate } from './Gate'
 import { NextTool, saveSharedDomain, useSharedDomain } from './sharedDomain'
+import { ShareButton, query, useAutoRun } from './share'
 import { useToolTracking } from './useToolTracking'
 
 type Res = { sides: Side[]; at: string }
@@ -58,6 +59,12 @@ function diagnose(sides: Side[]) {
 export function CompareApp() {
   const [doms, setDoms] = useState(['', '', ''])
   useSharedDomain((d) => setDoms((x) => (x[0] ? x : [d, x[1], x[2]])))
+  useEffect(() => {
+    const q = query()
+    const ok = (v: string | null) => (v && /^[a-z0-9.-]{3,100}$/i.test(v) ? v : '')
+    const c1 = ok(q.get('c1')), c2 = ok(q.get('c2'))
+    if (c1 || c2) setDoms((x) => [x[0], c1 || x[1], c2 || x[2]])
+  }, [])
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [res, setRes] = useState<Res | null>(null)
@@ -85,6 +92,7 @@ export function CompareApp() {
       setBusy(false)
     }
   }, [doms, ready, busy])
+  useAutoRun(Boolean(ready), run)
 
   const print = useCallback(() => {
     setGate(false)
@@ -159,6 +167,7 @@ export function CompareApp() {
               <div className="s-keys">
                 <button type="button" className="btn or" onClick={() => setGate(true)}>Comparativa completa en PDF ▸</button>
                 <NextTool current="comparador-competidores" domain={res.sides[0]?.domain} />
+                <ShareButton tool="Comparador de competidores" params={() => ({ d: res.sides[0]?.domain, c1: res.sides[1]?.domain, c2: res.sides[2]?.domain, auto: 1 })} />
               </div>
             )}
           </>

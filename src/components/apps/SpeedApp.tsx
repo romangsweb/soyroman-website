@@ -6,6 +6,7 @@ import type { Field, FieldMetric, Lab, Strategy } from '@/lib/speedScan'
 import { AppHeader } from './Panels'
 import { Gate } from './Gate'
 import { NextTool, saveSharedDomain, useSharedDomain } from './sharedDomain'
+import { ShareButton, query, useAutoRun } from './share'
 import { useToolTracking } from './useToolTracking'
 
 const STATUS_TXT = { ok: 'BUENO', warn: 'MEJORABLE', bad: 'LENTO' } as const
@@ -89,6 +90,12 @@ export function SpeedApp() {
       setBusy(null)
     }
   }, [domain, busy])
+  const autoMeasure = useCallback(() => {
+    const m: Strategy = query().get('m') === 'desktop' ? 'desktop' : 'mobile'
+    setStrategy(m)
+    measure(m)
+  }, [measure])
+  useAutoRun(Boolean(domain.trim()), autoMeasure)
 
   const switchTo = (s: Strategy) => {
     if (s === strategy || busy) return
@@ -219,6 +226,7 @@ export function SpeedApp() {
               <div className="s-keys">
                 <button type="button" className="btn or" disabled={!!busy} onClick={() => setGate(true)}>Plan de mejora en PDF ▸</button>
                 <NextTool current="velocidad-real" domain={site} />
+                <ShareButton tool="Velocidad real" params={() => ({ d: site, m: strategy, auto: 1 })} />
               </div>
             )}
           </>

@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 
 import { Device, ListMode, defaults, fmt, type Param, type Values } from './Device'
 import { AppHeader, Library } from './Panels'
+import { ShareButton, readParamValues } from './share'
 import { useToolTracking } from './useToolTracking'
 
 const PARAMS: Param[] = [
@@ -16,6 +17,7 @@ const PARAMS: Param[] = [
 
 export function RoasApp() {
   const [v, setV] = useState<Values>(() => defaults(PARAMS))
+  useEffect(() => setV((x) => ({ ...x, ...readParamValues(PARAMS) })), [])
   useToolTracking('ROAS · ROMI · ROI', v)
   const o = useMemo(() => {
     const cost = v.spend + v.other
@@ -58,6 +60,7 @@ export function RoasApp() {
             ]}
           />
           <ListMode params={PARAMS} values={v} onChange={setV} />
+          <div style={{ display: 'flex', gap: 10, marginTop: 18 }}><ShareButton tool="ROAS · ROMI · ROI" params={() => v} /></div>
         </div>
       </div>
     </>

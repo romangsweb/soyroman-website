@@ -7,6 +7,7 @@ import type { StackResult } from '@/lib/stackScan'
 import { AppHeader } from './Panels'
 import { Gate } from './Gate'
 import { NextTool, saveSharedDomain, useSharedDomain } from './sharedDomain'
+import { ShareButton, useAutoRun } from './share'
 import { useToolTracking } from './useToolTracking'
 
 const STATUS_TXT = { ok: 'cubierto', warn: 'revisar', bad: 'falta' } as const
@@ -40,6 +41,7 @@ export function StackApp() {
       setBusy(false)
     }
   }, [domain, busy])
+  useAutoRun(Boolean(domain.trim()), scan)
 
   const print = useCallback(() => {
     setGate(false)
@@ -116,6 +118,7 @@ export function StackApp() {
               <div className="s-keys">
                 <button type="button" className="btn or" onClick={() => setGate(true)}>Diagnóstico completo en PDF ▸</button>
                 <NextTool current="radiografia-stack" domain={res.domain} />
+                <ShareButton tool="Radiografía de stack" params={() => ({ d: res.domain, auto: 1 })} />
               </div>
             )}
           </>

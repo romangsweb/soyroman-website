@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState, useEffect } from 'react'
 
 import { fmt } from './Device'
 import { AppHeader } from './Panels'
@@ -9,6 +9,7 @@ import { Benchmarks } from './Benchmarks'
 import { Gate } from './Gate'
 import { COVERAGE_RULE, SOURCES } from '@/data/benchmarks'
 import { DEFAULTS, pipeline, type PipelineIn } from './pipeline'
+import { ShareButton, decodeState, encodeState, query } from './share'
 import { useToolTracking } from './useToolTracking'
 
 const usd = (x: number) => `$${fmt(Math.round(x))}`
@@ -21,6 +22,14 @@ const TOP: { id: 'goal' | 'won' | 'ticket' | 'l2o'; key: string; label: string; 
 
 export function PipelineApp() {
   const [v, setV] = useState<PipelineIn>(DEFAULTS)
+  useEffect(() => {
+    const s = decodeState<PipelineIn>(query().get('s'))
+    const num = (x: unknown, min: number, max: number) => typeof x === 'number' && Number.isFinite(x) && x >= min && x <= max
+    if (s && num(s.goal, 0, 1e10) && num(s.won, 0, 1e10) && num(s.ticket, 1, 1e9) && num(s.l2o, 0, 100) && Array.isArray(s.stages)) {
+      const stages = s.stages.slice(0, 8).filter((x) => x && num(x.amount, 0, 1e10) && num(x.prob, 0, 100)).map((x) => ({ name: String(x.name || '').slice(0, 40), amount: x.amount, prob: x.prob }))
+      if (stages.length) setV({ goal: s.goal, won: s.won, ticket: s.ticket, l2o: s.l2o, stages })
+    }
+  }, [])
   const [gate, setGate] = useState(false)
   useToolTracking('Brecha de pipeline', v, gate)
   const o = useMemo(() => pipeline(v), [v])
@@ -145,7 +154,10 @@ export function PipelineApp() {
         {gate ? (
           <div className="q-gate"><Gate tool="Brecha de pipeline" summary={summary} meta={{ slug: 'brecha-pipeline', finding: summary.split('\n')[0], items: summary.split('\n').slice(0, 3).map((t) => ({ t })) }} onDone={print} onCancel={() => setGate(false)} /></div>
         ) : (
-          <div className="q-keys"><button type="button" className="btn or" onClick={() => setGate(true)}>Plan para cerrar la brecha en PDF ▸</button></div>
+          <div className="q-keys">
+            <button type="button" className="btn or" onClick={() => setGate(true)}>Plan para cerrar la brecha en PDF ▸</button>
+            <ShareButton tool="Brecha de pipeline" params={() => ({ s: encodeState(v) })} />
+          </div>
         )}
       </div>
 

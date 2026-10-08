@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState, useEffect } from 'react'
 
 import { Device, ListMode, defaults, fmt, type Param, type Values } from './Device'
 import { AppHeader, Library } from './Panels'
 import { Benchmarks, type BenchRow } from './Benchmarks'
 import { Gate } from './Gate'
 import { FUNNEL_RANGES, SOURCES } from '@/data/benchmarks'
+import { ShareButton, readParamValues } from './share'
 import { useToolTracking } from './useToolTracking'
 import Link from 'next/link'
 
@@ -24,6 +25,7 @@ const n = (v: number) => fmt(v < 10 ? v : Math.ceil(v), v < 10 ? 1 : 0)
 
 export function FunnelApp() {
   const [v, setV] = useState<Values>(() => defaults(PARAMS))
+  useEffect(() => setV((x) => ({ ...x, ...readParamValues(PARAMS) })), [])
   const [gate, setGate] = useState(false)
   useToolTracking('Embudo inverso', v, gate)
 
@@ -102,6 +104,7 @@ export function FunnelApp() {
             caveat="Rangos entre empresas enterprise y pyme/mid-market de EE. UU. Tu mejor referencia son tus propios datos de los últimos 6–12 meses."
           />
           <ListMode params={PARAMS} values={v} onChange={setV} />
+          <ShareButton tool="Embudo inverso" params={() => v} className="btn" />
           <Link
             className="btn or"
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', marginTop: 18 }}
