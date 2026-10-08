@@ -52,14 +52,15 @@ export default async function HomePage() {
             
             {/* Main Title Area */}
             <div className="md:col-span-7 p-8 md:p-16 border-b md:border-b-0 md:border-r border-black bg-[#f4f4f4] relative">
-              <Reveal duration={1.2}>
+              {/* Portada: animaciones solo con CSS (no esperan a que cargue el JavaScript), para que el texto se pinte de inmediato */}
+              <div className="fade-up">
                 <div className="flex items-center gap-3 mb-16">
                   <div className="w-3 h-3 bg-[#e85a2a]"></div>
                   <p className="font-mono uppercase tracking-[0.2em] text-xs font-bold text-black/60">
                     {profile?.role || 'Director de Marketing B2B'}
                   </p>
                 </div>
-              </Reveal>
+              </div>
               
               <h1 className="text-[clamp(2.5rem,6vw,6rem)] leading-[1.05] tracking-tight font-semibold max-w-[15ch] mb-8 text-black">
                 <SplitText 
@@ -68,18 +69,18 @@ export default async function HomePage() {
                 />
               </h1>
 
-              <Reveal delay={0.4}>
+              <div className="fade-up">
                 <p className="text-xl text-black/80 leading-relaxed font-light max-w-2xl font-mono">
                   {profile?.shortBio || 'Dirijo campañas de generación de demanda en medios digitales y construyo lo que las hace funcionar: sitios, analítica, CRM y posicionamiento SEO y AEO.'}
                 </p>
-              </Reveal>
+              </div>
             </div>
 
             {/* Derecha: diagrama del sistema */}
             <div className="md:col-span-5 bg-white flex items-center p-4 md:p-8">
-              <Reveal className="w-full" delay={0.5}>
+              <div className="w-full fade-up" style={{ ['--delay' as string]: '200ms' }}>
                 <SystemDiagram className="w-full h-auto" />
-              </Reveal>
+              </div>
             </div>
           </div>
         </section>
