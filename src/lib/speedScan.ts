@@ -90,7 +90,7 @@ type LhAudit = { title?: string; score?: number | null; displayValue?: string; n
 
 /** Prueba de laboratorio de PageSpeed Insights (tarda entre 10 y 40 s). */
 export async function psiLab(domain: string, strategy: Strategy): Promise<Lab> {
-  const qs = new URLSearchParams({ url: `https://${domain}/`, strategy, category: 'performance', locale: 'es-419', key: key() })
+  const qs = new URLSearchParams({ url: `https://${domain}/`, strategy, category: 'performance', locale: 'es', key: key() })
   const res = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${qs}`, { signal: AbortSignal.timeout(55_000), cache: 'no-store' })
   if (!res.ok) {
     const body = await res.text().catch(() => '')
