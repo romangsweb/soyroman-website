@@ -318,6 +318,10 @@ body::before {
 @keyframes word-up {
   to { transform: none; }
 }
+/* En móvil los títulos se muestran de inmediato: la animación por palabra retrasa el LCP ~2.4 s */
+@media (max-width: 767px) {
+  .split-word > span { animation: none; transform: none; }
+}
 
 /* Generic on-load fade-up */
 .fade-up {
