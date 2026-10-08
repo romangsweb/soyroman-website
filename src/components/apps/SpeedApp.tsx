@@ -211,7 +211,7 @@ export function SpeedApp() {
               </div>
             )}
             {gate ? (
-              <div className="s-gate"><Gate tool="Velocidad real" summary={summary} meta={{ slug: 'velocidad-real', domain: site, score: lab?.score ?? null, finding: dx[0]?.t }} onDone={print} onCancel={() => setGate(false)} /></div>
+              <div className="s-gate"><Gate tool="Velocidad real" summary={summary} meta={{ slug: 'velocidad-real', domain: site, score: lab?.score ?? null, finding: dx[0]?.t, items: dx.slice(0, 3).map((x) => ({ t: x.t, fix: x.d })) }} onDone={print} onCancel={() => setGate(false)} /></div>
             ) : (
               <div className="s-keys">
                 <button type="button" className="btn or" disabled={!!busy} onClick={() => setGate(true)}>Plan de mejora en PDF ▸</button>

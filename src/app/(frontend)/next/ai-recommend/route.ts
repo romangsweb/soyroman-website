@@ -59,6 +59,7 @@ export async function POST(req: Request) {
       domain,
       score: (data.mentions / Math.max(1, data.answers.filter((a) => !a.failed).length)) * 100,
       finding: data.findings[0]?.title,
+      items: data.findings.slice(0, 3).map((f) => ({ t: f.title, fix: f.detail })),
     }).catch(() => null)
     return Response.json(data)
   } catch (e) {

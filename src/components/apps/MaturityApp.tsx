@@ -138,7 +138,7 @@ export function MaturityApp() {
       {done && (
         <div className="osc-card">
           {gate ? (
-            <Gate tool="Diagnóstico de madurez RevOps" summary={summary} meta={{ slug: 'madurez-revops', score: total, finding: summary.split('\n')[0] }} onDone={print} onCancel={() => setGate(false)} />
+            <Gate tool="Diagnóstico de madurez RevOps" summary={summary} meta={{ slug: 'madurez-revops', score: total, finding: summary.split('\n')[0], items: summary.split('\n').slice(0, 3).map((t) => ({ t })) }} onDone={print} onCancel={() => setGate(false)} />
           ) : (
             <>
               <h3>Por dónde empezar</h3>

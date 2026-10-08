@@ -18,7 +18,7 @@ export function Gate({ tool, summary, onDone, onCancel, meta }: { tool: string; 
 
   return (
     <form className="gate on" action={action}>
-      <p>Te dejo el plan en PDF con estas cifras. Escribe tu correo para descargarlo.</p>
+      <p>Te envío el diagnóstico a tu correo y lo puedes guardar en PDF.</p>
       <input name="name" required placeholder="Nombre" aria-label="Nombre" autoComplete="given-name" />
       <input name="email" type="email" required placeholder="Correo de trabajo" aria-label="Correo de trabajo" autoComplete="email" />
       <input name="company" placeholder="Empresa" aria-label="Empresa" autoComplete="organization" />
@@ -30,6 +30,7 @@ export function Gate({ tool, summary, onDone, onCancel, meta }: { tool: string; 
           <input name="sr_dominio" type="hidden" value={meta.domain || ''} />
           <input name="sr_puntaje" type="hidden" value={score} />
           <input name="sr_hallazgo" type="hidden" value={(meta.finding || '').slice(0, 240)} />
+          <input name="sr_report" type="hidden" value={JSON.stringify((meta.items || []).slice(0, 3))} />
         </>
       )}
       <div className="hidden" aria-hidden="true"><input name="sr_trap" tabIndex={-1} autoComplete="off" /></div>

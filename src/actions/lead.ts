@@ -2,6 +2,8 @@
 
 import { cookies, headers } from 'next/headers'
 
+import { cleanItems, sendReport, type ReportItem } from '@/lib/reportEmail'
+
 /**
  * Envía un lead al formulario de HubSpot (portal de soyroman) vía Forms API v3.
  * No requiere token: solo portal + ID de formulario (valores públicos).
@@ -58,7 +60,19 @@ const today = () => {
   return String(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()))
 }
 
-export type ToolMeta = { slug: string; domain?: string; score?: number | null; finding?: string }
+export type ToolMeta = { slug: string; domain?: string; score?: number | null; finding?: string; items?: ReportItem[] }
+
+// Máximo de reportes por correo al día por IP (en memoria de la instancia), para que nadie use el formulario para enviar correos a terceros
+const reportHits = new Map<string, number[]>()
+async function canSendReport() {
+  const ip = (await headers()).get('x-forwarded-for')?.split(',')[0]?.trim() || 'anon'
+  const now = Date.now()
+  const recent = (reportHits.get(ip) || []).filter((t) => now - t < 24 * 60 * 60 * 1000)
+  if (recent.length >= 3) return false
+  reportHits.set(ip, [...recent, now])
+  if (reportHits.size > 5000) reportHits.clear()
+  return true
+}
 
 /** Propiedades sr_* del formulario de recursos. */
 const metaFields = (m: Partial<Record<'sr_recurso' | 'sr_dominio' | 'sr_puntaje' | 'sr_hallazgo', string>>): Field[] => [
@@ -133,7 +147,28 @@ export async function submitToolLead(_prev: LeadState, form: FormData): Promise<
       sr_hallazgo: clean(form.get('sr_hallazgo'), 240),
     }),
   ]
-  return sendToHubspot(fields, `Recurso · ${tool}`, 'https://soyroman.com/recursos', TOOLS_GUID)
+  const result = await sendToHubspot(fields, `Recurso · ${tool}`, 'https://soyroman.com/recursos', TOOLS_GUID)
+  // Reporte por correo (solo herramientas, no el CV), si HubSpot aceptó el lead
+  const slug = clean(form.get('sr_recurso'), 40)
+  if (result.status === 'ok' && slug && slug !== 'cv' && (await canSendReport())) {
+    let items: ReportItem[] = []
+    try {
+      items = cleanItems(JSON.parse(clean(form.get('sr_report'), 3000) || '[]'))
+    } catch {
+      items = []
+    }
+    const score = Number(clean(form.get('sr_puntaje'), 3))
+    await sendReport({
+      to: email,
+      name,
+      tool,
+      slug,
+      domain: clean(form.get('sr_dominio'), 120) || undefined,
+      score: clean(form.get('sr_puntaje'), 3) && Number.isFinite(score) ? score : null,
+      items,
+    })
+  }
+  return result
 }
 
 /**
@@ -187,5 +222,10 @@ export async function recordToolRun(email: string, tool: string, summary: string
     `Recurso · ${tool}`,
     'https://soyroman.com/recursos',
     TOOLS_GUID,
-  )
+  ).then(async (r) => {
+    if (r.status === 'ok' && meta) {
+      await sendReport({ to: email, tool, slug: meta.slug, domain: meta.domain, score: meta.score ?? null, items: cleanItems(meta.items) })
+    }
+    return r
+  })
 }

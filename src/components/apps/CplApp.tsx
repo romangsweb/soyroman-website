@@ -81,7 +81,7 @@ export function CplApp() {
               { label: 'CAC real con tu CPL', value: money(o.cacReal) },
             ]}
           >
-            {gate ? <Gate tool="CPL máximo" summary={summary} meta={{ slug: 'cpl-maximo', finding: summary.split('\n')[1] }} onDone={print} onCancel={() => setGate(false)} /> : undefined}
+            {gate ? <Gate tool="CPL máximo" summary={summary} meta={{ slug: 'cpl-maximo', finding: summary.split('\n')[1], items: summary.split('\n').slice(0, 3).map((t) => ({ t })) }} onDone={print} onCancel={() => setGate(false)} /> : undefined}
           </Library>
           <ListMode params={PARAMS} values={v} onChange={setV} />
           <div style={{ display: 'flex', gap: 10, marginTop: 18, flexWrap: 'wrap' }}>

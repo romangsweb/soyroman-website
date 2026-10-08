@@ -165,7 +165,7 @@ export function IcpApp() {
 
       <div className="osc-card">
         {gate ? (
-          <Gate tool="Generador de ICP" summary={summary} meta={{ slug: 'icp', finding: summary.split('\n')[0] }} onDone={print} onCancel={() => setGate(false)} />
+          <Gate tool="Generador de ICP" summary={summary} meta={{ slug: 'icp', finding: summary.split('\n')[0], items: summary.split('\n').slice(0, 3).map((t) => ({ t })) }} onDone={print} onCancel={() => setGate(false)} />
         ) : (
           <>
             <h3>Tu cliente ideal {s < STEPS.length - 1 ? '(en construcción)' : ''}</h3>
