@@ -10,6 +10,8 @@ const PORTAL_ID = process.env.HUBSPOT_PORTAL_ID || '51346021'
 const FORM_GUID = process.env.HUBSPOT_FORM_GUID || '5f4b698f-db18-4c9a-b547-1c37d54d1ce1'
 const SUB_GUID = process.env.HUBSPOT_SUBSCRIBE_FORM_GUID || '89dc04aa-03b8-4810-a373-9468478e0e38'
 const SUB_TYPE = Number(process.env.HUBSPOT_BLOG_SUBSCRIPTION_ID || 0)
+// Formulario "Recursos · soyroman" (propiedades sr_* ocultas; crea contacto nuevo por cada correo nuevo)
+const TOOLS_GUID = process.env.HUBSPOT_TOOLS_FORM_GUID || '044392eb-9190-46f3-8b30-fbf907cdd49a'
 const endpoint = (guid: string) => `https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${guid}`
 
 export type LeadState = { status: 'idle' | 'ok' | 'error'; message?: string }
@@ -49,6 +51,22 @@ export async function submitLead(_prev: LeadState, form: FormData): Promise<Lead
 }
 
 type Field = { objectTypeId: string; name: string; value: string }
+
+/** Medianoche UTC de hoy en milisegundos: formato de las propiedades de fecha de HubSpot. */
+const today = () => {
+  const d = new Date()
+  return String(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()))
+}
+
+export type ToolMeta = { slug: string; domain?: string; score?: number | null; finding?: string }
+
+/** Propiedades sr_* del formulario de recursos. */
+const metaFields = (m: Partial<Record<'sr_recurso' | 'sr_dominio' | 'sr_puntaje' | 'sr_hallazgo', string>>): Field[] => [
+  ...Object.entries(m)
+    .filter(([, v]) => v)
+    .map(([name, value]) => ({ objectTypeId: '0-1', name, value: String(value) })),
+  { objectTypeId: '0-1', name: 'sr_fecha_recurso', value: today() },
+]
 
 async function sendToHubspot(
   fields: Field[],
@@ -108,8 +126,14 @@ export async function submitToolLead(_prev: LeadState, form: FormData): Promise<
     { objectTypeId: '0-1', name: 'email', value: email },
     ...(company ? [{ objectTypeId: '0-1', name: 'company', value: company }] : []),
     { objectTypeId: '0-1', name: 'message', value: `[Recurso: ${tool}]\n${summary}` },
+    ...metaFields({
+      sr_recurso: clean(form.get('sr_recurso'), 40),
+      sr_dominio: clean(form.get('sr_dominio'), 120),
+      sr_puntaje: /^\d{1,3}$/.test(clean(form.get('sr_puntaje'), 3)) ? clean(form.get('sr_puntaje'), 3) : '',
+      sr_hallazgo: clean(form.get('sr_hallazgo'), 240),
+    }),
   ]
-  return sendToHubspot(fields, `Recurso · ${tool}`, 'https://soyroman.com/recursos')
+  return sendToHubspot(fields, `Recurso · ${tool}`, 'https://soyroman.com/recursos', TOOLS_GUID)
 }
 
 /**
@@ -147,14 +171,21 @@ export async function submitSubscriber(_prev: LeadState, form: FormData): Promis
  * Lead previo a correr una herramienta con costo (el correo se pide antes del resultado).
  * Lo llama la ruta del servidor, no el navegador.
  */
-export async function recordToolRun(email: string, tool: string, summary: string): Promise<LeadState> {
+export async function recordToolRun(email: string, tool: string, summary: string, meta?: ToolMeta): Promise<LeadState> {
   if (!EMAIL.test(email)) return { status: 'error', message: 'Revisa tu correo.' }
   return sendToHubspot(
     [
       { objectTypeId: '0-1', name: 'email', value: email.toLowerCase().slice(0, 200) },
       { objectTypeId: '0-1', name: 'message', value: `[Recurso: ${tool}]\n${summary.slice(0, 2000)}` },
+      ...metaFields({
+        sr_recurso: meta?.slug,
+        sr_dominio: meta?.domain?.slice(0, 120),
+        sr_puntaje: meta?.score != null ? String(Math.round(Math.max(0, Math.min(100, meta.score)))) : '',
+        sr_hallazgo: meta?.finding?.slice(0, 240),
+      }),
     ],
     `Recurso · ${tool}`,
     'https://soyroman.com/recursos',
+    TOOLS_GUID,
   )
 }

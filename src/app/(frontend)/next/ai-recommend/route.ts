@@ -54,7 +54,12 @@ export async function POST(req: Request) {
     cache.set(ck, { at: now, data })
     if (cache.size > 300) cache.delete(cache.keys().next().value as string)
     // El lead no bloquea el resultado si HubSpot falla
-    await recordToolRun(email, '¿Te recomienda la IA?', `Dominio: ${domain}\nServicio: ${service} (${market})\nMenciones: ${data.mentions}/5\nCompetidores: ${data.rivals.map((r) => r.domain).join(', ') || '—'}`).catch(() => null)
+    await recordToolRun(email, '¿Te recomienda la IA?', `Dominio: ${domain}\nServicio: ${service} (${market})\nMenciones: ${data.mentions}/5\nCompetidores: ${data.rivals.map((r) => r.domain).join(', ') || '—'}`, {
+      slug: 'te-recomienda-la-ia',
+      domain,
+      score: (data.mentions / Math.max(1, data.answers.filter((a) => !a.failed).length)) * 100,
+      finding: data.findings[0]?.title,
+    }).catch(() => null)
     return Response.json(data)
   } catch (e) {
     byEmail.delete(email) // si falló, no le cuenta como su diagnóstico del día

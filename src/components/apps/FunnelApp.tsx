@@ -81,7 +81,7 @@ export function FunnelApp() {
               { label: 'Ingresos / mes', value: `$${fmt(o.rev)}` },
             ]}
           >
-            {gate ? <Gate tool="Embudo inverso" summary={summary} onDone={print} onCancel={() => setGate(false)} /> : undefined}
+            {gate ? <Gate tool="Embudo inverso" summary={summary} meta={{ slug: 'embudo-inverso', finding: summary.split('\n')[2] }} onDone={print} onCancel={() => setGate(false)} /> : undefined}
           </Library>
           <ListMode params={PARAMS} values={v} onChange={setV} />
           <Link

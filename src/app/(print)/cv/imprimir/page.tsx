@@ -28,8 +28,8 @@ h1{font-size:38px;font-weight:400;margin:8px 0 2px;letter-spacing:-.01em}
 .kpis b{display:block;font-size:19px;font-weight:400;color:#e85a2a}.kpis span{font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;line-height:1.4;display:block}
 .grid{display:grid;grid-template-columns:1fr 54mm;gap:6mm;flex:1}
 h2{font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:400;margin:0 0 8px;color:#6c757b}h2 em{color:#e85a2a;font-style:normal}
-.job{display:grid;grid-template-columns:64px 1fr;gap:10px;border-top:1px solid #000;padding:8px 0;break-inside:avoid}
-.yr{font-size:8.5px;background:#111;color:#fff;padding:3px 4px;align-self:start;text-align:center;letter-spacing:.04em}.yr.now{background:#e85a2a}
+.job{display:grid;grid-template-columns:78px 1fr;gap:10px;border-top:1px solid #000;padding:8px 0;break-inside:avoid}
+.yr{font-size:8.5px;background:#111;color:#fff;padding:3px 4px;align-self:start;text-align:center;letter-spacing:.02em;white-space:nowrap}.yr.now{background:#e85a2a}
 .job h3{margin:0;font-size:13px;font-weight:400}.co{font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:#6c757b;margin:2px 0 4px}
 .job ul{margin:0;padding:0;list-style:none}.job li{font-size:10.5px;line-height:1.5;padding-left:12px;position:relative}.job li::before{content:">";position:absolute;left:0;color:#e85a2a}
 .side{display:flex;flex-direction:column;gap:5mm}

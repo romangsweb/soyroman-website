@@ -120,7 +120,7 @@ export function AeoApp() {
             ))}
           </div>
           {audit && (gate ? (
-            <div className="s-gate"><Gate tool="Auditor AEO" summary={summary} onDone={print} onCancel={() => setGate(false)} /></div>
+            <div className="s-gate"><Gate tool="Auditor AEO" summary={summary} meta={audit ? { slug: 'auditor-aeo', domain: audit.domain, score: audit.score, finding: fixes[0]?.label } : undefined} onDone={print} onCancel={() => setGate(false)} /></div>
           ) : (
             <div className="s-keys">
               <button type="button" className="btn or" onClick={() => setGate(true)} disabled={!fixes.length}>

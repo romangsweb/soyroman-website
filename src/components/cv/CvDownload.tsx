@@ -34,6 +34,7 @@ export function CvDownload({ url }: { url: string }) {
       <input name="company" placeholder="Empresa" aria-label="Empresa" autoComplete="organization" className="border border-black px-3 py-2 font-mono text-sm" />
       <input name="tool" type="hidden" value="CV" />
       <input name="summary" type="hidden" value="Descargó el CV en PDF desde soyroman.com/cv" />
+      <input name="sr_recurso" type="hidden" value="cv" />
       <div className="hidden" aria-hidden="true"><input name="sr_trap" tabIndex={-1} autoComplete="off" /></div>
       {state.status === 'error' && <span className="font-mono text-xs text-[#e85a2a]" role="alert">{state.message}</span>}
       <div className="flex gap-3 items-center">

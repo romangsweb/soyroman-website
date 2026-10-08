@@ -149,7 +149,7 @@ export function CompareApp() {
               </div>
             )}
             {gate ? (
-              <div className="s-gate"><Gate tool="Comparador de competidores" summary={summary} onDone={print} onCancel={() => setGate(false)} /></div>
+              <div className="s-gate"><Gate tool="Comparador de competidores" summary={summary} meta={res ? { slug: 'comparador-competidores', domain: res.sides[0]?.domain, score: res.sides[0]?.aeo ?? null, finding: dx[0]?.t } : undefined} onDone={print} onCancel={() => setGate(false)} /></div>
             ) : (
               <div className="s-keys"><button type="button" className="btn or" onClick={() => setGate(true)}>Comparativa completa en PDF ▸</button></div>
             )}

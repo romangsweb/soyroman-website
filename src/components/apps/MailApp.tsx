@@ -107,7 +107,7 @@ export function MailApp() {
               </div>
             )}
             {gate ? (
-              <div className="s-gate"><Gate tool="Salud del correo" summary={summary} onDone={print} onCancel={() => setGate(false)} /></div>
+              <div className="s-gate"><Gate tool="Salud del correo" summary={summary} meta={res ? { slug: 'salud-correo', domain: res.domain, score: (res.lights.filter((l) => l.status === 'ok').length / res.lights.length) * 100, finding: res.findings[0]?.title } : undefined} onDone={print} onCancel={() => setGate(false)} /></div>
             ) : (
               <div className="s-keys">
                 <button type="button" className="btn or" onClick={() => setGate(true)}>Guía de configuración en PDF ▸</button>

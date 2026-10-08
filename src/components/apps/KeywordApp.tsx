@@ -128,7 +128,7 @@ export function KeywordApp() {
               </div>
             </div>
             {gate ? (
-              <div className="s-gate"><Gate tool="Explorador de búsquedas" summary={summary} onDone={print} onCancel={() => setGate(false)} /></div>
+              <div className="s-gate"><Gate tool="Explorador de búsquedas" summary={summary} meta={res ? { slug: 'explorador-busquedas', finding: `${res.seed}: ${res.terms.length} búsquedas` } : undefined} onDone={print} onCancel={() => setGate(false)} /></div>
             ) : (
               <div className="s-keys">
                 <button type="button" className="btn or" onClick={() => setGate(true)}>Mapa de contenido en PDF ▸</button>

@@ -103,7 +103,7 @@ export function StackApp() {
               </div>
             )}
             {gate ? (
-              <div className="s-gate"><Gate tool="Radiografía de stack" summary={summary} onDone={print} onCancel={() => setGate(false)} /></div>
+              <div className="s-gate"><Gate tool="Radiografía de stack" summary={summary} meta={res ? { slug: 'radiografia-stack', domain: res.domain, score: (res.bands.filter((b) => b.status === 'ok').length / res.bands.length) * 100, finding: res.findings[0]?.title } : undefined} onDone={print} onCancel={() => setGate(false)} /></div>
             ) : (
               <div className="s-keys">
                 <button type="button" className="btn or" onClick={() => setGate(true)}>Diagnóstico completo en PDF ▸</button>

@@ -128,7 +128,7 @@ export function PipelineApp() {
         </p>
 
         {gate ? (
-          <div className="q-gate"><Gate tool="Brecha de pipeline" summary={summary} onDone={print} onCancel={() => setGate(false)} /></div>
+          <div className="q-gate"><Gate tool="Brecha de pipeline" summary={summary} meta={{ slug: 'brecha-pipeline', finding: summary.split('\n')[0] }} onDone={print} onCancel={() => setGate(false)} /></div>
         ) : (
           <div className="q-keys"><button type="button" className="btn or" onClick={() => setGate(true)}>Plan para cerrar la brecha en PDF ▸</button></div>
         )}

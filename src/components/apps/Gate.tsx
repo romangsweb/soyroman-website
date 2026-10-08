@@ -2,11 +2,12 @@
 
 import React, { useActionState, useEffect } from 'react'
 
-import { submitToolLead, type LeadState } from '@/actions/lead'
+import { submitToolLead, type LeadState, type ToolMeta } from '@/actions/lead'
 import { track } from '@/lib/analytics'
 
 /** Formulario que desbloquea el plan: manda el lead a HubSpot y luego llama a onDone (imprimir). */
-export function Gate({ tool, summary, onDone, onCancel }: { tool: string; summary: string; onDone: () => void; onCancel: () => void }) {
+export function Gate({ tool, summary, onDone, onCancel, meta }: { tool: string; summary: string; onDone: () => void; onCancel: () => void; meta?: ToolMeta }) {
+  const score = meta?.score != null && Number.isFinite(meta.score) ? String(Math.round(Math.max(0, Math.min(100, meta.score)))) : ''
   const [state, action, pending] = useActionState<LeadState, FormData>(submitToolLead, { status: 'idle' })
   useEffect(() => {
     if (state.status === 'ok') {
@@ -23,6 +24,14 @@ export function Gate({ tool, summary, onDone, onCancel }: { tool: string; summar
       <input name="company" placeholder="Empresa" aria-label="Empresa" autoComplete="organization" />
       <input name="tool" type="hidden" value={tool} />
       <input name="summary" type="hidden" value={summary} />
+      {meta && (
+        <>
+          <input name="sr_recurso" type="hidden" value={meta.slug} />
+          <input name="sr_dominio" type="hidden" value={meta.domain || ''} />
+          <input name="sr_puntaje" type="hidden" value={score} />
+          <input name="sr_hallazgo" type="hidden" value={(meta.finding || '').slice(0, 240)} />
+        </>
+      )}
       <div className="hidden" aria-hidden="true"><input name="sr_trap" tabIndex={-1} autoComplete="off" /></div>
       {state.status === 'error' && <span className="err" role="alert">{state.message}</span>}
       <button disabled={pending}>{pending ? 'Enviando…' : 'Enviar y descargar ▸'}</button>

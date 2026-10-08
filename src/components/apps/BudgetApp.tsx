@@ -184,7 +184,7 @@ export function BudgetApp() {
 
           {gate ? (
             <div className="m-gate">
-              <Gate tool="Presupuesto" summary={summary} onDone={print} onCancel={() => setGate(false)} />
+              <Gate tool="Presupuesto" summary={summary} meta={{ slug: 'presupuesto-marketing', finding: summary.split('\n')[1] }} onDone={print} onCancel={() => setGate(false)} />
             </div>
           ) : (
             <div className="m-keys">
