@@ -3,7 +3,6 @@ import Link from 'next/link'
 
 import { cms } from '@/lib/cms'
 import { CdmxClock } from './DotMatrix'
-import { dotMatrix } from './dotFont'
 import { CookieLink } from '@/components/analytics/CookieLink'
 
 const GROUPS: [string, [string, string][]][] = [
@@ -36,8 +35,6 @@ export async function FooterComponent() {
   const available = p?.available !== false
   const status = p?.availabilityText || (available ? 'Aceptando proyectos' : 'Agenda llena')
   const email = p?.email || 'contacto@soyroman.com'
-  const msg = 'SOY ROMAN · MARKETING B2B · CDMX · '
-  const tk = dotMatrix(msg + msg, '#f4f4f0', '#1d2023', 6)
   const link = 'font-mono text-[10px] uppercase font-bold tracking-widest py-2.5 border-b border-black/10 flex items-center justify-between hover:text-[#e85a2a] hover:pl-1.5 transition-all'
 
   return (
@@ -72,7 +69,8 @@ export async function FooterComponent() {
                 <span>SOY_ROMAN · SYS</span><b className="font-normal text-[#e85a2a]">● REC</b>
               </div>
               <div className="relative h-14 my-3 overflow-hidden" aria-hidden="true">
-                <svg viewBox={`0 0 ${tk.w} ${tk.h}`} className="absolute left-0 top-1 h-[46px] w-auto max-w-none animate-[tickerscroll_16s_linear_infinite] motion-reduce:animate-none">{tk.dots}</svg>
+                {/* eslint-disable-next-line @next/next/no-img-element -- SVG estático de la marquesina; next/image no aporta nada aquí */}
+                <img src="/marquesina.svg" alt="" width={2514} height={42} decoding="async" className="absolute left-0 top-1 h-[46px] w-auto max-w-none animate-[tickerscroll_16s_linear_infinite] motion-reduce:animate-none" />
               </div>
               <div className="flex flex-wrap items-end gap-4 border-t border-dashed border-white/20 pt-3">
                 <CdmxClock />

@@ -29,3 +29,19 @@ export function dotMatrix(text: string, on: string, off: string, cell = 4) {
   return { dots, w: Math.max(cell, x - cell), h: 7 * cell }
 }
 
+/** La misma matriz como texto SVG, para servirla como archivo estático (no infla el HTML de cada página). */
+export function dotMatrixSvg(text: string, on: string, off: string, cell = 4) {
+  const parts: string[] = []
+  const r = +(cell * 0.38).toFixed(2)
+  let x = 0
+  for (const ch of text.toUpperCase()) {
+    const g = F[ch] || F[' ']
+    g.forEach((row, j) =>
+      [...row].forEach((b, i) => parts.push(`<circle cx="${x + i * cell + cell / 2}" cy="${j * cell + cell / 2}" r="${r}" fill="${b === '1' ? on : off}"/>`)),
+    )
+    x += 6 * cell
+  }
+  const w = Math.max(cell, x - cell)
+  const h = 7 * cell
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">${parts.join('')}</svg>`
+}

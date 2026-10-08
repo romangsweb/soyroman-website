@@ -94,8 +94,16 @@ export async function psiLab(domain: string, strategy: Strategy): Promise<Lab> {
   const res = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${qs}`, { signal: AbortSignal.timeout(55_000), cache: 'no-store' })
   if (!res.ok) {
     const body = await res.text().catch(() => '')
-    if (res.status === 400 || res.status === 500) throw new AuditError('Google no pudo cargar el sitio para la prueba de laboratorio.')
-    throw new Error(`psi ${res.status} ${body.slice(0, 200)}`)
+    // Solo culpamos al sitio cuando Lighthouse de verdad intentó cargarlo; lo demás es configuración o cuota
+    if (/Lighthouse returned error|FAILED_DOCUMENT_REQUEST|ERRORED_DOCUMENT_REQUEST|NO_FCP|DNS_FAILURE|NOT_HTML/i.test(body)) {
+      throw new AuditError('Google no pudo cargar el sitio para la prueba de laboratorio.')
+    }
+    console.error('[speed-scan] PageSpeed rechazó la petición', res.status, body.slice(0, 500))
+    throw new AuditError(
+      res.status === 429
+        ? 'La prueba de laboratorio llegó a su límite de hoy. Los datos de usuarios reales sí están arriba; intenta mañana.'
+        : 'La prueba de laboratorio no está disponible en este momento. Los datos de usuarios reales sí están arriba.',
+    )
   }
   const data = (await res.json()) as { lighthouseResult?: { categories?: { performance?: { score?: number } }; audits?: Record<string, LhAudit> } }
   const lh = data.lighthouseResult
