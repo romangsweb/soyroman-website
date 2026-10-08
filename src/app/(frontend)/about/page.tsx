@@ -7,6 +7,8 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { canonical } from '@/lib/seo'
+import { LeadBoy } from '@/components/about/LeadBoy'
+import { Passions } from '@/components/about/Passions'
 
 export default async function AboutPage() {
   const profile = await cms.findGlobal({ slug: 'profile' })
@@ -126,6 +128,19 @@ export default async function AboutPage() {
               </div>
 
             </div>
+          </div>
+        </section>
+
+        <Passions />
+
+        {/* Recreo: minijuego */}
+        <section className="border-b border-black bg-[#a8b1b8] bg-[linear-gradient(rgba(255,255,255,.28)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.28)_1px,transparent_1px)] [background-size:28px_28px]">
+          <div className="container mx-auto p-8 md:p-16">
+            <h2 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-3 text-black/60">// Recreo</h2>
+            <p className="font-mono text-sm text-black/70 mb-10 max-w-xl">
+              Un trimestre en miniatura: atrapa leads, esquiva a los bots y cierra ventas.
+            </p>
+            <LeadBoy />
           </div>
         </section>
 
