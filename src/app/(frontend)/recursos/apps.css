@@ -542,3 +542,19 @@
 .te-app .r-steps a:hover{background:var(--or);color:#fff}
 .te-app .r-steps b{font-weight:400;color:var(--or)}
 @media(max-width:560px){.te-app .r-lab{min-width:0;width:100%}}
+
+/* ───────── Panel de referencias de la industria: prefijo bm- ───────── */
+.te-app .bm{margin-top:18px;background:#fff;border:2px solid var(--ink);box-shadow:5px 5px 0 var(--ink)}
+.te-app .bm-h{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--ink);color:#fff;padding:9px 12px;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.te-app .bm-h b{color:var(--or);font-weight:400}
+.te-app .bm-t{width:100%;border-collapse:collapse;font-size:12px}
+.te-app .bm-t th{font-weight:400;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--ink)}
+.te-app .bm-t td{padding:8px 10px;border-bottom:1px dashed #c3c6c3;vertical-align:top}
+.te-app .bm-t td small{display:block;font-size:10px;color:var(--grey);margin-top:2px}
+.te-app .bm-s{display:inline-block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid var(--ink);padding:2px 6px;white-space:nowrap}
+.te-app .bm-s.ok,.te-app .bm-s.high,.te-app .bm-s.fit{background:#3ddc84}
+.te-app .bm-s.low,.te-app .bm-s.nofit{background:var(--or);color:#fff}
+.te-app .bm-s.none{background:#e6e5df}
+.te-app .bm-f{padding:8px 12px 10px;font-size:10px;line-height:1.5;color:#444}
+.te-app .bm-f p{margin:4px 0}
+.te-app .bm-f a{color:inherit;text-decoration:underline;text-decoration-color:var(--or)}

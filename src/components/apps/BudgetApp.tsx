@@ -6,7 +6,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { fmt } from './Device'
 import { AppHeader } from './Panels'
+import { Benchmarks } from './Benchmarks'
 import { Gate } from './Gate'
+import { BUDGET_REF, SOURCES } from '@/data/benchmarks'
 import { CHANNELS, DEFAULTS, FIELDS, budget, type BudgetIn } from './budget'
 import { useToolTracking } from './useToolTracking'
 
@@ -181,6 +183,27 @@ export function BudgetApp() {
               ? <><b>El plan no se paga con tu margen:</b> sube la conversión del embudo o baja el costo por lead antes de subir el presupuesto.</>
               : <>Con un margen de {fmt(v.margin)}%, el plan devuelve <b>{fmt(o.romi * 100, 0)}%</b> sobre lo invertido en el año.</>}
           </p>
+
+          <Benchmarks
+            title="Tu presupuesto contra lo que invierten los CMOs"
+            rows={[
+              {
+                label: 'Presupuesto / meta',
+                note: 'Gartner lo mide contra los ingresos totales de la empresa; aquí es contra tu meta.',
+                yours: `${fmt(o.share * 100, 1)}%`,
+                ref: `${fmt(BUDGET_REF.revenueShare, 1)}% de los ingresos`,
+                status: o.share * 100 < BUDGET_REF.revenueShare * 0.75 ? 'low' : o.share * 100 > BUDGET_REF.revenueShare * 1.25 ? 'high' : 'ok',
+              },
+              {
+                label: 'Medios / presupuesto',
+                yours: `${fmt((o.media / Math.max(o.total, 1)) * 100, 0)}%`,
+                ref: `${fmt(BUDGET_REF.paidShare, 1)}%`,
+                status: 'none',
+              },
+            ]}
+            sources={[SOURCES.gartner]}
+            caveat="Son empresas grandes de EE. UU. y Europa: una pyme en crecimiento suele invertir proporcionalmente más para ganar mercado."
+          />
 
           {gate ? (
             <div className="m-gate">

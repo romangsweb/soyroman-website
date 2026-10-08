@@ -5,7 +5,9 @@ import React, { useCallback, useMemo, useState } from 'react'
 
 import { Device, ListMode, defaults, fmt, type Param, type Values } from './Device'
 import { AppHeader, Library } from './Panels'
+import { Benchmarks } from './Benchmarks'
 import { Gate } from './Gate'
+import { CHANNEL_COSTS, SOURCES } from '@/data/benchmarks'
 import { useToolTracking } from './useToolTracking'
 
 // Valores por defecto = los del Embudo inverso y el Planificador, para que las tres herramientas cuadren
@@ -83,6 +85,18 @@ export function CplApp() {
           >
             {gate ? <Gate tool="CPL máximo" summary={summary} meta={{ slug: 'cpl-maximo', finding: summary.split('\n')[1], items: summary.split('\n').slice(0, 3).map((t) => ({ t })) }} onDone={print} onCancel={() => setGate(false)} /> : undefined}
           </Library>
+          <Benchmarks
+            title="¿Qué canales caben en tu CPL máximo?"
+            rows={CHANNEL_COSTS.map((c) => ({
+              label: `CPL en ${c.channel}`,
+              note: `CPC $${fmt(c.cpc, 2)} · clic→lead ${fmt(c.conv, 1)}%`,
+              yours: money(o.cplMax),
+              ref: `$${fmt(c.cpl)}`,
+              status: c.cpl <= o.cplMax ? 'fit' : 'nofit',
+            }))}
+            sources={[SOURCES.metadata]}
+            caveat="Promedios de EE. UU. en dólares; en México el costo por clic suele ser menor, pero la conversión también varía. Úsalo para ordenar canales, no como presupuesto."
+          />
           <ListMode params={PARAMS} values={v} onChange={setV} />
           <div style={{ display: 'flex', gap: 10, marginTop: 18, flexWrap: 'wrap' }}>
             <Link className="btn" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }} href="/recursos/embudo-inverso">◂ Mejorar la conversión</Link>

@@ -4,7 +4,9 @@ import React, { useCallback, useMemo, useState } from 'react'
 
 import { Device, ListMode, defaults, fmt, type Param, type Values } from './Device'
 import { AppHeader, Library } from './Panels'
+import { Benchmarks, type BenchRow } from './Benchmarks'
 import { Gate } from './Gate'
+import { FUNNEL_RANGES, SOURCES } from '@/data/benchmarks'
 import { useToolTracking } from './useToolTracking'
 import Link from 'next/link'
 
@@ -83,6 +85,22 @@ export function FunnelApp() {
           >
             {gate ? <Gate tool="Embudo inverso" summary={summary} meta={{ slug: 'embudo-inverso', finding: summary.split('\n')[2], items: summary.split('\n').slice(0, 3).map((t) => ({ t })) }} onDone={print} onCancel={() => setGate(false)} /> : undefined}
           </Library>
+          <Benchmarks
+            title="Tus tasas contra el rango típico B2B"
+            rows={([
+              ['visit', 'Visita → lead', undefined],
+              ['mql', 'Lead → MQL', undefined],
+              ['sql', 'MQL → SQL', 'Depende de qué tan estricta es tu definición de MQL.'],
+              ['opp', 'SQL → oportunidad', undefined],
+              ['win', 'Oportunidad → ganado', undefined],
+            ] as const).map(([id, label, note]): BenchRow => {
+              const [a, b] = FUNNEL_RANGES[id]
+              const x = v[id]
+              return { label, note, yours: `${fmt(x, 1)}%`, ref: `${fmt(a, 1)}–${fmt(b, 1)}%`, status: x < a ? 'low' : x > b ? 'high' : 'ok' }
+            })}
+            sources={[SOURCES.bloom]}
+            caveat="Rangos entre empresas enterprise y pyme/mid-market de EE. UU. Tu mejor referencia son tus propios datos de los últimos 6–12 meses."
+          />
           <ListMode params={PARAMS} values={v} onChange={setV} />
           <Link
             className="btn or"

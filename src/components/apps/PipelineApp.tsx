@@ -5,7 +5,9 @@ import React, { useCallback, useMemo, useState } from 'react'
 
 import { fmt } from './Device'
 import { AppHeader } from './Panels'
+import { Benchmarks } from './Benchmarks'
 import { Gate } from './Gate'
+import { COVERAGE_RULE, SOURCES } from '@/data/benchmarks'
 import { DEFAULTS, pipeline, type PipelineIn } from './pipeline'
 import { useToolTracking } from './useToolTracking'
 
@@ -114,6 +116,19 @@ export function PipelineApp() {
           ))}
         </div>
 
+        <Benchmarks
+          title="Cobertura de pipeline"
+          rows={[
+            {
+              label: 'Pipeline abierto / lo que falta',
+              note: 'Con tasas de cierre de 25–35%, se necesitan unas 3 veces la meta en pipeline.',
+              yours: `${fmt(o.coverage, 1)}x`,
+              ref: `${COVERAGE_RULE}x`,
+              status: o.coverage < COVERAGE_RULE ? 'low' : 'ok',
+            },
+          ]}
+          sources={[SOURCES.rule]}
+        />
         <p className="q-plan">
           {o.gap ? (
             <>
