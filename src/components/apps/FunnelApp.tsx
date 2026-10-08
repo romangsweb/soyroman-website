@@ -119,6 +119,13 @@ export function FunnelApp() {
           >
             ¿Cuánta gente necesito para esto? ▸
           </Link>
+          <Link
+            className="btn"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', marginTop: 10 }}
+            href="/recursos/planeador-marketing"
+          >
+            Planear el año por trimestre ▸
+          </Link>
         </div>
       </div>
 

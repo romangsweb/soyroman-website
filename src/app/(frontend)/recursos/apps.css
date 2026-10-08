@@ -606,3 +606,79 @@
 .te-app .cp-lg span::before{content:"";display:inline-block;width:8px;height:8px;margin-right:4px;vertical-align:-1px}
 .te-app .cp-lg .h::before{background:var(--or)}.te-app .cp-lg .r::before{background:#f2c14e}.te-app .cp-lg .p::before{background:#2f5a46}.te-app .cp-lg .a::before{background:#3ddc84}
 @media(max-width:560px){.te-app .cp-r{grid-template-columns:70px repeat(12,minmax(0,1fr))}.te-app .cp-m{font-size:7px}}
+
+/* ───────── Planeador de marketing (PLAN·01): prefijo pl- ───────── */
+.te-app .pl-cfg{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));background:#fff;border:2px solid var(--ink);border-radius:10px;padding:12px;margin-bottom:12px;align-items:end}
+.te-app .pl-cfg label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);display:grid;gap:4px}
+.te-app .pl-cfg-k{display:flex;justify-content:flex-end}
+.te-app .pl-cfg input,.te-app .pl-cfg select,.te-app .pl-t input,.te-app .pl-t select,.te-app .pl-fld textarea{font:inherit;font-size:12px;border:1.5px solid var(--ink);border-radius:4px;padding:5px 6px;background:#fff;min-width:0;color:var(--ink)}
+.te-app .pl-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.te-app .pl-tab{font:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border:2px solid var(--ink);background:#e6e5df;padding:8px 12px;border-radius:8px;box-shadow:0 3px 0 #000;cursor:pointer;color:var(--ink)}
+.te-app .pl-tab i{font-style:normal;color:var(--or);margin-right:5px}
+.te-app .pl-tab.on{background:var(--ink);color:#fff;transform:translateY(2px);box-shadow:0 1px 0 #000}
+.te-app .pl-h{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:400;color:var(--grey);margin:18px 0 8px}
+.te-app .pl-tbl{overflow-x:auto;background:#fff;border:2px solid var(--ink);border-radius:10px}
+.te-app .pl-t{border-collapse:collapse;width:100%;font-size:11px}
+.te-app .pl-t th{font-weight:400;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);text-align:left;padding:7px 6px;border-bottom:2px solid var(--ink);white-space:nowrap;background:#f4f4f1}
+.te-app .pl-t td{padding:4px 5px;border-bottom:1px dashed #c3c6c3;white-space:nowrap}
+.te-app .pl-t .n{text-align:right}
+.te-app .pl-t tr.sub td{background:#f4f4f1;font-weight:700}
+.te-app .pl-t td.bad{color:var(--or)}.te-app .pl-t td.warn{color:#b8860b}.te-app .pl-t td.ok{color:#1a9d5a}
+.te-app .pl-t td.in.bad input{border-color:var(--or)}.te-app .pl-t td.in.ok input{border-color:#1a9d5a}
+.te-app .pl-seg tr.plan td{color:var(--grey);border-bottom:0;padding-top:8px}
+.te-app .pl-ro{color:var(--grey)}
+.te-app .pl-x{border:0;background:none;color:var(--or);font-size:14px;cursor:pointer}
+.te-app .pl-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.te-app .pl-muted{font-size:10px;color:var(--grey);letter-spacing:.06em;text-transform:uppercase}
+.te-app .pl-intro{font-size:12px;line-height:1.6;margin:0 0 10px}
+.te-app .pl-lcd{background:#0b0d0c;color:#cfd;border:2px solid var(--ink);border-radius:10px;padding:14px;margin-top:12px;overflow-x:auto}
+.te-app .pl-lt{border-collapse:collapse;width:100%;font-size:11px;min-width:640px;font-variant-numeric:tabular-nums}
+.te-app .pl-lt th{font-weight:400;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#8a9;text-align:right;padding:6px;border-bottom:1px solid #2a2f2c}
+.te-app .pl-lt th:first-child,.te-app .pl-lt td:first-child{text-align:left}
+.te-app .pl-lt td{padding:6px;text-align:right;border-bottom:1px solid #1b201e}
+.te-app .pl-lt tr.hl td{color:#3ddc84;font-size:13px}
+.te-app .pl-lt tr.or td{color:#ff7a3d}
+.te-app .pl-lg{display:flex;flex-wrap:wrap;gap:10px;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#8a9;margin-top:8px}
+.te-app .pl-lg .c-nd{color:#8fa198}.te-app .pl-lg .c-pl{color:#ff7a3d}.te-app .pl-lg .c-ok{color:#3ddc84}
+.te-app .pl-dot{display:inline-block;width:10px;height:10px;border:1px solid #000;margin-right:6px;vertical-align:-1px}
+.te-app .pl-alert{background:#fff;border:2px solid var(--ink);border-left:8px solid var(--or);padding:10px 12px;font-size:12px;margin-top:10px;line-height:1.5}
+.te-app .pl-alert.y{border-left-color:#f2c14e}.te-app .pl-alert.g{border-left-color:#3ddc84}
+.te-app .pl-alert b{font-weight:400;color:var(--or)}
+.te-app .pl-g{display:grid;grid-template-columns:200px repeat(12,minmax(42px,1fr)) 96px;gap:2px;font-size:10px;align-items:center;min-width:900px}
+.te-app .pl-g .h{color:#8a9;font-size:9px;letter-spacing:.08em;text-transform:uppercase;text-align:center}
+.te-app .pl-g .qh{grid-column:span 3;text-align:center;font-size:9px;letter-spacing:.14em;color:#0b0d0c;background:#8a9;border-radius:2px;padding:2px 0}
+.te-app .pl-g .lab{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:6px}
+.te-app .pl-g .c{height:22px;border-radius:2px;background:#15191b;font-size:9px;display:flex;align-items:center;justify-content:center;color:#0b0d0c}
+.te-app .pl-g .tot{text-align:right;color:#fff}
+.te-app .pl-g .sum{color:#ff7a3d;border-top:1px solid #233;padding-top:4px}
+.te-app .pl-g .dim{color:#8a9}
+.te-app .pl-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+.te-app .pl-kpi{border:1px solid #2a2f2c;border-radius:6px;padding:10px}
+.te-app .pl-kpi b{display:block;font-size:20px;font-weight:400}
+.te-app .pl-kpi span{font-size:9px;letter-spacing:.1em;color:#8a9;text-transform:uppercase}
+.te-app .pl-kpi.bad b{color:#ff7a3d}.te-app .pl-kpi.ok b{color:#3ddc84}.te-app .pl-kpi.warn b{color:#f2c14e}
+.te-app .pl-type{display:grid;grid-template-columns:150px 1fr 110px;gap:8px;align-items:center;font-size:11px;margin-bottom:4px}
+.te-app .pl-type i{display:block;height:10px}
+.te-app .pl-type span:last-child{text-align:right}
+.te-app .pl-bars{display:grid;gap:4px;align-items:end;height:180px;margin-top:6px}
+.te-app .pl-bars>div{display:flex;flex-direction:column;justify-content:flex-end;height:100%;font-size:8px;color:#8a9;text-align:center}
+.te-app .pl-bars .pair{display:flex;gap:2px;align-items:flex-end;flex:1}
+.te-app .pl-bars .pair i{flex:1;display:block;border-radius:2px 2px 0 0}
+.te-app .pl-bars i.nd{background:#5f6e66}.te-app .pl-bars i.pl{background:#ff7a3d}.te-app .pl-bars i.pl.okb{background:#3ddc84}
+.te-app .pl-fld{display:block;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:10px}
+.te-app .pl-fld span{display:block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-bottom:6px}
+.te-app .pl-fld textarea{width:100%;resize:vertical;min-height:80px;line-height:1.5;font-family:system-ui,sans-serif}
+.te-app .pl-swot{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.te-app .pl-two{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+@media(max-width:700px){.te-app .pl-swot{grid-template-columns:1fr}}
+
+/* Probabilidad de llegar a la meta (Monte Carlo) dentro de Brecha de pipeline */
+.te-app .q-mc{margin-top:16px;display:grid;gap:14px;grid-template-columns:minmax(0,220px) minmax(0,1fr);background:#0b0d0c;border:2px solid var(--ink);border-radius:8px;padding:14px;color:#cfd}
+@media(max-width:700px){.te-app .q-mc{grid-template-columns:1fr}}
+.te-app .q-mc .t{font-size:10px;letter-spacing:.16em;color:#8a9;text-transform:uppercase}
+.te-app .q-mc .big{font-size:48px;line-height:1;margin:6px 0}
+.te-app .q-mc .big.ok{color:#3ddc84}.te-app .q-mc .big.warn{color:#f2c14e}.te-app .q-mc .big.bad{color:#ff7a3d}
+.te-app .q-mc p{font-size:12px;line-height:1.55;margin:8px 0 0}
+.te-app .q-mc p b{color:#ff7a3d;font-weight:400}
+.te-app .q-hist{display:grid;grid-template-columns:repeat(30,1fr);gap:1px;align-items:end;height:120px}
+.te-app .q-hist i{display:block;background:#2f5a46}.te-app .q-hist i.hit{background:#3ddc84}

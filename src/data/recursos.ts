@@ -256,6 +256,21 @@ export const RECURSOS: Recurso[] = [
     kind: 'calc',
     isNew: true,
   },
+  {
+    slug: 'planeador-marketing',
+    href: '/recursos/planeador-marketing',
+    code: 'PLAN·01',
+    name: 'Planeador de marketing',
+    sub: 'plan anual en Excel',
+    desc: 'De la cuota de venta por trimestre a los leads que hay que generar cada mes, las actividades, el presupuesto y el seguimiento. Se descarga en Excel con fórmulas.',
+    preview: { label: 'Cobertura', value: '50%' },
+    glossary: ['pipeline', 'mql', 'sql', 'lead', 'forecast', 'kpi', 'embudo-de-ventas'],
+    expertise: ['generacion-demanda-b2b', 'crm-revops'],
+    categories: ['generacion-demanda', 'crm-revops', 'analitica'],
+    areas: ['dem', 'rev'],
+    kind: 'calc',
+    isNew: true,
+  },
 ]
 
 export const LIVE = RECURSOS.filter((r) => r.href)

@@ -6,7 +6,7 @@ import { submitToolLead, type LeadState, type ToolMeta } from '@/actions/lead'
 import { track } from '@/lib/analytics'
 
 /** Formulario que desbloquea el plan: manda el lead a HubSpot y luego llama a onDone (imprimir). */
-export function Gate({ tool, summary, onDone, onCancel, meta }: { tool: string; summary: string; onDone: () => void; onCancel: () => void; meta?: ToolMeta }) {
+export function Gate({ tool, summary, onDone, onCancel, meta, intro, cta }: { tool: string; summary: string; onDone: () => void; onCancel: () => void; meta?: ToolMeta; intro?: string; cta?: string }) {
   const score = meta?.score != null && Number.isFinite(meta.score) ? String(Math.round(Math.max(0, Math.min(100, meta.score)))) : ''
   const [state, action, pending] = useActionState<LeadState, FormData>(submitToolLead, { status: 'idle' })
   useEffect(() => {
@@ -18,7 +18,7 @@ export function Gate({ tool, summary, onDone, onCancel, meta }: { tool: string; 
 
   return (
     <form className="gate on" action={action}>
-      <p>Te envío el diagnóstico a tu correo y lo puedes guardar en PDF.</p>
+      <p>{intro ?? 'Te envío el diagnóstico a tu correo y lo puedes guardar en PDF.'}</p>
       <input name="name" required placeholder="Nombre" aria-label="Nombre" autoComplete="given-name" />
       <input name="email" type="email" required placeholder="Correo de trabajo" aria-label="Correo de trabajo" autoComplete="email" />
       <input name="company" placeholder="Empresa" aria-label="Empresa" autoComplete="organization" />
@@ -35,7 +35,7 @@ export function Gate({ tool, summary, onDone, onCancel, meta }: { tool: string; 
       )}
       <div className="hidden" aria-hidden="true"><input name="sr_trap" tabIndex={-1} autoComplete="off" /></div>
       {state.status === 'error' && <span className="err" role="alert">{state.message}</span>}
-      <button disabled={pending}>{pending ? 'Enviando…' : 'Enviar y descargar ▸'}</button>
+      <button disabled={pending}>{pending ? 'Enviando…' : cta ?? 'Enviar y descargar ▸'}</button>
       <small>
         Uso tu correo solo para enviarte este recurso y, si quieres, dar seguimiento. <a href="/privacidad">Aviso de privacidad</a> ·{' '}
         <button type="button" onClick={onCancel} style={{ all: 'unset', cursor: 'pointer', textDecoration: 'underline' }}>Volver</button>

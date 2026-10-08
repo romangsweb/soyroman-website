@@ -34,6 +34,7 @@ const STATIC = [
   '/recursos/explorador-busquedas',
   '/recursos/auditoria-crm',
   '/recursos/capacidad-comercial',
+  '/recursos/planeador-marketing',
   '/about',
   '/cv',
   '/uses',

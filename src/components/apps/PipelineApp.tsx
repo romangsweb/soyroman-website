@@ -8,7 +8,7 @@ import { AppHeader } from './Panels'
 import { Benchmarks } from './Benchmarks'
 import { Gate } from './Gate'
 import { COVERAGE_RULE, SOURCES } from '@/data/benchmarks'
-import { DEFAULTS, pipeline, type PipelineIn } from './pipeline'
+import { DEFAULTS, montecarlo, pipeline, type PipelineIn } from './pipeline'
 import { ShareButton, decodeState, encodeState, query } from './share'
 import { useToolTracking } from './useToolTracking'
 
@@ -33,6 +33,7 @@ export function PipelineApp() {
   const [gate, setGate] = useState(false)
   useToolTracking('Brecha de pipeline', v, gate)
   const o = useMemo(() => pipeline(v), [v])
+  const mc = useMemo(() => montecarlo(v), [v])
 
   const num = (raw: string) => (raw.trim() === '' || !Number.isFinite(Number(raw)) ? null : Math.max(0, Number(raw)))
   const setTop = (id: (typeof TOP)[number]['id'], raw: string) => {
@@ -53,6 +54,7 @@ export function PipelineApp() {
     `Meta trimestre ${usd(v.goal)} · Ganado ${usd(v.won)} · Forecast ponderado ${usd(o.forecast)} · Brecha ${usd(o.gap)}`,
     `Cobertura ${fmt(o.coverage, 1)}x · Caso seguro ${usd(o.commit)} · Si todo cierra ${usd(o.best)}`,
     ...o.rows.map((r) => `${r.name}: ${usd(r.amount)} al ${fmt(r.prob)}% = ${usd(r.weighted)}`),
+    `Probabilidad de llegar a la meta: ${fmt(mc.p * 100, 0)}%${mc.extra ? ` · para 80%: ${mc.extra} oportunidades nuevas` : ''}`,
     o.gap ? `Para cerrar la brecha: ${usd(o.newPipe)} de pipeline nuevo, ${fmt(Math.ceil(o.opps))} oportunidades, ~${fmt(Math.ceil(o.leads))} leads` : 'Sin brecha',
   ].join('\n')
 
@@ -151,6 +153,28 @@ export function PipelineApp() {
           )}
         </p>
 
+        <div className="q-mc" aria-live="polite">
+          <div>
+            <div className="t">Probabilidad de llegar a la meta</div>
+            <div className={`big ${mc.p >= 0.7 ? 'ok' : mc.p >= 0.4 ? 'warn' : 'bad'}`}>{fmt(mc.p * 100, 0)}%</div>
+            <div className="t">10,000 trimestres simulados</div>
+          </div>
+          <div>
+            {mc.hist.length > 0 && (
+              <div className="q-hist" role="img" aria-label={`Distribución de resultados: en ${fmt(mc.p * 100, 0)}% de los escenarios se cierra lo que falta`}>
+                {mc.hist.map((c, i) => <i key={i} className={((i + 1) / mc.hist.length) * mc.max >= mc.target ? 'hit' : ''} style={{ height: `${(c / Math.max(...mc.hist, 1)) * 100}%` }} />)}
+              </div>
+            )}
+            <p>
+              {mc.target === 0
+                ? 'Ya ganaste la meta del trimestre.'
+                : <>En {fmt(mc.p * 100, 0)} de cada 100 trimestres simulados cierras los {usd(mc.target)} que faltan. {mc.p < 0.8
+                    ? <>Para llegar a 80% necesitas <b>unas {mc.extra} oportunidades nuevas</b> de {usd(v.ticket)} que entren en {o.rows[0]?.name.toLowerCase() || 'la primera etapa'} ({fmt(mc.early * 100, 0)}% de cierre) y alcancen a cerrar este trimestre.</>
+                    : 'Tienes margen: protege los negocios en las últimas etapas.'}</>}
+            </p>
+          </div>
+        </div>
+
         {gate ? (
           <div className="q-gate"><Gate tool="Brecha de pipeline" summary={summary} meta={{ slug: 'brecha-pipeline', finding: summary.split('\n')[0], items: summary.split('\n').slice(0, 3).map((t) => ({ t })) }} onDone={print} onCancel={() => setGate(false)} /></div>
         ) : (
@@ -180,6 +204,7 @@ export function PipelineApp() {
             <tr><td>Si todo cierra</td><td>{usd(o.best)}</td><td>{fmt((o.best / Math.max(v.goal, 1)) * 100, 0)}%</td></tr>
           </tbody>
         </table>
+        <p>Probabilidad de llegar a la meta (10,000 trimestres simulados): {fmt(mc.p * 100, 0)}%{mc.extra ? `. Para llegar a 80%: unas ${mc.extra} oportunidades nuevas.` : '.'}</p>
         {o.gap > 0 && <p>Para cerrar la brecha con pipeline nuevo: {usd(o.newPipe)} ({fmt(Math.ceil(o.opps))} oportunidades, ~{fmt(Math.ceil(o.leads))} leads).</p>}
         <h3>Siguientes pasos</h3>
         <ol>
