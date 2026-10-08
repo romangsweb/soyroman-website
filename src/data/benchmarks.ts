@@ -21,6 +21,11 @@ export const SOURCES = {
     url: 'https://thedigitalbloom.com/learn/pipeline-performance-benchmarks-2025/',
     note: 'Recopilado de más de 40 estudios (FirstPageSage y otros); sin tamaño de muestra. Úsalo como rango orientativo.',
   },
+  skok: {
+    name: 'David Skok · SaaS Metrics 2.0 (For Entrepreneurs)',
+    url: 'https://www.forentrepreneurs.com/saas-metrics-2/',
+    note: 'Propone LTV mayor a 3 veces el CAC y recuperar el CAC en menos de 12 meses. Es una convención de la industria, no un estudio con muestra.',
+  },
   rule: {
     name: 'Regla práctica de ventas B2B',
     url: '',
@@ -47,3 +52,6 @@ export const FUNNEL_RANGES: Record<string, [number, number]> = {
 
 export const BUDGET_REF = { revenueShare: 7.7, paidShare: 30.6 }
 export const COVERAGE_RULE = 3
+/** LTV:CAC mínimo de referencia y meses de payback que suelen aceptarse por segmento. */
+export const LTV_RULE = 3
+export const PAYBACK_REF = { smb: 12, mid: 18, ent: 24 }

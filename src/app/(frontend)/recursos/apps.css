@@ -682,3 +682,43 @@
 .te-app .q-mc p b{color:#ff7a3d;font-weight:400}
 .te-app .q-hist{display:grid;grid-template-columns:repeat(30,1fr);gap:1px;align-items:end;height:120px}
 .te-app .q-hist i{display:block;background:#2f5a46}.te-app .q-hist i.hit{background:#3ddc84}
+
+/* ───────── Velocidad de pipeline y LTV:CAC (vl-, lt-) ───────── */
+.te-app .vl-t{font-size:10px;letter-spacing:.16em;color:#8a9;text-transform:uppercase}
+.te-app .vl-big{font-size:clamp(30px,5vw,44px);line-height:1.05;margin:6px 0 4px}
+.te-app .vl-big small{font-size:.35em;color:#8a9}
+.te-app .vl-big.ok{color:#3ddc84}.te-app .vl-big.warn{color:#f2c14e}.te-app .vl-big.bad{color:#ff7a3d}
+.te-app .vl-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:10px}
+.te-app .vl-tiles div{border:1px solid #2a2f2c;border-radius:6px;padding:8px}
+.te-app .vl-tiles b{display:block;font-size:17px;font-weight:400}
+.te-app .vl-tiles span{font-size:9px;letter-spacing:.1em;color:#8a9;text-transform:uppercase}
+.te-app .vl-lev{width:100%;border-collapse:collapse;font-size:11px;margin-top:6px;font-variant-numeric:tabular-nums}
+.te-app .vl-lev td{padding:5px 0;border-bottom:1px solid #1b201e}
+.te-app .vl-lev td:nth-child(2),.te-app .vl-lev td:nth-child(3){text-align:right}
+.te-app .vl-lev td:nth-child(3){color:#8a9;width:70px}
+.te-app .vl-lev b{font-weight:400}.te-app .vl-lev b.near{color:#3ddc84}.te-app .vl-lev b.far{color:#ff7a3d}
+.te-app .vl-dec{display:grid;gap:6px;margin-top:8px}
+.te-app .vl-row{display:grid;grid-template-columns:120px 1fr 74px;gap:8px;align-items:center;font-size:11px}
+.te-app .vl-row span:last-child{text-align:right}
+.te-app .vl-axis{position:relative;height:12px;background:#15191b;border-radius:2px}
+.te-app .vl-axis::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:#566}
+.te-app .vl-axis i{position:absolute;top:0;bottom:0;background:#3ddc84;border-radius:2px}.te-app .vl-axis i.neg{background:#ff7a3d}
+.te-app .lt-svg{width:100%;height:auto;display:block;margin-top:6px}
+
+/* ───────── Lead scoring (sc-) ───────── */
+.te-app .sc-two{display:grid;gap:12px}@media(min-width:900px){.te-app .sc-two{grid-template-columns:1fr 1fr}}
+.te-app .sc-cfg{display:grid;gap:12px;margin-top:12px;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:12px}@media(min-width:800px){.te-app .sc-cfg{grid-template-columns:280px 1fr}}
+.te-app .sc-cfg label,.te-app .sc-cfg legend{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);display:grid;gap:4px}
+.te-app .sc-cfg select{font:inherit;font-size:12px;border:1.5px solid var(--ink);border-radius:4px;padding:5px 6px;background:#fff;text-transform:none;letter-spacing:0;color:var(--ink)}
+.te-app .sc-cfg fieldset{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px}
+.te-app .sc-chk{display:flex !important;gap:6px;align-items:center;font-size:12px !important;text-transform:none !important;letter-spacing:0 !important;color:var(--ink) !important}
+.te-app .sc-chk small{color:var(--grey)}
+.te-app .sc-chk input{accent-color:var(--or)}
+.te-app .sc-pick{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:10px;display:grid;gap:4px}
+.te-app .sc-add{font:inherit;font-size:10px;letter-spacing:.08em;text-transform:uppercase;border:1.5px solid var(--ink);background:#fff;border-radius:4px;padding:3px 6px;cursor:pointer}
+.te-app .sc-add:hover{background:var(--or);color:#fff}
+.te-app .sc-leak{color:var(--or)}
+.te-app .sc-sub{display:block;color:var(--grey);font-size:10px;margin-top:2px}
+.te-app .sc-tag{display:inline-block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border:1px solid var(--ink);border-radius:3px}
+.te-app .sc-tag.hot{background:var(--or);color:#fff}.te-app .sc-tag.warm{background:#f2c14e}.te-app .sc-tag.cold{background:#dfe3e6}
+.te-app .sc-res{font-size:13px;margin:10px 0 0}
