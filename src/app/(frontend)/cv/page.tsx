@@ -6,7 +6,9 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { ArrowUpRight } from '@/components/icons'
-import { canonical } from '@/lib/seo'
+import { CvDownload } from '@/components/cv/CvDownload'
+import { CERTS, CV_SUMMARY, LINKS, TOOLS, UNIVERSITY, cleanAchievements, yearRange } from '@/data/cv'
+import { PERSON_ID, SITE, canonical, ld } from '@/lib/seo'
 
 export default async function CVPage() {
   const profile = await cms.findGlobal({ slug: 'profile' })
@@ -32,16 +34,8 @@ export default async function CVPage() {
                     SYS.05 // Trayectoria
                   </p>
                 </div>
-                {profile?.cvFile && (
-                  <a
-                    href={typeof profile.cvFile === 'object' ? (profile.cvFile as any).url : '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-2 border border-black bg-white px-4 py-2 hover:bg-black hover:text-white transition-colors font-mono uppercase tracking-widest text-[10px] font-bold"
-                  >
-                    Descargar PDF
-                    <ArrowUpRight className="w-3 h-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                  </a>
+                {profile?.cvFile && typeof profile.cvFile === 'object' && (profile.cvFile as any).url && (
+                  <div className="hidden md:block"><CvDownload url={(profile.cvFile as any).url} /></div>
                 )}
               </div>
             </Reveal>
@@ -51,8 +45,21 @@ export default async function CVPage() {
             </h1>
             <Reveal delay={0.3}>
               <p className="font-mono text-sm md:text-base opacity-70 leading-relaxed max-w-2xl mt-8">
-                Años de experiencia diseñando y liderando sistemas de crecimiento B2B escalables.
+                {CV_SUMMARY}
               </p>
+              <div className="flex flex-wrap gap-3 mt-8">
+                {LINKS.map((l) => (
+                  <a key={l.label} href={l.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-black bg-white px-4 py-2 hover:bg-black hover:text-white transition-colors font-mono uppercase tracking-widest text-[10px] font-bold">
+                    {l.label} <ArrowUpRight className="w-3 h-3" />
+                  </a>
+                ))}
+                <Link href="/contacto" className="inline-flex items-center gap-2 border border-black bg-black text-white px-4 py-2 hover:bg-[#e85a2a] hover:border-[#e85a2a] transition-colors font-mono uppercase tracking-widest text-[10px] font-bold">
+                  Contacto
+                </Link>
+              </div>
+              {profile?.cvFile && typeof profile.cvFile === 'object' && (profile.cvFile as any).url && (
+                <div className="md:hidden mt-6"><CvDownload url={(profile.cvFile as any).url} /></div>
+              )}
             </Reveal>
             <div className="absolute right-8 bottom-8 w-16 h-16 border-2 border-black flex items-center justify-center opacity-20">
               <div className="w-4 h-4 bg-black"></div>
@@ -72,11 +79,7 @@ export default async function CVPage() {
                     <div className="md:col-span-3 p-8 flex flex-col justify-between">
                       <div className="flex items-center justify-between mb-16">
                         <p className="font-mono text-xs uppercase tracking-widest font-bold bg-black text-white px-2 py-1 inline-block">
-                          {exp.startDate && new Date(exp.startDate).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit' })}
-                          {' // '}
-                          {exp.endDate
-                            ? new Date(exp.endDate).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit' })
-                            : 'ACT'}
+                          {yearRange(exp.startDate, exp.endDate)}
                         </p>
                         <div className={`w-3 h-3 border border-black ${!exp.endDate ? 'bg-[#e85a2a] animate-pulse' : 'bg-transparent'}`}></div>
                       </div>
@@ -90,17 +93,17 @@ export default async function CVPage() {
                           {exp.position}
                         </h2>
                         <span className="font-mono uppercase tracking-widest text-sm font-bold opacity-60 bg-white border border-black px-3 py-1 self-start md:self-auto">
-                          {exp.company}
+                          {exp.type === 'education' ? UNIVERSITY : exp.company}
                         </span>
                       </div>
 
-                      {exp.achievements && exp.achievements.length > 0 && (
+                      {cleanAchievements(exp.achievements).length > 0 && (
                         <div className="mt-8 border-t border-black/10 pt-8">
                           <ul className="space-y-4">
-                            {exp.achievements.map((a: any, i: number) => (
+                            {cleanAchievements(exp.achievements).map((a: string, i: number) => (
                               <li key={i} className="text-base md:text-lg leading-relaxed flex gap-4 font-light text-black/80">
                                 <span className="font-mono text-[#e85a2a] shrink-0 font-bold mt-1">{'>'}</span>
-                                {a.text}
+                                {a}
                               </li>
                             ))}
                           </ul>
@@ -114,6 +117,52 @@ export default async function CVPage() {
           </div>
         </section>
 
+        {/* Certificaciones y herramientas */}
+        <section className="border-t border-black bg-[#f4f4f4]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-black">
+            <div className="lg:col-span-7 p-8 md:p-12">
+              <h2 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-8 text-black/50">// Certificaciones</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {CERTS.map((c) => (
+                  <div key={c.org} className="border border-black bg-white p-5">
+                    <p className="font-mono text-[10px] uppercase tracking-widest font-bold text-[#e85a2a] mb-2">{c.org}</p>
+                    <p className="font-mono text-sm leading-relaxed">{c.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="lg:col-span-5 p-8 md:p-12">
+              <h2 className="font-mono font-bold uppercase tracking-widest text-[10px] mb-8 text-black/50">// Herramientas</h2>
+              <div className="flex flex-wrap gap-2">
+                {TOOLS.map((t) => (
+                  <span key={t} className="font-mono text-[10px] uppercase font-bold tracking-widest px-3 py-1.5 border border-black bg-white">{t}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: ld({
+              '@type': 'ProfilePage',
+              '@id': `${SITE}/cv#page`,
+              url: `${SITE}/cv`,
+              mainEntity: {
+                '@id': PERSON_ID,
+                '@type': 'Person',
+                name: 'Román García',
+                jobTitle: 'Director de marketing B2B',
+                alumniOf: { '@type': 'CollegeOrUniversity', name: UNIVERSITY },
+                hasCredential: CERTS.flatMap((c) =>
+                  c.items.map((name) => ({ '@type': 'EducationalOccupationalCredential', name, recognizedBy: { '@type': 'Organization', name: c.org } })),
+                ),
+                knowsAbout: TOOLS,
+              },
+            }),
+          }}
+        />
       </div>
     </PageTransition>
   )
@@ -121,6 +170,6 @@ export default async function CVPage() {
 
 export const metadata: Metadata = {
   alternates: canonical('/cv'),
-  title: 'Trayectoria',
-  description: 'Trayectoria profesional de Román García — Director de Marketing B2B.',
+  title: 'Trayectoria y CV',
+  description: 'Trayectoria de Román García, director de marketing B2B desde 2017: demanda, CRM, SEO/AEO, certificaciones y herramientas.',
 }

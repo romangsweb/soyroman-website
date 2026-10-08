@@ -607,7 +607,6 @@ async function seed() {
 
   // ─── Experience ───
   console.log('  experience')
-  const grow = { text: 'Incremento en la generación de demanda digital.' }
   const experienceData = [
     {
       company: 'Buildations',
@@ -616,8 +615,8 @@ async function seed() {
       startDate: '2024-01-01T00:00:00.000Z',
       order: 1,
       achievements: [
-        { text: 'Laboratorio de IA con motores Revenue Intelligence y Search & Presence.' },
-        { text: 'Infraestructura propia con Docker, PostgreSQL, Qdrant, Ollama, n8n y Tailscale.' },
+        { text: 'Motores Revenue Intelligence y Search & Presence para equipos de marketing y ventas.' },
+        { text: 'Infraestructura propia: Docker, PostgreSQL, Ollama y n8n.' },
       ],
     },
     {
@@ -640,7 +639,7 @@ async function seed() {
       startDate: '2020-01-01T00:00:00.000Z',
       endDate: '2023-01-01T00:00:00.000Z',
       order: 3,
-      achievements: [{ text: 'Migración de Dynamics CRM a HubSpot.' }, grow],
+      achievements: [{ text: 'Impulsé la migración de Dynamics CRM a HubSpot y definí la estructura del nuevo CRM: ciclo de vida, scoring y paso de lead a oportunidad.' }],
     },
     {
       company: 'Empresa de soluciones RFID',
@@ -649,7 +648,7 @@ async function seed() {
       startDate: '2019-01-01T00:00:00.000Z',
       endDate: '2020-01-01T00:00:00.000Z',
       order: 4,
-      achievements: [grow],
+      achievements: [],
     },
     {
       company: 'Empresa de servicios de nube en AWS',
@@ -658,7 +657,7 @@ async function seed() {
       startDate: '2018-01-01T00:00:00.000Z',
       endDate: '2019-01-01T00:00:00.000Z',
       order: 5,
-      achievements: [grow],
+      achievements: [],
     },
     {
       company: 'Empresa de desarrollo de cursos digitales',
@@ -667,20 +666,16 @@ async function seed() {
       startDate: '2017-01-01T00:00:00.000Z',
       endDate: '2018-01-01T00:00:00.000Z',
       order: 6,
-      achievements: [grow],
+      achievements: [],
     },
     {
-      company: 'Formación académica',
+      company: 'Universidad del Valle de México',
       type: 'education' as const,
       position: 'Licenciatura en Marketing, especialidad en Publicidad',
       startDate: '2012-01-01T00:00:00.000Z',
       endDate: '2017-01-01T00:00:00.000Z',
       order: 7,
-      achievements: [
-        { text: 'Certificaciones de HubSpot.' },
-        { text: 'Certificaciones de Google.' },
-        { text: 'Universidad de Helsinki: Elements of AI, Building AI, Ethics of AI.' },
-      ],
+      achievements: [], // certificaciones: src/data/cv.ts
     },
   ]
   for (const exp of experienceData) {
@@ -692,6 +687,7 @@ async function seed() {
     ['Buildations', 'Fundador y Director'],
     ['Consultora de ERP enterprise', 'Director de Marketing'],
     ['Empresas de tecnología', 'Gerencias de Marketing'],
+    ['Formación académica', 'Licenciatura en Marketing, especialidad en Publicidad'],
   ]
   for (const [company, position] of oldExperience) {
     const found = await payload.find({
