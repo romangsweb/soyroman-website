@@ -18,6 +18,7 @@ const HOME_RECURSOS = ['embudo-inverso', 'auditor-aeo', 'te-recomienda-la-ia']
   .map((slug) => RECURSOS.find((r) => r.slug === slug && r.href))
   .filter((r): r is (typeof RECURSOS)[number] => !!r)
 import { canonical } from '@/lib/seo'
+import { MEETINGS } from '@/lib/meetings'
 
 export default async function HomePage() {
   const profile = await cms.findGlobal({ slug: 'profile' })
@@ -96,13 +97,16 @@ export default async function HomePage() {
                 Ver servicios <ArrowUpRight className="w-3 h-3" />
               </span>
             </Link>
-            <Link
-              href="/contacto"
-              className="sm:col-span-3 p-6 flex items-center justify-center gap-2 hover:bg-[#e85a2a] hover:text-white transition-colors group"
+            <a
+              href={MEETINGS}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cta="agendar"
+              className="sm:col-span-3 p-6 flex items-center justify-center gap-2 bg-[#e85a2a] text-white hover:bg-black transition-colors group"
             >
-              <span className="font-mono uppercase tracking-widest text-[10px] font-bold">Contacto</span>
+              <span className="font-mono uppercase tracking-widest text-[10px] font-bold">Agendar 30 min</span>
               <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-            </Link>
+            </a>
             <Link
               href="/cv"
               className="sm:col-span-3 p-6 flex items-center justify-center gap-2 hover:bg-black hover:text-white transition-colors group"

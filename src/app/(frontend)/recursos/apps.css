@@ -722,3 +722,17 @@
 .te-app .sc-tag{display:inline-block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border:1px solid var(--ink);border-radius:3px}
 .te-app .sc-tag.hot{background:var(--or);color:#fff}.te-app .sc-tag.warm{background:#f2c14e}.te-app .sc-tag.cold{background:#dfe3e6}
 .te-app .sc-res{font-size:13px;margin:10px 0 0}
+
+/* ───────── Encabezado y cierre de cada herramienta (ti-) ───────── */
+.te-app .ti{margin:0 0 18px}
+.te-app .ti-crumbs{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);margin-bottom:6px}
+.te-app .ti-crumbs a{color:inherit;text-decoration:none;border-bottom:1px dashed var(--grey)}
+.te-app .ti-crumbs a:hover{color:var(--or);border-color:var(--or)}
+.te-app .ti h1{font-size:clamp(22px,3.4vw,34px);font-weight:400;letter-spacing:-.01em;line-height:1.1;margin:0}
+.te-app .ti p{font-size:13px;line-height:1.55;color:#333;margin:6px 0 0;max-width:70ch}
+.te-app .ti-call{display:grid;gap:14px;align-items:center;margin-top:28px;background:var(--ink);color:#fff;border:2px solid var(--ink);border-radius:14px;padding:18px 20px;box-shadow:6px 6px 0 var(--or)}
+@media(min-width:800px){.te-app .ti-call{grid-template-columns:1fr auto}}
+.te-app .ti-call b{display:block;font-weight:400;font-size:18px;color:var(--or)}
+.te-app .ti-call span{font-size:12px;line-height:1.55;color:#cfd}
+.te-app .ti-call-k{display:flex;gap:10px;flex-wrap:wrap}
+.te-app .ti-call-k .btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:0 18px;flex:none}

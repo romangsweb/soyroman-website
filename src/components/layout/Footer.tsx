@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { cms } from '@/lib/cms'
 import { CdmxClock } from './DotMatrix'
 import { CookieLink } from '@/components/analytics/CookieLink'
+import { MEETINGS } from '@/lib/meetings'
 
 const GROUPS: [string, [string, string][]][] = [
   ['Trabajo', [['/expertise', 'Expertise'], ['/proyectos', 'Proyectos'], ['/consultoria', 'Consultoría']]],
@@ -51,9 +52,9 @@ export async function FooterComponent() {
             </p>
           </div>
           <div className="lg:col-span-5 p-8 md:p-14 flex flex-col justify-center gap-4 border-t lg:border-t-0 lg:border-l border-white/20">
-            <Link href="/contacto" className="flex items-center justify-between h-14 px-5 border-2 border-white bg-[#e85a2a] font-mono text-[11px] uppercase font-bold tracking-widest shadow-[4px_4px_0_#fff] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0_#fff] transition-[transform,box-shadow]">
+            <a href={MEETINGS} target="_blank" rel="noopener noreferrer" data-cta="agendar" className="flex items-center justify-between h-14 px-5 border-2 border-white bg-[#e85a2a] font-mono text-[11px] uppercase font-bold tracking-widest shadow-[4px_4px_0_#fff] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0_#fff] transition-[transform,box-shadow]">
               Agendar una llamada <span aria-hidden="true">▸</span>
-            </Link>
+            </a>
             <Link href="/consultoria" className="flex items-center justify-between h-14 px-5 border-2 border-white font-mono text-[11px] uppercase font-bold tracking-widest shadow-[4px_4px_0_#fff] hover:bg-white hover:text-black active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0_#fff] transition-[transform,box-shadow,background-color,color]">
               Ver cómo trabajo <span aria-hidden="true">▸</span>
             </Link>
