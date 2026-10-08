@@ -5,6 +5,7 @@ import React, { useCallback, useState } from 'react'
 import type { Audit, Check } from '@/lib/aeoAudit'
 import { AppHeader } from './Panels'
 import { Gate } from './Gate'
+import { NextTool, saveSharedDomain, useSharedDomain } from './sharedDomain'
 import { useToolTracking } from './useToolTracking'
 
 const GROUPS: Check['group'][] = ['Acceso', 'Lectura', 'Estructura']
@@ -12,6 +13,7 @@ const verdict = (s: number) => (s >= 80 ? 'Listo para las IA' : s >= 55 ? 'Te pu
 
 export function AeoApp() {
   const [domain, setDomain] = useState('')
+  useSharedDomain(setDomain)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [audit, setAudit] = useState<Audit | null>(null)
@@ -32,7 +34,10 @@ export function AeoApp() {
       })
       const data = await res.json()
       if (!res.ok) setError(data.error || 'No pude revisar ese sitio.')
-      else setAudit(data)
+      else {
+        setAudit(data)
+        saveSharedDomain(data.domain)
+      }
     } catch {
       setError('No pude conectar. Intenta de nuevo.')
     } finally {
@@ -126,12 +131,7 @@ export function AeoApp() {
               <button type="button" className="btn or" onClick={() => setGate(true)} disabled={!fixes.length}>
                 {fixes.length ? `Plan de correcciones en PDF (${fixes.length}) ▸` : 'Sin correcciones pendientes ✓'}
               </button>
-              <a className="btn" href="/recursos/radiografia-stack" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
-                Ver todo su stack ▸
-              </a>
-              <a className="btn" href="/recursos/comparador-competidores" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
-                Compárate con tu competencia ▸
-              </a>
+              <NextTool current="auditor-aeo" domain={audit.domain} />
             </div>
           ))}
         </div>

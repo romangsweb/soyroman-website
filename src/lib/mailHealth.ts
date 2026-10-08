@@ -50,7 +50,7 @@ const SENDERS: { name: string; mx?: RegExp; spf?: RegExp; dkim: string[] }[] = [
   { name: 'Proofpoint', mx: /pphosted\.com/i, dkim: [] },
   { name: 'Mimecast', mx: /mimecast/i, dkim: [] },
 ]
-const SELECTORS = [...new Set([...SENDERS.flatMap((s) => s.dkim), 'default', 'dkim', 'selector', 'email', 's1024'])]
+const SELECTORS = [...new Set([...SENDERS.flatMap((s) => s.dkim), 'default', 'dkim', 'selector', 'email', 's1024', 'resend'])]
 
 // Listas negras de dominios (no de IP: las IP de envío no son públicas)
 const DBLS = [
@@ -92,7 +92,23 @@ async function spfLookups(record: string, depth: number, budget: { n: number }):
   return n + (await Promise.all(nested)).reduce((a, b) => a + b, 0)
 }
 
-export async function runMailHealth(domain: string): Promise<MailResult> {
+// Plataforma probable según el formato de un selector DKIM propio
+const SELECTOR_OWNER: [RegExp, string][] = [
+  [/^hs\d(-\d+)?$/i, 'HubSpot'],
+  [/^k\d$|^mte\d$/i, 'Mailchimp'],
+  [/^s\d$|^smtpapi$/i, 'SendGrid'],
+  [/^google$/i, 'Google Workspace'],
+  [/^selector\d$/i, 'Microsoft 365'],
+  [/^(zoho|zmail)/i, 'Zoho'],
+  [/^(mail|brevo\d)$/i, 'Brevo'],
+  [/^resend$/i, 'Resend'],
+  [/^cf\d{4}-\d$/i, 'Cloudflare Email Routing'],
+  [/pm$/i, 'Postmark'],
+]
+export const validSelector = (s: string) => /^[a-z0-9][a-z0-9._-]{0,62}$/i.test(s)
+
+export async function runMailHealth(domain: string, customSelector = ''): Promise<MailResult> {
+  const custom = validSelector(customSelector) ? customSelector.toLowerCase() : ''
   const [mxRecs, rootTxt, dmarcTxt, stsTxt, tlsTxt, bimiTxt, dkimHits, lists] = await Promise.all([
     r.resolveMx(domain).catch(() => []),
     txtOrNull(domain),
@@ -100,7 +116,7 @@ export async function runMailHealth(domain: string): Promise<MailResult> {
     txt(`_mta-sts.${domain}`),
     txt(`_smtp._tls.${domain}`),
     txt(`default._bimi.${domain}`),
-    Promise.all(SELECTORS.map(async (s) => ((await txt(`${s}._domainkey.${domain}`)).some((t) => /p=[A-Za-z0-9+/]/.test(t)) ? s : null))),
+    Promise.all([...new Set([...(custom ? [custom] : []), ...SELECTORS])].map(async (s) => ((await txt(`${s}._domainkey.${domain}`)).some((t) => /p=[A-Za-z0-9+/]/.test(t)) ? s : null))),
     Promise.all(DBLS.map(async (d) => ({ name: d.name, result: await listed(domain, d.zone) }))),
   ])
   const mx = mxRecs.filter((m) => m.exchange && m.exchange !== '.').map((m) => m.exchange.toLowerCase())
@@ -127,11 +143,12 @@ export async function runMailHealth(domain: string): Promise<MailResult> {
     const byMx = !!(s.mx && s.mx.test(mxStr))
     const bySpf = !!(s.spf && s.spf.test(spfRec))
     if (!byMx && !bySpf) continue
-    const sel = s.dkim.filter((x) => dkim.includes(x))
+    const owner = custom && dkim.includes(custom) ? SELECTOR_OWNER.find(([re]) => re.test(custom))?.[1] : undefined
+    const sel = [...new Set([...s.dkim.filter((x) => dkim.includes(x)), ...(owner === s.name ? [custom] : [])])]
     senders.push({
       name: s.name,
       via: [byMx && 'MX', bySpf && 'SPF', sel.length && `DKIM ${sel.join('/')}`].filter(Boolean).join(' + '),
-      dkim: !s.dkim.length ? 'no-verificable' : sel.length ? 'si' : 'no',
+      dkim: sel.length ? 'si' : !s.dkim.length || (custom && dkim.includes(custom) && !SELECTOR_OWNER.some(([re]) => re.test(custom))) ? 'no-verificable' : 'no',
     })
   }
 

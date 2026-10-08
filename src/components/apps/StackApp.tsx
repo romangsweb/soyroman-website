@@ -6,12 +6,14 @@ import { BrandIcon } from '@/components/BrandIcon'
 import type { StackResult } from '@/lib/stackScan'
 import { AppHeader } from './Panels'
 import { Gate } from './Gate'
+import { NextTool, saveSharedDomain, useSharedDomain } from './sharedDomain'
 import { useToolTracking } from './useToolTracking'
 
 const STATUS_TXT = { ok: 'cubierto', warn: 'revisar', bad: 'falta' } as const
 
 export function StackApp() {
   const [domain, setDomain] = useState('')
+  useSharedDomain(setDomain)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [res, setRes] = useState<StackResult | null>(null)
@@ -28,7 +30,10 @@ export function StackApp() {
       const r = await fetch('/next/stack-scan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ domain }) })
       const d = await r.json()
       if (!r.ok) setError(d.error || 'No pude revisar ese sitio.')
-      else setRes(d)
+      else {
+        setRes(d)
+        saveSharedDomain(d.domain)
+      }
     } catch {
       setError('No pude conectar. Intenta de nuevo.')
     } finally {
@@ -110,7 +115,7 @@ export function StackApp() {
             ) : (
               <div className="s-keys">
                 <button type="button" className="btn or" onClick={() => setGate(true)}>Diagnóstico completo en PDF ▸</button>
-                <a className="btn" href="/recursos/salud-correo" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>Revisar su correo ▸</a>
+                <NextTool current="radiografia-stack" domain={res.domain} />
               </div>
             )}
           </>

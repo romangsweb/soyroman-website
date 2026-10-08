@@ -5,6 +5,7 @@ import React, { useCallback, useState } from 'react'
 import type { MailResult } from '@/lib/mailHealth'
 import { AppHeader } from './Panels'
 import { Gate } from './Gate'
+import { NextTool, saveSharedDomain, useSharedDomain } from './sharedDomain'
 import { useToolTracking } from './useToolTracking'
 
 const IDLE = ['MX', 'SPF', 'DKIM', 'DMARC', 'MTA-STS', 'TLS-RPT', 'BIMI', 'LISTAS']
@@ -12,6 +13,8 @@ const DKIM_TXT = { si: 'con DKIM', no: 'sin DKIM detectado', 'no-verificable': '
 
 export function MailApp() {
   const [domain, setDomain] = useState('')
+  useSharedDomain(setDomain)
+  const [selector, setSelector] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [res, setRes] = useState<MailResult | null>(null)
@@ -25,16 +28,19 @@ export function MailApp() {
     setError('')
     setRes(null)
     try {
-      const r = await fetch('/next/mail-health', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ domain }) })
+      const r = await fetch('/next/mail-health', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ domain, selector: selector.trim() }) })
       const d = await r.json()
       if (!r.ok) setError(d.error || 'No pude revisar ese dominio.')
-      else setRes(d)
+      else {
+        setRes(d)
+        saveSharedDomain(d.domain)
+      }
     } catch {
       setError('No pude conectar. Intenta de nuevo.')
     } finally {
       setBusy(false)
     }
-  }, [domain, busy])
+  }, [domain, selector, busy])
 
   const print = useCallback(() => {
     setGate(false)
@@ -61,11 +67,14 @@ export function MailApp() {
 
       <div className="x-dev">
         <div className="x-brand"><span><b>MAIL·01</b> salud del correo</span><span>8 luces · DNS público</span></div>
-        <form className="s-in" onSubmit={scan}>
+        <form className="s-in c-in" onSubmit={scan}>
           <input value={domain} onChange={(e) => setDomain(e.target.value)} placeholder="tu-dominio.com" aria-label="Dominio a revisar"
             inputMode="url" autoCapitalize="off" spellCheck={false} />
+          <input value={selector} onChange={(e) => setSelector(e.target.value)} placeholder="Selector DKIM (opcional)" aria-label="Selector DKIM opcional"
+            autoCapitalize="off" spellCheck={false} maxLength={63} className="e-sel" />
           <button type="submit" disabled={busy || !domain.trim()}>{busy ? '···' : 'REVISAR'}</button>
         </form>
+        <p className="s-help">¿Usas un selector DKIM propio? Está en el encabezado de cualquier correo tuyo: <code>DKIM-Signature: … s=selector</code>. Escríbelo para revisarlo primero.</p>
         {error && <p className="s-err" role="alert">{error}</p>}
 
         <div className={`e-lcd${busy ? ' busy' : ''}`}>
@@ -111,7 +120,7 @@ export function MailApp() {
             ) : (
               <div className="s-keys">
                 <button type="button" className="btn or" onClick={() => setGate(true)}>Guía de configuración en PDF ▸</button>
-                <a className="btn" href="/recursos/radiografia-stack" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>Ver todo su stack ▸</a>
+                <NextTool current="salud-correo" domain={res.domain} />
               </div>
             )}
           </>

@@ -558,3 +558,6 @@
 .te-app .bm-f{padding:8px 12px 10px;font-size:10px;line-height:1.5;color:#444}
 .te-app .bm-f p{margin:4px 0}
 .te-app .bm-f a{color:inherit;text-decoration:underline;text-decoration-color:var(--or)}
+.te-app .e-sel{max-width:240px}
+@media(max-width:560px){.te-app .e-sel{max-width:none}}
+.te-app .s-help code{font-size:10px;background:#fff;border:1px solid var(--ink);padding:0 3px;text-transform:none;letter-spacing:0}

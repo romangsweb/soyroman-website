@@ -1,5 +1,5 @@
 import { AuditError, normalizeDomain } from '@/lib/aeoAudit'
-import { runMailHealth, type MailResult } from '@/lib/mailHealth'
+import { runMailHealth, validSelector, type MailResult } from '@/lib/mailHealth'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -21,17 +21,19 @@ export async function POST(req: Request) {
   if (hits.size > 5000) hits.clear()
 
   let domain: string
+  const body = await req.json().catch(() => ({}))
   try {
-    const body = await req.json().catch(() => ({}))
     domain = normalizeDomain(String(body?.domain || ''))
   } catch (e) {
     return Response.json({ error: e instanceof AuditError ? e.message : 'Dominio no válido.' }, { status: 400 })
   }
-  const hit = cache.get(domain)
+  const selector = validSelector(String(body?.selector || '').trim()) ? String(body.selector).trim().toLowerCase() : ''
+  const ck = `${domain}|${selector}`
+  const hit = cache.get(ck)
   if (hit && now - hit.at < CACHE_MS) return Response.json(hit.data)
   try {
-    const data = await runMailHealth(domain)
-    cache.set(domain, { at: now, data })
+    const data = await runMailHealth(domain, selector)
+    cache.set(ck, { at: now, data })
     if (cache.size > 500) cache.delete(cache.keys().next().value as string)
     return Response.json(data)
   } catch (e) {

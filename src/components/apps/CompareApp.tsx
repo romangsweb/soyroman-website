@@ -5,6 +5,7 @@ import React, { useCallback, useState } from 'react'
 import type { Side } from '@/lib/compare'
 import { AppHeader } from './Panels'
 import { Gate } from './Gate'
+import { NextTool, saveSharedDomain, useSharedDomain } from './sharedDomain'
 import { useToolTracking } from './useToolTracking'
 
 type Res = { sides: Side[]; at: string }
@@ -56,6 +57,7 @@ function diagnose(sides: Side[]) {
 
 export function CompareApp() {
   const [doms, setDoms] = useState(['', '', ''])
+  useSharedDomain((d) => setDoms((x) => (x[0] ? x : [d, x[1], x[2]])))
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [res, setRes] = useState<Res | null>(null)
@@ -73,7 +75,10 @@ export function CompareApp() {
       const r = await fetch('/next/compare', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ domains: doms.filter((d) => d.trim()) }) })
       const d = await r.json()
       if (!r.ok) setError(d.error || 'No pude comparar esos sitios.')
-      else setRes(d)
+      else {
+        setRes(d)
+        saveSharedDomain(d.sides?.[0]?.domain)
+      }
     } catch {
       setError('No pude conectar. Intenta de nuevo.')
     } finally {
@@ -151,7 +156,10 @@ export function CompareApp() {
             {gate ? (
               <div className="s-gate"><Gate tool="Comparador de competidores" summary={summary} meta={res ? { slug: 'comparador-competidores', domain: res.sides[0]?.domain, score: res.sides[0]?.aeo ?? null, finding: dx[0]?.t, items: dx.slice(0, 3).map((x) => ({ t: x.t, fix: x.d })) } : undefined} onDone={print} onCancel={() => setGate(false)} /></div>
             ) : (
-              <div className="s-keys"><button type="button" className="btn or" onClick={() => setGate(true)}>Comparativa completa en PDF ▸</button></div>
+              <div className="s-keys">
+                <button type="button" className="btn or" onClick={() => setGate(true)}>Comparativa completa en PDF ▸</button>
+                <NextTool current="comparador-competidores" domain={res.sides[0]?.domain} />
+              </div>
             )}
           </>
         )}

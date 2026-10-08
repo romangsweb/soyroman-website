@@ -5,6 +5,7 @@ import React, { useCallback, useState } from 'react'
 import type { Field, FieldMetric, Lab, Strategy } from '@/lib/speedScan'
 import { AppHeader } from './Panels'
 import { Gate } from './Gate'
+import { NextTool, saveSharedDomain, useSharedDomain } from './sharedDomain'
 import { useToolTracking } from './useToolTracking'
 
 const STATUS_TXT = { ok: 'BUENO', warn: 'MEJORABLE', bad: 'LENTO' } as const
@@ -44,6 +45,7 @@ function Gauge({ g, label, sim }: { g: G; label: string; sim?: boolean }) {
 
 export function SpeedApp() {
   const [domain, setDomain] = useState('')
+  useSharedDomain(setDomain)
   const [strategy, setStrategy] = useState<Strategy>('mobile')
   const [busy, setBusy] = useState<'field' | 'lab' | null>(null)
   const [error, setError] = useState('')
@@ -72,6 +74,7 @@ export function SpeedApp() {
     try {
       const f = await call('field', domain, s)
       setSite(f.domain)
+      saveSharedDomain(f.domain)
       setField(f.field)
       setBusy('lab')
       try {
@@ -215,7 +218,7 @@ export function SpeedApp() {
             ) : (
               <div className="s-keys">
                 <button type="button" className="btn or" disabled={!!busy} onClick={() => setGate(true)}>Plan de mejora en PDF ▸</button>
-                <a className="btn" href="/recursos/comparador-competidores" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>Compárate con tu competencia ▸</a>
+                <NextTool current="velocidad-real" domain={site} />
               </div>
             )}
           </>

@@ -5,12 +5,14 @@ import React, { useCallback, useState } from 'react'
 import { track } from '@/lib/analytics'
 import type { AiResult, Market } from '@/lib/aiRecommend'
 import { AppHeader } from './Panels'
+import { saveSharedDomain, useSharedDomain } from './sharedDomain'
 import { useToolTracking } from './useToolTracking'
 
 const MARKETS: Market[] = ['México', 'Latinoamérica', 'España']
 
 export function AiApp() {
   const [f, setF] = useState({ domain: '', brand: '', service: '', market: 'México' as Market, email: '', sr_trap: '' })
+  useSharedDomain((d) => setF((x) => (x.domain ? x : { ...x, domain: d })))
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [res, setRes] = useState<AiResult | null>(null)
@@ -31,6 +33,7 @@ export function AiApp() {
       if (!r.ok) setError(d.error || 'No pude completar el diagnóstico.')
       else {
         setRes(d)
+        saveSharedDomain(d.domain)
         track('generate_lead', { form: 'recurso', tool: '¿Te recomienda la IA?' })
       }
     } catch {
