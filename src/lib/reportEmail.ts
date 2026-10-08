@@ -29,6 +29,7 @@ const SCORE_LABEL: Record<string, string> = {
   'comparador-competidores': 'tu preparación para IA',
   'te-recomienda-la-ia': 'respuestas de la IA que te mencionan',
   'madurez-revops': 'madurez de tu operación de revenue',
+  'auditoria-crm': 'salud de tu base de contactos',
 }
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)

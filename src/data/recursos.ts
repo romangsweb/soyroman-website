@@ -19,13 +19,14 @@ export type Recurso = {
 }
 
 export type Area = 'dem' | 'rev' | 'seo' | 'web'
-export type Kind = 'calc' | 'diag' | 'sitio' | 'ia'
+export type Kind = 'calc' | 'diag' | 'sitio' | 'ia' | 'datos'
 export const AREAS: Record<Area, string> = { dem: 'Demanda y medios', rev: 'RevOps y CRM', seo: 'SEO e IA', web: 'Sitio y stack' }
 export const KINDS: Record<Kind, { label: string; hint: string }> = {
   calc: { label: 'Calculadora', hint: 'usa tus números' },
   diag: { label: 'Diagnóstico', hint: 'respondes preguntas' },
   sitio: { label: 'Analizador', hint: 'escribe un dominio' },
   ia: { label: 'Con IA', hint: 'consulta en vivo' },
+  datos: { label: 'Con tus datos', hint: 'sube un CSV' },
 }
 
 export const RECURSOS: Recurso[] = [
@@ -168,7 +169,6 @@ export const RECURSOS: Recurso[] = [
     categories: ['sitios-web', 'seo-aeo'],
     areas: ['web', 'seo'],
     kind: 'sitio',
-    isNew: true,
   },
   {
     slug: 'salud-correo',
@@ -183,7 +183,6 @@ export const RECURSOS: Recurso[] = [
     categories: ['contenido-email', 'crm-revops'],
     areas: ['web', 'dem'],
     kind: 'sitio',
-    isNew: true,
   },
   {
     slug: 'comparador-competidores',
@@ -198,7 +197,6 @@ export const RECURSOS: Recurso[] = [
     categories: ['sitios-web', 'seo-aeo', 'analitica'],
     areas: ['seo', 'web'],
     kind: 'sitio',
-    isNew: true,
   },
   {
     slug: 'te-recomienda-la-ia',
@@ -213,7 +211,6 @@ export const RECURSOS: Recurso[] = [
     categories: ['seo-aeo', 'ia-aplicada'],
     areas: ['seo'],
     kind: 'ia',
-    isNew: true,
   },
   {
     slug: 'explorador-busquedas',
@@ -228,6 +225,35 @@ export const RECURSOS: Recurso[] = [
     categories: ['seo-aeo', 'contenido-email'],
     areas: ['seo', 'dem'],
     kind: 'ia',
+  },
+  {
+    slug: 'auditoria-crm',
+    href: '/recursos/auditoria-crm',
+    code: 'CRM·01',
+    name: 'Auditoría de CRM',
+    sub: 'salud de la base',
+    desc: 'Sube la exportación de tus contactos: duplicados, datos incompletos, sin propietario e inactivos. Se procesa en tu navegador.',
+    preview: { label: 'Salud', value: '68 / 100' },
+    glossary: ['crm', 'lead', 'mql', 'lead-scoring'],
+    expertise: ['crm-revops'],
+    categories: ['crm-revops', 'analitica'],
+    areas: ['rev'],
+    kind: 'datos',
+    isNew: true,
+  },
+  {
+    slug: 'capacidad-comercial',
+    href: '/recursos/capacidad-comercial',
+    code: 'CAP·01',
+    name: 'Capacidad comercial',
+    sub: 'SDR y vendedores',
+    desc: '¿Cuántos SDR y vendedores necesitas para tu meta, cuál es tu cuello de botella y cuándo empieza a cerrar alguien que contratas hoy?',
+    preview: { label: 'Equipo', value: '3 SDR · 4 AE' },
+    glossary: ['sdr', 'sql', 'win-rate', 'pipeline', 'forecast'],
+    expertise: ['crm-revops', 'liderazgo-equipos'],
+    categories: ['crm-revops', 'liderazgo'],
+    areas: ['rev', 'dem'],
+    kind: 'calc',
     isNew: true,
   },
 ]

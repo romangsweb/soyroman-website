@@ -112,6 +112,13 @@ export function FunnelApp() {
           >
             Siguiente: ¿cuánto presupuesto necesito? ▸
           </Link>
+          <Link
+            className="btn"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', marginTop: 10 }}
+            href={`/recursos/capacidad-comercial?goal=${v.goal}&ticket=${v.ticket}&win=${v.win}&opp=${v.opp}`}
+          >
+            ¿Cuánta gente necesito para esto? ▸
+          </Link>
         </div>
       </div>
 

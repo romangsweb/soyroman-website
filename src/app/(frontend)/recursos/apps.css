@@ -561,3 +561,48 @@
 .te-app .e-sel{max-width:240px}
 @media(max-width:560px){.te-app .e-sel{max-width:none}}
 .te-app .s-help code{font-size:10px;background:#fff;border:1px solid var(--ink);padding:0 3px;text-transform:none;letter-spacing:0}
+
+/* ───────── Auditoría de CRM (ca-) y Capacidad comercial (cp-) ───────── */
+.te-app .ca-drop{display:flex;gap:14px;align-items:center;border:2px dashed var(--ink);border-radius:10px;background:#fff;padding:18px;cursor:pointer;transition:background .15s}
+.te-app .ca-drop:hover,.te-app .ca-drop.over{background:#fff3ec;border-color:var(--or)}
+.te-app .ca-ico{font-size:28px;color:var(--or)}
+.te-app .ca-txt{font-size:13px;line-height:1.5}.te-app .ca-txt small{display:block;color:var(--grey);font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
+.te-app .ca-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.te-app .ca-priv{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#1f7a45;display:flex;gap:6px;align-items:center}
+.te-app .ca-priv i{width:8px;height:8px;border-radius:50%;background:#3ddc84;box-shadow:0 0 6px #3ddc84;display:inline-block}
+.te-app .ca-top{display:grid;grid-template-columns:170px 1fr;gap:18px;align-items:center}
+@media(max-width:620px){.te-app .ca-top{grid-template-columns:1fr}}
+.te-app .ca-score{text-align:center}.te-app .ca-score b{display:block;font-size:56px;font-weight:400;line-height:1}
+.te-app .ca-score.ok b{color:#3ddc84}.te-app .ca-score.warn b{color:#f2c14e}.te-app .ca-score.bad b{color:var(--or)}
+.te-app .ca-score span{font-size:10px;letter-spacing:.16em;color:#8a9;text-transform:uppercase}
+.te-app .ca-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media(max-width:620px){.te-app .ca-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.te-app .ca-tile{border:1px solid #2a2f2c;border-radius:6px;padding:8px}.te-app .ca-tile b{display:block;font-size:20px;font-weight:400}
+.te-app .ca-tile span{font-size:9px;letter-spacing:.1em;color:#8a9;text-transform:uppercase}
+.te-app .ca-tile.bad b{color:var(--or)}.te-app .ca-tile.warn b{color:#f2c14e}.te-app .ca-tile.ok b{color:#3ddc84}.te-app .ca-tile.off b{color:#566}
+.te-app .ca-src{margin:12px 0 0;font-size:10px;color:#6c7a72;letter-spacing:.04em}
+.te-app .ca-bar{display:grid;grid-template-columns:minmax(0,130px) 1fr 44px;gap:8px;align-items:center;font-size:11px;margin-bottom:6px}
+.te-app .ca-bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.te-app .ca-bar i{display:block;height:10px;background:#c3c6c3;border:1px solid var(--ink)}.te-app .ca-bar em{display:block;height:100%}
+.te-app .ca-bar small{text-align:right}
+.te-app .cp-wrap{display:grid;gap:16px}@media(min-width:900px){.te-app .cp-wrap{grid-template-columns:340px minmax(0,1fr)}}
+.te-app .cp-knobs{display:grid;gap:8px}
+.te-app .cp-k{display:block;background:#fff;border:1.5px solid var(--ink);border-radius:6px;padding:8px 10px}
+.te-app .cp-l{display:flex;justify-content:space-between;gap:8px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#333}.te-app .cp-l b{font-weight:400;color:var(--ink);font-size:12px;white-space:nowrap}
+.te-app .cp-k input{width:100%;accent-color:var(--or)}
+.te-app .cp-k small{display:block;color:var(--grey);font-size:9px}
+.te-app .cp-team{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.te-app .cp-role{border:1px solid #2a2f2c;border-radius:8px;padding:12px}
+.te-app .cp-role h4{margin:0 0 6px;font-weight:400;font-size:10px;letter-spacing:.14em;color:#8a9;text-transform:uppercase}
+.te-app .cp-n{font-size:42px;line-height:1;color:var(--or)}.te-app .cp-n small{font-size:12px;color:#8a9}
+.te-app .cp-people{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}.te-app .cp-people i{width:14px;height:20px;border-radius:7px 7px 3px 3px;background:#3ddc84;display:inline-block}
+.te-app .cp-role p{margin:8px 0 0;font-size:11px;color:#9ab;line-height:1.5}
+.te-app .cp-tl{margin-top:14px}
+.te-app .cp-r{display:grid;grid-template-columns:110px repeat(12,minmax(0,1fr));gap:2px;font-size:9px;align-items:center;margin-bottom:3px;color:#8a9}
+.te-app .cp-m{text-align:center}
+.te-app .cp-c{height:14px;border-radius:2px;background:#1c2024}
+.te-app .cp-c.h{background:var(--or)}.te-app .cp-c.r{background:#f2c14e}.te-app .cp-c.p{background:#2f5a46}.te-app .cp-c.a{background:#3ddc84}
+.te-app .cp-lg{display:flex;flex-wrap:wrap;gap:12px;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#8a9;margin-top:6px}
+.te-app .cp-lg span::before{content:"";display:inline-block;width:8px;height:8px;margin-right:4px;vertical-align:-1px}
+.te-app .cp-lg .h::before{background:var(--or)}.te-app .cp-lg .r::before{background:#f2c14e}.te-app .cp-lg .p::before{background:#2f5a46}.te-app .cp-lg .a::before{background:#3ddc84}
+@media(max-width:560px){.te-app .cp-r{grid-template-columns:70px repeat(12,minmax(0,1fr))}.te-app .cp-m{font-size:7px}}
