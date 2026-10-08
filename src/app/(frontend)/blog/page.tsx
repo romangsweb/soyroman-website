@@ -13,7 +13,7 @@ export default async function BlogPage() {
   const posts = await cms.find({
     collection: 'posts',
     sort: '-publishedAt',
-    limit: 20,
+    limit: 60,
     where: { _status: { equals: 'published' } },
     depth: 1,
   })
@@ -23,9 +23,17 @@ export default async function BlogPage() {
     // Solo para saber qué temas tienen artículos publicados
     cms.find({ collection: 'posts', where: { _status: { equals: 'published' } }, limit: 500, depth: 0 }),
   ])
-  const used = new Set(
-    usage.docs.flatMap((p: any) => (p.categories || []).map((c: any) => (typeof c === 'object' ? c.id : c))),
-  )
+  // Artículos publicados por tema (la misma consulta de antes, ahora cuenta)
+  const counts = new Map<number, number>()
+  for (const p of usage.docs as any[])
+    for (const c of p.categories || []) {
+      const id = typeof c === 'object' ? c.id : c
+      counts.set(id, (counts.get(id) || 0) + 1)
+    }
+  const used = new Set(counts.keys())
+  const counter =
+    'font-mono text-[10px] font-bold border border-black px-1.5 py-0.5 bg-white tabular-nums group-hover:bg-[#e85a2a] group-hover:text-white group-hover:border-[#e85a2a] transition-colors'
+  const pad = (n: number) => String(n).padStart(2, '0')
   const categories = { docs: allCategories.docs.filter((c: any) => used.has(c.id)) }
 
   return (
@@ -72,7 +80,7 @@ export default async function BlogPage() {
                       className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black transition-colors"
                     >
                       <span className="font-mono text-sm uppercase font-bold group-hover:text-[#e85a2a] transition-colors">Todos</span>
-                      <span className="w-1.5 h-1.5 bg-[#e85a2a] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                      <span className={counter} aria-label={`${usage.totalDocs} artículos`}>{pad(usage.totalDocs)}</span>
                     </Link>
                     {categories.docs.map((cat: any) => (
                       <Link
@@ -81,7 +89,7 @@ export default async function BlogPage() {
                         className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black transition-colors"
                       >
                         <span className="font-mono text-sm uppercase font-bold group-hover:text-[#e85a2a] transition-colors">{cat.title}</span>
-                        <span className="w-1.5 h-1.5 bg-black opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                        <span className={counter} aria-label={`${counts.get(cat.id) || 0} artículos`}>{pad(counts.get(cat.id) || 0)}</span>
                       </Link>
                     ))}
                   </div>
@@ -96,7 +104,7 @@ export default async function BlogPage() {
                   </Link>
                   <Link href="/recursos" className="group flex items-center justify-between py-2 border-b border-black/10 hover:border-black">
                     <span className="font-mono text-sm uppercase font-bold text-[#e85a2a] group-hover:text-black">Recursos</span>
-                    <span className="font-mono text-[9px] uppercase font-bold bg-[#e85a2a] text-white px-1.5 py-0.5">Calc</span>
+                    <span className="font-mono text-[9px] uppercase font-bold bg-[#e85a2a] text-white px-1.5 py-0.5">Herram.</span>
                   </Link>
                 </div>
                 <div className="mt-12">
