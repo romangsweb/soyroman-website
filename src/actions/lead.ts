@@ -3,7 +3,7 @@
 import { cookies, headers } from 'next/headers'
 import { after } from 'next/server'
 
-import { notifyHall } from '@/lib/hallHook'
+import { recordToolUse } from '@/lib/hubspotRecord'
 import { cleanItems, sendReport, type ReportItem } from '@/lib/reportEmail'
 
 /**
@@ -158,12 +158,11 @@ export async function submitToolLead(_prev: LeadState, form: FormData): Promise<
     items = []
   }
   const score = Number(clean(form.get('sr_puntaje'), 3))
-  // Expediente en HubSpot vía Hall (después de responder, para no hacer esperar a nadie)
+  // Expediente en HubSpot (después de responder, para no hacer esperar a nadie)
   if (result.status === 'ok') {
     const page = (await headers()).get('referer') || undefined
     after(() =>
-      notifyHall({
-        event: 'tool_lead',
+      recordToolUse({
         email,
         name,
         company: company || undefined,
@@ -247,8 +246,7 @@ export async function recordToolRun(email: string, tool: string, summary: string
   ).then(async (r) => {
     if (r.status === 'ok') {
       after(() =>
-        notifyHall({
-          event: 'tool_lead',
+        recordToolUse({
           email: email.toLowerCase(),
           tool,
           slug: meta?.slug,
