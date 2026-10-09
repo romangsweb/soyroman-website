@@ -1,4 +1,4 @@
-import { bigint, boolean, index, integer, jsonb, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { bigint, bigserial, boolean, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core'
 
 /*
  * Base del taller (Neon). Las cuatro primeras tablas son las de Better Auth con sus nombres por defecto;
@@ -99,3 +99,38 @@ export const companyProfile = pgTable('company_profile', {
   consentAlerts: boolean('consent_alerts').notNull().default(true),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })
+
+/**
+ * Eventos de uso del sitio (registro propio, para el panel de admin). `anon_id` solo existe si el visitante aceptó
+ * cookies de analítica; `user_id` si tiene cuenta. Al borrar la cuenta el evento queda, sin usuario.
+ */
+export const event = pgTable(
+  'event',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    ts: timestamp('ts', { withTimezone: true }).notNull().defaultNow(),
+    type: text('type').notNull(),
+    toolSlug: text('tool_slug'),
+    path: text('path'),
+    anonId: text('anon_id'),
+    userId: text('user_id').references(() => user.id, { onDelete: 'set null' }),
+  },
+  (t) => [index('event_ts_idx').on(t.ts), index('event_type_ts_idx').on(t.type, t.ts), index('event_tool_ts_idx').on(t.toolSlug, t.ts)],
+)
+
+/** Biblioteca: posts y términos guardados o leídos. */
+export const savedItem = pgTable(
+  'saved_item',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+    kind: text('kind').notNull(), // post | term
+    slug: text('slug').notNull(),
+    title: text('title').notNull().default(''),
+    savedAt: timestamp('saved_at', { withTimezone: true }),
+    readAt: timestamp('read_at', { withTimezone: true }),
+  },
+  (t) => [uniqueIndex('saved_item_user_kind_slug_idx').on(t.userId, t.kind, t.slug)],
+)
+
+export type SavedItem = typeof savedItem.$inferSelect

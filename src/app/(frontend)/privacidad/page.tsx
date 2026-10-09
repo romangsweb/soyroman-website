@@ -48,6 +48,13 @@ export default function PrivacidadPage() {
             tus datos o borrar tu cuenta y todo lo guardado en cualquier momento.
           </p>
           <p>
+            <strong>Registro de uso.</strong> Para saber qué herramientas sirven, registro en mi propia base de datos qué
+            herramienta se abre o se usa, la página y la fecha, sin nombre ni correo. Si aceptaste las cookies de analítica,
+            ese registro lleva un identificador aleatorio de tu navegador; si tienes cuenta en Mi taller, queda asociado a
+            ella. También guardo los artículos y términos que añades a tu biblioteca o que lees con tu sesión abierta. Si
+            borras tu cuenta, el registro de uso queda sin asociarse a ti.
+          </p>
+          <p>
             <strong>Derechos ARCO.</strong> Puedes acceder, rectificar, cancelar u oponerte al tratamiento de tus datos, así
             como revocar tu consentimiento, escribiendo a contacto@soyroman.com con el asunto &quot;Derechos ARCO&quot;.
           </p>

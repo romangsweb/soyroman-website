@@ -8,13 +8,15 @@ import { TallerNav } from '@/components/taller/TallerNav'
 import { currentUser } from '@/lib/auth'
 import { hace } from '@/lib/taller/dates'
 import { completeness } from '@/lib/taller/profile'
-import { lastRunPerTool } from '@/lib/taller/queries'
+import { lastRunPerTool, libraryFor } from '@/lib/taller/queries'
+import { recommendPosts } from '@/lib/taller/recommend'
 import { TALLER_TOOLS, fmtMetric, tallerTool } from '@/lib/taller/tools'
 
 export default async function TallerPage() {
   const user = await currentUser()
   if (!user) redirect('/entrar')
-  const [last, profile] = await Promise.all([lastRunPerTool(user.id), getMyProfile()])
+  const [last, profile, lib] = await Promise.all([lastRunPerTool(user.id), getMyProfile(), libraryFor(user.id)])
+  const recs = await recommendPosts(last.map((r) => r.slug), lib.readPosts).catch(() => [])
   const pct = completeness(profile?.data ?? {})
   const unused = TALLER_TOOLS.filter((t) => !last.some((r) => r.slug === t.slug))
 
@@ -28,7 +30,7 @@ export default async function TallerPage() {
         </div>
         <SignOut />
       </div>
-      <TallerNav active="panel" profilePct={pct} />
+      <TallerNav active="panel" profilePct={pct} admin={user.role === 'admin'} />
       <ClaimPending />
       {pct < 100 && (
         <Link href="/taller/perfil" className="tl-profile-cta">
@@ -66,6 +68,33 @@ export default async function TallerPage() {
           <p className="tl-empty">Aún no guardas resultados. Usa una herramienta y pulsa «Guardar en mi taller».</p>
         )}
       </section>
+
+      <div className="tl-row">
+        <section aria-labelledby="tl-leer" className="tl-read">
+          <h2 id="tl-leer" className="tl-h2">Para leer</h2>
+          {recs.length ? (
+            <ul className="tl-list">
+              {recs.map((p) => (
+                <li key={p.slug}>
+                  <span className="tl-list-k">{p.why.toUpperCase()}</span>
+                  <Link href={`/blog/${p.slug}`}>{p.title}</Link>
+                  {p.minutes ? <small>{p.minutes} min de lectura</small> : null}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="tl-empty">Pronto habrá lecturas para ti según las herramientas que uses.</p>
+          )}
+        </section>
+        <Link href="/taller/biblioteca" className="tl-card tl-lib">
+          <span className="tl-card-top"><span>BIBLIOTECA</span><span>ver ▸</span></span>
+          <span className="tl-lib-n">
+            <span className="tl-lcd"><span>GUARDADOS</span><b>{lib.saved.length}</b></span>
+            <span className="tl-lcd"><span>LEÍDOS</span><b>{lib.read.length}</b></span>
+          </span>
+          <span className="tl-card-when">Guarda artículos y términos desde el blog y el glosario.</span>
+        </Link>
+      </div>
 
       {unused.length > 0 && (
         <section aria-labelledby="tl-more">

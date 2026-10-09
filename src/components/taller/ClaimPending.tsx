@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 
 import { claimRuns } from '@/actions/taller'
 import { clearPending, readPending } from '@/lib/taller/pending'
+import { logEvent } from '@/lib/taller/events'
 import { setAccountFlag } from './useProfilePrefill'
 
 /** Al entrar al taller, sube lo que quedó apartado en este navegador. */
@@ -13,6 +14,7 @@ export function ClaimPending() {
   const [n, setN] = useState(0)
   useEffect(() => {
     setAccountFlag(true)
+    logEvent('taller_view')
     const list = readPending()
     if (!list.length) return
     claimRuns(list).then((r) => {

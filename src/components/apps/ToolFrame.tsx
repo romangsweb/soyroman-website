@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { RECURSOS } from '@/data/recursos'
 import { TOOL_SEO } from '@/data/recursosSeo'
 import { MEETINGS } from '@/lib/meetings'
+import { logEvent } from '@/lib/taller/events'
 import { PERSON_ID, SITE, ld } from '@/lib/seo'
 
 const useTool = () => {
@@ -17,6 +18,9 @@ const useTool = () => {
 /** Encabezado de cada herramienta: migas, H1 con su nombre y datos estructurados (WebApplication + migas). */
 export function ToolIntro() {
   const { path, tool } = useTool()
+  useEffect(() => {
+    if (tool?.href) logEvent('tool_view')
+  }, [tool?.href])
   if (path === '/recursos') {
     return (
       <div className="ti">

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import { CONSENT_KEY } from '@/lib/analytics'
+import { listenAgendar } from '@/lib/taller/events'
 import { CookieDeck } from './CookieDeck'
 
 const GA = process.env.NEXT_PUBLIC_GA_ID
@@ -19,6 +20,7 @@ export function Analytics() {
   const path = usePathname()
 
   useEffect(() => {
+    listenAgendar()
     try {
       setConsent(localStorage.getItem(CONSENT_KEY) as Consent)
     } catch {

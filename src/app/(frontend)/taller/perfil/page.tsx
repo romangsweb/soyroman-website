@@ -24,7 +24,7 @@ export default async function PerfilPage() {
         </div>
         <SignOut />
       </div>
-      <TallerNav active="perfil" profilePct={completeness(profile?.data ?? {})} />
+      <TallerNav active="perfil" profilePct={completeness(profile?.data ?? {})} admin={user.role === 'admin'} />
       <ProfileForm initial={profile} />
       <section className="tl-account" aria-labelledby="tl-acc">
         <h2 id="tl-acc" className="tl-h2">Tu cuenta</h2>

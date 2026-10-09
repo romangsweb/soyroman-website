@@ -10,6 +10,7 @@ import { ArrowUpRight } from '@/components/icons'
 import { Reveal } from '@/components/motion/Reveal'
 import { getServerSideURL } from '@/utilities/getURL'
 import { canonical } from '@/lib/seo'
+import { SaveToLibrary } from '@/components/taller/SaveToLibrary'
 
 type Args = { params: Promise<{ slug: string }> }
 
@@ -63,6 +64,9 @@ export default async function TermPage({ params }: Args) {
           </Link>
           <h1 className="text-[clamp(3rem,7vw,6rem)] leading-[0.95] tracking-tighter font-semibold">{t.term}</h1>
           {t.fullName && <p className="mt-4 font-mono text-sm md:text-base opacity-70">{t.fullName}</p>}
+          <div className="mt-6">
+            <SaveToLibrary kind="term" slug={slug} title={t.term} />
+          </div>
           {cats.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-8">
               {cats.map((c: any) => (

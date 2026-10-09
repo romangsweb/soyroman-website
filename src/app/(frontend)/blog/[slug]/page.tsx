@@ -15,6 +15,7 @@ import { ScreenCover, postCategory } from '@/components/ScreenCover'
 import { ArrowUpRight } from '@/components/icons'
 import { AuthorBox, RelatedPosts } from '@/components/PostExtras'
 import { Subscribe } from '@/components/Subscribe'
+import { SaveToLibrary } from '@/components/taller/SaveToLibrary'
 import { SITE, PERSON_ID, ld } from '@/lib/seo'
 import { extractFaq } from '@/lib/faq'
 
@@ -153,6 +154,9 @@ export default async function BlogPostPage({ params }: Args) {
                   ))}
                 </div>
               )}
+              <div className="mt-6">
+                <SaveToLibrary kind="post" slug={post.slug} title={post.title} />
+              </div>
             </Reveal>
           </div>
         </header>

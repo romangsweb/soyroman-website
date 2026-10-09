@@ -1,11 +1,15 @@
 import Link from 'next/link'
 import React from 'react'
 
-/** Pestañas del taller. */
-export function TallerNav({ active, profilePct }: { active: 'panel' | 'perfil'; profilePct?: number }) {
-  const items: [string, string, 'panel' | 'perfil', string?][] = [
+type Tab = 'panel' | 'perfil' | 'biblioteca' | 'admin'
+
+/** Pestañas del taller (la de admin solo con ese rol). */
+export function TallerNav({ active, profilePct, admin = false }: { active: Tab; profilePct?: number; admin?: boolean }) {
+  const items: [string, string, Tab, string?][] = [
     ['/taller', 'Panel', 'panel'],
     ['/taller/perfil', 'Perfil de empresa', 'perfil', profilePct !== undefined ? `${profilePct}%` : undefined],
+    ['/taller/biblioteca', 'Biblioteca', 'biblioteca'],
+    ...(admin ? ([['/taller/admin', 'Uso del sitio', 'admin']] as [string, string, Tab][]) : []),
   ]
   return (
     <nav className="pl-tabs tl-nav" aria-label="Mi taller">
