@@ -8,6 +8,7 @@ export const INDUSTRIES = ['Software y SaaS', 'Servicios profesionales', 'Manufa
 
 export type ProfileData = {
   domain?: string
+  service?: string // lo que vende, como lo buscaría un comprador (radar de IA)
   industry?: string
   size?: number // índice de SIZES
   country?: string
@@ -28,7 +29,7 @@ export type ProfileData = {
 type NumKey = { [K in keyof ProfileData]-?: NonNullable<ProfileData[K]> extends number ? K : never }[keyof ProfileData]
 
 export type FieldDef =
-  | { id: 'domain' | 'country'; kind: 'text'; label: string; ph: string; max: number; hint?: string }
+  | { id: 'domain' | 'country' | 'service'; kind: 'text'; label: string; ph: string; max: number; hint?: string }
   | { id: 'industry'; kind: 'select'; label: string; options: readonly string[]; hint?: string }
   | { id: 'size'; kind: 'size'; label: string; hint?: string }
   | { id: 'model'; kind: 'model'; label: string; hint?: string }
@@ -39,6 +40,7 @@ export const GROUPS: { title: string; fields: FieldDef[] }[] = [
     title: 'EMPRESA',
     fields: [
       { id: 'domain', kind: 'text', label: 'Dominio', ph: 'empresa.com', max: 120, hint: 'auditor AEO, stack, correo y radar de IA' },
+      { id: 'service', kind: 'text', label: 'Qué vendes, como lo buscaría un comprador', ph: 'consultoría de CRM', max: 80, hint: 'el radar de IA pregunta por esto cada mes' },
       { id: 'industry', kind: 'select', label: 'Industria', options: INDUSTRIES },
       { id: 'size', kind: 'size', label: 'Tamaño (personas)' },
       { id: 'country', kind: 'text', label: 'País principal', ph: 'México', max: 60 },
@@ -81,11 +83,12 @@ export const FEEDS: [string, string][] = [
   ['Tasas del embudo', 'Embudo · Presupuesto · CPL máx. · Capacidad · Velocidad'],
   ['Margen y modelo', 'LTV:CAC · CPL máx. · Presupuesto · ROAS/ROMI'],
   ['Industria, tamaño, ticket', 'Generador de ICP'],
+  ['Dominio, servicio y país', 'Radar de IA mensual'],
 ]
 
 /** Porcentaje del perfil lleno (el equipo cuenta como un solo dato). */
 export function completeness(p: ProfileData) {
-  const keys: (keyof ProfileData)[] = ['domain', 'industry', 'size', 'goal', 'ticket', 'cycle', 'model', 'margin', 'visit', 'mql', 'sql', 'opp', 'win']
+  const keys: (keyof ProfileData)[] = ['domain', 'service', 'industry', 'size', 'goal', 'ticket', 'cycle', 'model', 'margin', 'visit', 'mql', 'sql', 'opp', 'win']
   const filled = keys.filter((k) => p[k] !== undefined && p[k] !== '').length + (p.ae !== undefined ? 1 : 0)
   return Math.round((filled / (keys.length + 1)) * 100)
 }
@@ -136,4 +139,12 @@ export function fit(defs: readonly { id: string; min: number; max: number }[], v
     if (typeof x === 'number' && Number.isFinite(x)) out[d.id] = Math.min(d.max, Math.max(d.min, x))
   }
   return out
+}
+
+/** Mercado del radar de IA a partir del país del perfil. */
+export function marketFor(country?: string): 'México' | 'Latinoamérica' | 'España' {
+  const c = (country || '').trim().toLowerCase()
+  if (!c || c.startsWith('méx') || c.startsWith('mex')) return 'México'
+  if (c.startsWith('esp')) return 'España'
+  return 'Latinoamérica'
 }

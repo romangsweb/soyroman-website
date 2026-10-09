@@ -9,13 +9,14 @@ import { currentUser } from '@/lib/auth'
 import { hace } from '@/lib/taller/dates'
 import { completeness } from '@/lib/taller/profile'
 import { lastRunPerTool, libraryFor } from '@/lib/taller/queries'
+import { radarHistory } from '@/lib/taller/radar'
 import { recommendPosts } from '@/lib/taller/recommend'
 import { TALLER_TOOLS, fmtMetric, tallerTool } from '@/lib/taller/tools'
 
 export default async function TallerPage() {
   const user = await currentUser()
   if (!user) redirect('/entrar')
-  const [last, profile, lib] = await Promise.all([lastRunPerTool(user.id), getMyProfile(), libraryFor(user.id)])
+  const [last, profile, lib, radar] = await Promise.all([lastRunPerTool(user.id), getMyProfile(), libraryFor(user.id), radarHistory(user.id, 6)])
   const recs = await recommendPosts(last.map((r) => r.slug), lib.readPosts).catch(() => [])
   const pct = completeness(profile?.data ?? {})
   const unused = TALLER_TOOLS.filter((t) => !last.some((r) => r.slug === t.slug))
@@ -68,6 +69,21 @@ export default async function TallerPage() {
           <p className="tl-empty">Aún no guardas resultados. Usa una herramienta y pulsa «Guardar en mi taller».</p>
         )}
       </section>
+
+      <Link href="/taller/radar" className="tl-profile-cta tl-radar-cta">
+        <span>
+          <b>Radar de IA</b>
+          <small>
+            {radar[0]
+              ? `${radar[0].mentions} de ${radar[0].answered} respuestas te mencionan · ${hace(radar[0].createdAt)}`
+              : 'Cada mes revisamos si la IA recomienda tu empresa. Actívalo con tu dominio y qué vendes.'}
+          </small>
+        </span>
+        <span className="tl-mini" aria-hidden="true">
+          {[...radar].reverse().map((r) => <i key={r.id} style={{ height: `${Math.max(8, (r.mentions / Math.max(r.answered, 1)) * 100)}%` }} />)}
+        </span>
+        <em>ver ▸</em>
+      </Link>
 
       <div className="tl-row">
         <section aria-labelledby="tl-leer" className="tl-read">

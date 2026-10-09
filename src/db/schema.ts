@@ -134,3 +134,24 @@ export const savedItem = pgTable(
 )
 
 export type SavedItem = typeof savedItem.$inferSelect
+
+/** Radar de IA mensual: una foto por corrida de "¿Te recomienda la IA?" con el dominio del perfil. */
+export const radarSnapshot = pgTable(
+  'radar_snapshot',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+    domain: text('domain').notNull(),
+    service: text('service').notNull(),
+    market: text('market').notNull(),
+    mentions: integer('mentions').notNull(),
+    answered: integer('answered').notNull(),
+    rivals: jsonb('rivals').$type<{ domain: string; count: number }[]>().notNull().default([]),
+    result: jsonb('result').$type<Record<string, unknown>>().notNull(),
+    trigger: text('trigger').notNull().default('cron'), // cron | manual
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('radar_user_created_idx').on(t.userId, t.createdAt)],
+)
+
+export type RadarSnapshot = typeof radarSnapshot.$inferSelect

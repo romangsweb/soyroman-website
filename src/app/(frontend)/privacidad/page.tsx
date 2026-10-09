@@ -55,6 +55,11 @@ export default function PrivacidadPage() {
             borras tu cuenta, el registro de uso queda sin asociarse a ti.
           </p>
           <p>
+            <strong>Radar de IA.</strong> Si en tu perfil de empresa escribes tu dominio y qué vendes, una vez al mes envío
+            esas dos cosas (sin tu nombre ni correo) a Gemini, de Google, para ver si recomienda tu empresa, y guardo el
+            resultado en tu taller. Si tienes los avisos encendidos, te escribo cuando algo cambia.
+          </p>
+          <p>
             <strong>Derechos ARCO.</strong> Puedes acceder, rectificar, cancelar u oponerte al tratamiento de tus datos, así
             como revocar tu consentimiento, escribiendo a contacto@soyroman.com con el asunto &quot;Derechos ARCO&quot;.
           </p>

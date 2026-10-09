@@ -858,3 +858,21 @@
 .te-app .tl-funnel-bar>span{display:block;width:100%;background:var(--ink);border:2px solid var(--ink);border-bottom:0}
 .te-app .tl-funnel-bar>span.or{background:#c84a1e}
 .te-app .tl-head .tl-links .btn{min-height:40px}
+
+/* Mi taller · M4: radar de IA */
+.te-app .tl-run{display:grid;gap:6px;justify-items:end}
+.te-app .tl-run .btn{flex:none;padding:0 18px}
+.te-app .tl-radar{border-radius:14px;box-shadow:6px 6px 0 var(--ink);padding:14px 16px;margin:0 0 10px}
+.te-app .tl-radar-bars{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(36px,1fr);gap:10px;height:150px;margin-top:10px;align-items:end;overflow-x:auto}
+.te-app .tl-radar-bars>div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%}
+.te-app .tl-radar-bars b{font-weight:400;font-size:13px;color:#3ddc84}
+.te-app .tl-radar-bars>div>span{display:block;width:100%;border:1px solid #3ddc84}
+.te-app .tl-radar-bars>div>span.on{background:rgba(61,220,132,.55)}
+.te-app .tl-radar-bars small{font-size:10px;color:#8a9}
+.te-app .tl-rivals{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.te-app .tl-rivals li{display:flex;justify-content:space-between;gap:10px;font-size:13px;border-bottom:1px solid #c9c7bf;padding-bottom:6px}
+.te-app .tl-rivals em{font-style:normal;color:#b8441b;font-size:11px}
+.te-app .tl-rivals small{font-size:11px;color:#444}
+.te-app .tl-mini{display:flex;align-items:flex-end;gap:4px;height:36px;border-bottom:2px solid var(--ink)}
+.te-app .tl-mini i{display:block;width:12px;background:#c84a1e}
+.te-app .tl-radar-cta{margin-top:14px}
