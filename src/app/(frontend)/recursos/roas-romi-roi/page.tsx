@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { RoasApp } from '@/components/apps/RoasApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function RoasPage() {
   return (
@@ -16,8 +16,4 @@ export default function RoasPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/roas-romi-roi'),
-  title: 'Calculadora de ROAS, ROMI y ROI',
-  description: 'Calcula ROAS, ROMI y ROI de tus campañas con sus fórmulas y entiende por qué un ROAS alto no siempre es rentable.',
-}
+export const metadata: Metadata = toolMeta('roas-romi-roi')

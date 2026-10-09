@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { KeywordApp } from '@/components/apps/KeywordApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function ExploradorBusquedasPage() {
   return (
@@ -20,8 +20,4 @@ export default function ExploradorBusquedasPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/explorador-busquedas'),
-  title: 'Explorador de búsquedas: qué busca la gente sobre tu tema en Google',
-  description: 'Encuentra gratis las búsquedas y preguntas reales alrededor de una palabra, agrupadas por intención, con ideas de contenido para cada tema.',
-}
+export const metadata: Metadata = toolMeta('explorador-busquedas')

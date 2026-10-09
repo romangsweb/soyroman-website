@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { CplApp } from '@/components/apps/CplApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function CplMaximoPage() {
   return (
@@ -18,8 +18,4 @@ export default function CplMaximoPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/cpl-maximo'),
-  title: 'Calculadora de CPL y CPC máximo',
-  description: '¿Cuánto puedes pagar por un lead y por un clic sin perder dinero? Calcula tu CAC, CPL y CPC máximos desde tu margen y tu conversión.',
-}
+export const metadata: Metadata = toolMeta('cpl-maximo')

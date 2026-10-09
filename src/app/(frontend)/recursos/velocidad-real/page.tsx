@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { SpeedApp } from '@/components/apps/SpeedApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function VelocidadRealPage() {
   return (
@@ -19,8 +19,4 @@ export default function VelocidadRealPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/velocidad-real'),
-  title: 'Velocidad real de un sitio: Core Web Vitals con datos de usuarios',
-  description: 'Mide gratis qué tan rápido carga un sitio para sus visitas reales (LCP, INP y CLS) y qué arreglar primero, en móvil y escritorio.',
-}
+export const metadata: Metadata = toolMeta('velocidad-real')

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { AiApp } from '@/components/apps/AiApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function TeRecomiendaLaIaPage() {
   return (
@@ -20,8 +20,4 @@ export default function TeRecomiendaLaIaPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/te-recomienda-la-ia'),
-  title: '¿Te recomienda la IA? Revisa si Gemini menciona tu empresa',
-  description: 'Descubre gratis si la IA recomienda tu empresa cuando alguien busca tu servicio: menciones, posición y competidores que menciona.',
-}
+export const metadata: Metadata = toolMeta('te-recomienda-la-ia')

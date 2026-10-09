@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { VelocityApp } from '@/components/apps/VelocityApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function VelocidadPipelinePage() {
   return (
@@ -19,8 +19,4 @@ export default function VelocidadPipelinePage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/velocidad-pipeline'),
-  title: 'Calculadora de velocidad de pipeline (sales velocity)',
-  description: 'Calcula gratis cuánto dinero sale de tu pipeline por día, qué palanca mover para llegar a la meta del trimestre y qué explicó el cambio contra el trimestre anterior.',
-}
+export const metadata: Metadata = toolMeta('velocidad-pipeline')

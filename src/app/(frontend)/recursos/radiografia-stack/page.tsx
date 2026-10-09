@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { StackApp } from '@/components/apps/StackApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function RadiografiaStackPage() {
   return (
@@ -20,8 +20,4 @@ export default function RadiografiaStackPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/radiografia-stack'),
-  title: 'Radiografía de stack de marketing: ¿qué tecnología usa un sitio?',
-  description: 'Descubre gratis qué CMS, analítica, CRM, píxeles, chat y herramientas de correo usa un sitio web, con un diagnóstico de lo que le falta.',
-}
+export const metadata: Metadata = toolMeta('radiografia-stack')

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { CrmAuditApp } from '@/components/apps/CrmAuditApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function AuditoriaCrmPage() {
   return (
@@ -20,8 +20,4 @@ export default function AuditoriaCrmPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/auditoria-crm'),
-  title: 'Auditoría de CRM: revisa duplicados y calidad de tu base de contactos',
-  description: 'Sube la exportación de contactos de tu CRM y descubre gratis duplicados, datos incompletos, contactos sin propietario e inactivos. Se procesa en tu navegador.',
-}
+export const metadata: Metadata = toolMeta('auditoria-crm')

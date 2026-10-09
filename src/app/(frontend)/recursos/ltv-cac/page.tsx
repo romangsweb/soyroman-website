@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { LtvApp } from '@/components/apps/LtvApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function LtvCacPage() {
   return (
@@ -20,8 +20,4 @@ export default function LtvCacPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/ltv-cac'),
-  title: 'Calculadora de LTV:CAC y payback del CAC',
-  description: 'Calcula gratis cuánto vale un cliente contra lo que cuesta conseguirlo y en cuántos meses lo recuperas, para suscripción o para proyecto más servicio recurrente.',
-}
+export const metadata: Metadata = toolMeta('ltv-cac')

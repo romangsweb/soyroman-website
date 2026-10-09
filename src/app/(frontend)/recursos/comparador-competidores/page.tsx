@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { CompareApp } from '@/components/apps/CompareApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function ComparadorPage() {
   return (
@@ -19,8 +19,4 @@ export default function ComparadorPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/comparador-competidores'),
-  title: 'Comparador de competidores: velocidad, IA y stack de marketing lado a lado',
-  description: 'Compara gratis tu sitio con hasta dos competidores: velocidad real, preparación para buscadores con IA, CRM, publicidad y correo.',
-}
+export const metadata: Metadata = toolMeta('comparador-competidores')

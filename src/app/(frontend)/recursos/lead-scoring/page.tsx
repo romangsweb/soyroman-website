@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { ScoringApp } from '@/components/apps/ScoringApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function LeadScoringPage() {
   return (
@@ -20,8 +20,4 @@ export default function LeadScoringPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/lead-scoring'),
-  title: 'Constructor de lead scoring B2B (con calibración de tus datos)',
-  description: 'Arma gratis tu modelo de lead scoring de perfil e interés, calíbralo con la exportación de tu CRM y pruébalo con leads de ejemplo. Incluye los pasos para montarlo en HubSpot.',
-}
+export const metadata: Metadata = toolMeta('lead-scoring')

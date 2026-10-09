@@ -5,8 +5,9 @@ import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import { RECURSOS } from '@/data/recursos'
+import { TOOL_SEO } from '@/data/recursosSeo'
 import { MEETINGS } from '@/lib/meetings'
-import { PERSON_ID, SITE } from '@/lib/seo'
+import { PERSON_ID, SITE, ld } from '@/lib/seo'
 
 const useTool = () => {
   const path = usePathname()
@@ -58,9 +59,32 @@ export function ToolIntro() {
       <nav className="ti-crumbs" aria-label="Migas de pan">
         <Link href="/recursos">Recursos</Link> <span aria-hidden="true">/</span> <span>{tool.code}</span>
       </nav>
-      <h1>{tool.name}</h1>
+      <h1>{TOOL_SEO[tool.slug]?.h1 ?? tool.name}</h1>
       <p>{tool.desc}</p>
     </div>
+  )
+}
+
+/** Preguntas frecuentes de la herramienta, visibles y en FAQPage para buscadores y motores de IA. */
+export function ToolFaq() {
+  const { tool } = useTool()
+  const faq = tool ? TOOL_SEO[tool.slug]?.faq : undefined
+  if (!faq?.length) return null
+  const data = {
+    '@type': 'FAQPage',
+    mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  }
+  return (
+    <section className="ti-faq" aria-labelledby="ti-faq-h">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ld(data) }} />
+      <h2 id="ti-faq-h">Preguntas frecuentes</h2>
+      {faq.map(([q, a]) => (
+        <div key={q}>
+          <h3>{q}</h3>
+          <p>{a}</p>
+        </div>
+      ))}
+    </section>
   )
 }
 

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { CapacityApp } from '@/components/apps/CapacityApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function CapacidadComercialPage() {
   return (
@@ -19,8 +19,4 @@ export default function CapacidadComercialPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/capacidad-comercial'),
-  title: 'Plan de capacidad comercial: ¿cuántos SDR y vendedores necesitas?',
-  description: 'Calcula gratis cuántos SDR y vendedores necesitas para tu meta, cuál es tu cuello de botella y cuándo empieza a cerrar alguien que contratas hoy.',
-}
+export const metadata: Metadata = toolMeta('capacidad-comercial')

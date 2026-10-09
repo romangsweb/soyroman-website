@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { PipelineApp } from '@/components/apps/PipelineApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function BrechaPipelinePage() {
   return (
@@ -19,8 +19,4 @@ export default function BrechaPipelinePage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/brecha-pipeline'),
-  title: 'Calculadora de brecha de pipeline y forecast',
-  description: '¿Llegas a la meta del trimestre con lo que tienes abierto? Forecast ponderado por etapa, cobertura, escenarios y el pipeline nuevo que necesitas.',
-}
+export const metadata: Metadata = toolMeta('brecha-pipeline')

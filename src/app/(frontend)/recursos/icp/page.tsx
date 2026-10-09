@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { IcpApp } from '@/components/apps/IcpApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function IcpPage() {
   return (
@@ -16,8 +16,4 @@ export default function IcpPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/icp'),
-  title: 'Generador de perfil de cliente ideal (ICP)',
-  description: 'Define tu perfil de cliente ideal B2B en 6 pasos: industria, tamaño, ticket, ciclo de compra, quién decide y qué los dispara. Descárgalo en PDF.',
-}
+export const metadata: Metadata = toolMeta('icp')

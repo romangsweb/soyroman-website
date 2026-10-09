@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { MailApp } from '@/components/apps/MailApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function SaludCorreoPage() {
   return (
@@ -20,8 +20,4 @@ export default function SaludCorreoPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/salud-correo'),
-  title: 'Salud del correo: revisa SPF, DKIM, DMARC y listas negras de tu dominio',
-  description: 'Revisa gratis si tu dominio cumple los requisitos de Gmail y Yahoo: SPF, DKIM, DMARC, MTA-STS, listas negras y quién envía en tu nombre.',
-}
+export const metadata: Metadata = toolMeta('salud-correo')

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { MaturityApp } from '@/components/apps/MaturityApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function MadurezRevOpsPage() {
   return (
@@ -17,8 +17,4 @@ export default function MadurezRevOpsPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/madurez-revops'),
-  title: 'Diagnóstico de madurez RevOps',
-  description: 'Mide en 10 preguntas qué tan madura es tu operación de revenue: datos y CRM, procesos, alineación, medición y tecnología.',
-}
+export const metadata: Metadata = toolMeta('madurez-revops')

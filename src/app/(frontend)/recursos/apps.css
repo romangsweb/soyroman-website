@@ -730,6 +730,10 @@
 .te-app .ti-crumbs a:hover{color:var(--or);border-color:var(--or)}
 .te-app .ti h1{font-size:clamp(22px,3.4vw,34px);font-weight:400;letter-spacing:-.01em;line-height:1.1;margin:0}
 .te-app .ti p{font-size:13px;line-height:1.55;color:#333;margin:6px 0 0;max-width:70ch}
+.te-app .ti-faq{margin:8px 0 0;max-width:80ch}
+.te-app .ti-faq h2{font-size:clamp(18px,2.4vw,24px);font-weight:400;margin:0 0 10px}
+.te-app .ti-faq h3{font-size:14px;font-weight:600;margin:16px 0 4px}
+.te-app .ti-faq p{font-size:13px;line-height:1.6;color:#333;margin:0}
 .te-app .ti-call{display:grid;gap:14px;align-items:center;margin-top:28px;background:var(--ink);color:#fff;border:2px solid var(--ink);border-radius:14px;padding:18px 20px;box-shadow:6px 6px 0 var(--or)}
 @media(min-width:800px){.te-app .ti-call{grid-template-columns:1fr auto}}
 .te-app .ti-call b{display:block;font-weight:400;font-size:18px;color:var(--or)}

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { PlannerApp } from '@/components/apps/PlannerApp'
-import { canonical } from '@/lib/seo'
+import { toolMeta } from '@/data/recursosSeo'
 
 export default function PlaneadorMarketingPage() {
   return (
@@ -21,8 +21,4 @@ export default function PlaneadorMarketingPage() {
   )
 }
 
-export const metadata: Metadata = {
-  alternates: canonical('/recursos/planeador-marketing'),
-  title: 'Planeador de marketing B2B en Excel: de la cuota de venta a los leads por mes',
-  description: 'Arma tu plan de marketing anual gratis: cuota por trimestre, leads que necesitas cada mes, actividades, presupuesto, KPIs, riesgos y seguimiento. Se descarga en Excel con fórmulas.',
-}
+export const metadata: Metadata = toolMeta('planeador-marketing')
