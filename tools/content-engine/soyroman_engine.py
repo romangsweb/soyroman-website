@@ -21,7 +21,8 @@ Uso:
 
 Config (Vault hall9000/buildations o .env de buildations_engines):
   SOYROMAN_PAYLOAD_API_KEY   API key del usuario bot (obligatoria)
-  SOYROMAN_CMS_URL           opcional, por defecto http://127.0.0.1:3011
+  SOYROMAN_CMS_URL           opcional, por defecto https://soyroman.com (Payload en Vercel)
+  SOYROMAN_CMS_PUBLIC        opcional, URL para los enlaces de los avisos; por defecto la misma
   MODEL_WRITER, OLLAMA_URL, QDRANT_*, PG_*, TELEGRAM_*, COMFYUI_SERVICE  (compartidas)
 """
 import argparse
@@ -50,7 +51,7 @@ from buildations_engines import engine_telemetry as tel  # noqa: E402
 from topics import ALL_TOPICS, category_for  # noqa: E402
 
 ENGINE_NAME = "soyroman-posts"
-CMS_PUBLIC = "https://cms.soyroman.com"
+CMS_PUBLIC = (cfg.get("SOYROMAN_CMS_PUBLIC") or cfg.get("SOYROMAN_CMS_URL") or "https://soyroman.com").rstrip("/")
 EXCERPT_MAX = 195  # el campo excerpt de Posts admite 200
 IMAGE_STEPS, IMAGE_WIDTH, IMAGE_HEIGHT = "28", "1344", "768"
 
@@ -245,7 +246,7 @@ def parse_delimited(raw, fields):
 # ───────────────────────── CMS (Payload) ─────────────────────────
 class CMS:
     def __init__(self):
-        self.url = (cfg.get("SOYROMAN_CMS_URL") or "http://127.0.0.1:3011").rstrip("/")
+        self.url = (cfg.get("SOYROMAN_CMS_URL") or "https://soyroman.com").rstrip("/")
         key = cfg.get("SOYROMAN_PAYLOAD_API_KEY")
         if not key:
             raise RuntimeError("Falta SOYROMAN_PAYLOAD_API_KEY (Vault hall9000/buildations o .env)")
