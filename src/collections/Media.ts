@@ -22,7 +22,13 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    adminThumbnail: 'thumbnail',
+    // Miniatura del panel: con R2 se toma de su dominio público; sin R2 (Hall o local), la sirve Payload
+    adminThumbnail: ({ doc }) => {
+      const thumb = (doc.sizes as { thumbnail?: { filename?: string | null } } | undefined)?.thumbnail?.filename
+      if (!thumb) return null
+      const base = (process.env.MEDIA_PUBLIC_URL || '').replace(/\/$/, '')
+      return base ? `${base}/${encodeURIComponent(thumb)}` : `/api/media/file/${encodeURIComponent(thumb)}`
+    },
     imageSizes: [
       {
         name: 'thumbnail',

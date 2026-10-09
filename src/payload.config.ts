@@ -159,6 +159,9 @@ export default buildConfig({
                 secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
               },
               forcePathStyle: true,
+              // R2 no acepta las sumas de verificación que las versiones recientes del SDK de AWS mandan por defecto
+              requestChecksumCalculation: 'WHEN_REQUIRED',
+              responseChecksumValidation: 'WHEN_REQUIRED',
             },
           }),
         ]
