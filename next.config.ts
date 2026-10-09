@@ -13,6 +13,8 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 // Origen de las imágenes: Payload en Hall (cms.soyroman.com)
 const CMS_URL = process.env.CMS_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL
+// Imágenes en Cloudflare R2 (https://media.soyroman.com)
+const MEDIA_PUBLIC_URL = process.env.MEDIA_PUBLIC_URL
 
 const nextConfig: NextConfig = {
   // Hall construye la imagen Docker con NEXT_OUTPUT=standalone; Vercel lo ignora.
@@ -25,7 +27,7 @@ const nextConfig: NextConfig = {
     ],
     qualities: [100],
     remotePatterns: [
-      ...[NEXT_PUBLIC_SERVER_URL, CMS_URL].filter((u): u is string => Boolean(u)).map((item) => {
+      ...[NEXT_PUBLIC_SERVER_URL, CMS_URL, MEDIA_PUBLIC_URL].filter((u): u is string => Boolean(u)).map((item) => {
         const url = new URL(item)
 
         return {

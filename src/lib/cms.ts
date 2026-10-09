@@ -7,15 +7,25 @@ import type {
   Where,
 } from 'payload'
 
+import { unstable_cache } from 'next/cache'
+
 /**
- * Cliente REST del CMS (Payload en Hall → cms.soyroman.com).
+ * Cliente del CMS con dos modos:
+ * - LOCAL (Vercel con DATABASE_URI): Payload vive en la misma app y se lee la base (Neon) con la API local.
+ * - REST (sin DATABASE_URI): se pide a la API de un CMS externo (CMS_URL, p. ej. Hall). Sirve de respaldo:
+ *   quitar DATABASE_URI y apuntar CMS_URL a cms.soyroman.com regresa al esquema anterior.
  *
- * El frontend en Vercel no se conecta a Postgres: lee todo por la API REST
- * y cachea con etiquetas. Payload avisa a /next/revalidate cuando algo cambia.
- *
- * Imita la forma de payload.find / payload.findGlobal para que las páginas
- * casi no cambien.
+ * En ambos modos se cachea con la etiqueta "cms", que Payload invalida al publicar (/next/revalidate).
+ * La API local corre con overrideAccess: false para ver lo mismo que un visitante anónimo (solo publicado).
+ * Imita la forma de payload.find / payload.findGlobal para que las páginas casi no cambien.
  */
+
+const LOCAL = Boolean(process.env.DATABASE_URI) && process.env.CMS_ROLE !== 'cms'
+
+async function payloadLocal() {
+  const [{ getPayload }, { default: config }] = await Promise.all([import('payload'), import('@payload-config')])
+  return getPayload({ config })
+}
 
 const CMS_URL = (process.env.CMS_URL || 'http://localhost:3000').replace(/\/$/, '')
 const REVALIDATE_SECONDS = Number(process.env.CMS_REVALIDATE_SECONDS || 3600)
@@ -84,6 +94,13 @@ const emptyPage = <T>(): PaginatedDocs<T> => ({
 
 export const cms = {
   find<C extends CollectionSlug>({ collection, ...query }: FindArgs<C>) {
+    if (LOCAL) {
+      return unstable_cache(
+        async () => (await payloadLocal()).find({ collection, ...query, overrideAccess: false } as never) as unknown as Promise<PaginatedDocs<DataFromCollectionSlug<C>>>,
+        ['cms', collection, JSON.stringify(query)],
+        { revalidate: REVALIDATE_SECONDS, tags: [CMS_TAG, `${CMS_TAG}:${collection}`] },
+      )()
+    }
     const qs = toQuery(query)
     return request<PaginatedDocs<DataFromCollectionSlug<C>>>(
       `/${collection}${qs}`,
@@ -93,6 +110,13 @@ export const cms = {
   },
 
   findGlobal<G extends GlobalSlug>({ slug, ...query }: { slug: G; depth?: number; locale?: string }) {
+    if (LOCAL) {
+      return unstable_cache(
+        async () => (await payloadLocal()).findGlobal({ slug, ...query, overrideAccess: false } as never) as unknown as Promise<DataFromGlobalSlug<G>>,
+        ['cms', 'global', slug, JSON.stringify(query)],
+        { revalidate: REVALIDATE_SECONDS, tags: [CMS_TAG, `${CMS_TAG}:global:${slug}`] },
+      )()
+    }
     const qs = toQuery(query)
     return request<DataFromGlobalSlug<G>>(
       `/globals/${slug}${qs}`,

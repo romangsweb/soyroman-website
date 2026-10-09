@@ -1,5 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import sharp from 'sharp'
 import path from 'path'
@@ -37,13 +37,17 @@ import type { Page, Post, Project, Expertise as ExpertiseType } from './payload-
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-// URL pública del CMS (Hall): https://cms.soyroman.com — hace absolutas las URLs de media.
+// URL pública del CMS: https://soyroman.com (Vercel) o https://cms.soyroman.com (Hall, respaldo)
 const CMS_PUBLIC_URL = process.env.PAYLOAD_PUBLIC_SERVER_URL
-// Frontend en Vercel: https://soyroman.com
+// Frontend: https://soyroman.com
 const FRONTEND_URL = process.env.FRONTEND_URL
+// Imágenes en Cloudflare R2 servidas desde su dominio público (https://media.soyroman.com)
+const MEDIA_PUBLIC_URL = (process.env.MEDIA_PUBLIC_URL || '').replace(/\/$/, '')
 
 const isBuild = process.env.NEXT_PHASE === 'phase-production-build'
-if (process.env.CMS_ROLE === 'cms' && !isBuild && !process.env.PAYLOAD_SECRET) {
+// CMS de producción: Hall (CMS_ROLE=cms) o Vercel con base propia (DATABASE_URI)
+const isProdCms = process.env.CMS_ROLE === 'cms' || (Boolean(process.env.VERCEL) && Boolean(process.env.DATABASE_URI))
+if (isProdCms && !isBuild && !process.env.PAYLOAD_SECRET) {
   throw new Error('PAYLOAD_SECRET es obligatorio en el CMS de producción')
 }
 
@@ -135,13 +139,27 @@ export default buildConfig({
       generateTitle,
       generateURL,
     }),
-    ...(process.env.BLOB_READ_WRITE_TOKEN
+    // Media en Cloudflare R2 (compatible con S3). Sin S3_BUCKET, Payload guarda en disco (Hall o desarrollo local).
+    ...(process.env.S3_BUCKET && MEDIA_PUBLIC_URL
       ? [
-          vercelBlobStorage({
+          s3Storage({
             collections: {
-              media: true,
+              media: {
+                // Las imágenes se sirven directo desde R2 (CDN de Cloudflare), sin pasar por Payload
+                disablePayloadAccessControl: true,
+                generateFileURL: ({ filename }) => `${MEDIA_PUBLIC_URL}/${encodeURIComponent(filename)}`,
+              },
             },
-            token: process.env.BLOB_READ_WRITE_TOKEN,
+            bucket: process.env.S3_BUCKET,
+            config: {
+              endpoint: process.env.S3_ENDPOINT,
+              region: process.env.S3_REGION || 'auto',
+              credentials: {
+                accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+                secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+              },
+              forcePathStyle: true,
+            },
           }),
         ]
       : []),
