@@ -1,8 +1,9 @@
 import type { NextConfig } from 'next'
 
 /**
- * Mismo código, dos papeles:
- *  - Vercel (frontend): /admin se manda al CMS en Hall.
+ * Mismo código, tres papeles:
+ *  - Vercel con DATABASE_URI: Payload vive en la misma app; /admin se sirve aquí, sin redirigir.
+ *  - Vercel sin DATABASE_URI (respaldo): /admin se manda al CMS externo (CMS_URL, p. ej. Hall).
  *  - Hall (CMS_ROLE=cms): / abre /admin; lo demás que no sea admin/API va al frontend.
  */
 export const redirects: NextConfig['redirects'] = async () => {
@@ -22,6 +23,8 @@ export const redirects: NextConfig['redirects'] = async () => {
     ]
   }
 
+  // CMS en la misma app (Vercel con DATABASE_URI): /admin se sirve aquí, sin redirigir
+  if (process.env.DATABASE_URI) return []
   if (!CMS_URL || CMS_URL.includes('localhost')) return []
   return [
     { source: '/admin', destination: `${CMS_URL}/admin`, permanent: false },
