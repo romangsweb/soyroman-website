@@ -5,12 +5,14 @@ import React, { useEffect, useState } from 'react'
 
 import { claimRuns } from '@/actions/taller'
 import { clearPending, readPending } from '@/lib/taller/pending'
+import { setAccountFlag } from './useProfilePrefill'
 
 /** Al entrar al taller, sube lo que quedó apartado en este navegador. */
 export function ClaimPending() {
   const router = useRouter()
   const [n, setN] = useState(0)
   useEffect(() => {
+    setAccountFlag(true)
     const list = readPending()
     if (!list.length) return
     claimRuns(list).then((r) => {
@@ -34,6 +36,7 @@ export function SignOut() {
       onClick={async () => {
         const { authClient } = await import('@/lib/authClient')
         await authClient.signOut()
+        setAccountFlag(false)
         router.push('/')
         router.refresh()
       }}

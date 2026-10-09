@@ -9,6 +9,10 @@ import { Gate } from './Gate'
 import { KnobList, ModeKeys, knobDefaults, readKnobs, showKnob, type Knob, type KnobValues } from './Knobs'
 import { ShareButton, query } from './share'
 import { useToolTracking } from './useToolTracking'
+import { PrefillNote, useProfilePrefill } from '@/components/taller/useProfilePrefill'
+import { fit } from '@/lib/taller/profile'
+import { SaveRun } from '@/components/taller/SaveRun'
+import { finite } from '@/lib/taller/tools'
 import { DAYS_Q, decompose, levers, velocity } from './velocity'
 
 const NOW: Knob[] = [
@@ -37,6 +41,7 @@ export function VelocityApp() {
     if (query().get('modo') === 'cmp') setMode('cmp')
   }, [])
   useToolTracking('Velocidad de pipeline', v, gate)
+  const pre = useProfilePrefill('velocidad-pipeline', (x) => setV((c) => ({ ...c, ...fit(ALL, x) })))
   const set = (id: string, n: number) => setV((x) => ({ ...x, [id]: n }))
 
   const now = { opp: v.opp, tk: v.tk, wr: v.wr, cy: v.cy }
@@ -80,6 +85,7 @@ export function VelocityApp() {
 
   return (
     <>
+      <PrefillNote on={pre} />
       <AppHeader
         top="VEL"
         bottom="PIPE"
@@ -154,6 +160,14 @@ export function VelocityApp() {
               <div className="s-keys">
                 <button type="button" className="btn or" onClick={() => setGate(true)}>Diagnóstico en PDF ▸</button>
                 <ShareButton tool="Velocidad de pipeline" params={() => ({ ...v, modo: mode })} />
+                <SaveRun
+                  run={() => ({
+                    slug: 'velocidad-pipeline',
+                    inputs: { ...v, modo: mode },
+                    metrics: { vel_dia: finite(vel), trimestre: finite(q), alcance: finite(reach * 100) },
+                    summary: summary.join('\n'),
+                  })}
+                />
                 <Link className="btn" href="/recursos/planeador-marketing" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>Planear el pipeline del año ▸</Link>
               </div>
             )}

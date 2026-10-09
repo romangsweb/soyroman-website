@@ -12,6 +12,8 @@ import { KnobList, ModeKeys, knobDefaults, readKnobs, type Knob, type KnobValues
 import { HORIZON, ltv, type LtvIn } from './ltv'
 import { ShareButton, query } from './share'
 import { useToolTracking } from './useToolTracking'
+import { PrefillNote, useProfilePrefill } from '@/components/taller/useProfilePrefill'
+import { fit } from '@/lib/taller/profile'
 import { SaveRun } from '@/components/taller/SaveRun'
 import { finite } from '@/lib/taller/tools'
 
@@ -43,6 +45,10 @@ export function LtvApp() {
     if (query().get('modo') === 'prj') setMode('prj')
   }, [])
   useToolTracking('LTV:CAC y payback', v, gate)
+  const pre = useProfilePrefill('ltv-cac', (x) => {
+    setV((c) => ({ ...c, ...fit(ALL, x) }))
+    if (x.modo === 'rec' || x.modo === 'prj') setMode(x.modo)
+  })
   const set = (id: string, n: number) => setV((x) => ({ ...x, [id]: n }))
 
   const o = ltv({ mode, mkt: v.mkt, sales: v.sales, newc: v.newc, prj: v.prj, pgm: v.pgm, arpa: v.arpa, gm: v.gm, churn: v.churn })
@@ -78,6 +84,7 @@ export function LtvApp() {
 
   return (
     <>
+      <PrefillNote on={pre} />
       <AppHeader
         top="LTV"
         bottom="CAC"

@@ -93,3 +93,19 @@ export async function recordToolUse(r: ToolRecord) {
     console.warn('[expediente] no se pudo registrar', err instanceof Error ? err.message : err)
   }
 }
+
+/** Marca propiedades del contacto (por correo) sin tocar el expediente. Lo usa Mi taller: alta de cuenta y perfil de empresa. */
+export async function markContact(email: string, properties: Record<string, string>) {
+  const token = process.env.HUBSPOT_RECORD_TOKEN
+  if (!token || !Object.keys(properties).length) return
+  try {
+    await hs(token, 'POST', '/crm/v3/objects/contacts/batch/upsert', {
+      inputs: [{ idProperty: 'email', id: email.trim().toLowerCase(), properties: { email: email.trim().toLowerCase(), ...properties } }],
+    })
+  } catch (err) {
+    console.warn('[taller] no se pudo marcar el contacto en HubSpot', err instanceof Error ? err.message : err)
+  }
+}
+
+/** Día en medianoche UTC, como lo piden las propiedades de fecha de HubSpot. */
+export const hsDate = (d = new Date()) => String(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()))

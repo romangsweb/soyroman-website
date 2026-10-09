@@ -15,6 +15,7 @@ export type TallerTool = {
 
 const nf = (d = 0) => (n: number) => n.toLocaleString('es-MX', { maximumFractionDigits: d, minimumFractionDigits: d })
 const usd = (n: number) => `$${nf()(Math.round(n))}`
+const usd2 = (n: number) => `$${nf(2)(n)}`
 
 /** Mismo formato que encodeState de share.ts (base64url de JSON en UTF-8), seguro en servidor y navegador. */
 function encode(obj: unknown) {
@@ -72,6 +73,82 @@ export const TALLER_TOOLS = [
       { key: 'ciclo', label: 'Ciclo', fmt: (n) => `${nf()(n)} meses` },
     ],
     open: (i) => `/recursos/icp?s=${encode(i)}`,
+  },
+  {
+    slug: 'presupuesto-marketing',
+    name: 'Planificador de presupuesto',
+    code: 'BUDGET',
+    headline: 'total',
+    metrics: [
+      { key: 'total', label: 'Presupuesto / año', fmt: usd },
+      { key: 'cac', label: 'CAC', fmt: usd },
+      { key: 'romi', label: 'ROMI', fmt: (n) => `${nf()(n)}%` },
+      { key: 'adelanto', label: 'Adelanto de caja', fmt: usd },
+    ],
+    open: (i) => `/recursos/presupuesto-marketing?${qs(i)}`,
+  },
+  {
+    slug: 'cpl-maximo',
+    name: 'CPL máximo',
+    code: 'CPL MÁX',
+    headline: 'cpl_max',
+    metrics: [
+      { key: 'cpl_max', label: 'CPL máximo', fmt: usd2 },
+      { key: 'cac_max', label: 'CAC máximo', fmt: usd },
+      { key: 'cpc_max', label: 'CPC máximo', fmt: usd2 },
+      { key: 'cpl_actual', label: 'Tu CPL', fmt: usd2 },
+    ],
+    open: (i) => `/recursos/cpl-maximo?${qs(i)}`,
+  },
+  {
+    slug: 'roas-romi-roi',
+    name: 'ROAS · ROMI · ROI',
+    code: 'RENDIMIENTO',
+    headline: 'romi',
+    metrics: [
+      { key: 'roas', label: 'ROAS', fmt: (n) => `${nf(1)(n)}x` },
+      { key: 'romi', label: 'ROMI', fmt: (n) => `${nf()(n)}%` },
+      { key: 'roi', label: 'ROI', fmt: (n) => `${nf()(n)}%` },
+    ],
+    open: (i) => `/recursos/roas-romi-roi?${qs(i)}`,
+  },
+  {
+    slug: 'capacidad-comercial',
+    name: 'Capacidad comercial',
+    code: 'CAP·01',
+    headline: 'ae',
+    metrics: [
+      { key: 'ae', label: 'Vendedores', fmt: nf() },
+      { key: 'sdr', label: 'SDR', fmt: nf() },
+      { key: 'primer_cierre', label: 'Primer cierre', fmt: (n) => `mes ${nf()(n)}` },
+      { key: 'costo', label: 'Costo del equipo / año', fmt: usd },
+    ],
+    open: (i) => `/recursos/capacidad-comercial?${qs(i)}`,
+  },
+  {
+    slug: 'velocidad-pipeline',
+    name: 'Velocidad de pipeline',
+    code: 'VEL·01',
+    headline: 'vel_dia',
+    metrics: [
+      { key: 'vel_dia', label: 'Por día', fmt: usd },
+      { key: 'trimestre', label: 'En el trimestre', fmt: usd },
+      { key: 'alcance', label: 'De la meta', fmt: (n) => `${nf()(n)}%` },
+    ],
+    open: (i) => `/recursos/velocidad-pipeline?${qs(i)}`,
+  },
+  {
+    slug: 'brecha-pipeline',
+    name: 'Brecha de pipeline',
+    code: 'PIPE',
+    headline: 'brecha',
+    metrics: [
+      { key: 'brecha', label: 'Brecha', fmt: usd },
+      { key: 'forecast', label: 'Forecast ponderado', fmt: usd },
+      { key: 'cobertura', label: 'Cobertura', fmt: (n) => `${nf(1)(n)}x` },
+      { key: 'prob', label: 'Prob. de llegar', fmt: (n) => `${nf()(n)}%` },
+    ],
+    open: (i) => `/recursos/brecha-pipeline?s=${encode(i)}`,
   },
 ] as const satisfies readonly TallerTool[]
 

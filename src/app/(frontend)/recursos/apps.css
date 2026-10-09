@@ -790,3 +790,46 @@
 .te-app .tl-enter{max-width:640px}
 .te-app .tl-enter h1{font-size:clamp(26px,3.4vw,34px);font-weight:400;line-height:1.15;margin:8px 0 12px}
 .te-app .tl-enter ul{font-size:13px;line-height:1.7;margin:0 0 20px;padding-left:18px}
+
+/* Mi taller · M2: perfil de empresa y precarga */
+.te-app .tl-prefill{background:#fff;border:2px solid var(--ink);border-left:8px solid #c84a1e;padding:8px 12px;font-size:12px;margin:0 0 14px}
+.te-app .tl-prefill a{color:#b8441b}
+.te-app .tl-nav{margin:0 0 20px}
+.te-app .tl-nav .pl-tab{text-decoration:none;display:inline-flex;align-items:center}
+.te-app .tl-nav small{font-size:10px;opacity:.75}
+.te-app .tl-bar{display:block;height:10px;border:2px solid var(--ink);background:#e3e5e3}
+.te-app .tl-bar>span{display:block;height:100%;background:#c84a1e}
+.te-app .tl-profile-cta{display:grid;grid-template-columns:minmax(0,1fr) minmax(120px,220px) auto;gap:14px;align-items:center;background:#fff;border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:12px 16px;text-decoration:none;color:var(--ink);margin:0 0 8px}
+.te-app .tl-profile-cta b{display:block;font-weight:400;font-size:15px}
+.te-app .tl-profile-cta small{font-size:11px;color:#444}
+.te-app .tl-profile-cta em{font-style:normal;color:#b8441b;font-size:13px}
+@media(max-width:640px){.te-app .tl-profile-cta{grid-template-columns:1fr}}
+.te-app .tl-profile{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
+.te-app .tl-form{flex:999 1 560px;min-width:0;display:grid;gap:20px}
+.te-app .tl-form fieldset{margin:0;background:var(--shell);border:2px solid var(--ink);border-radius:18px;box-shadow:8px 8px 0 var(--ink);padding:16px 18px}
+.te-app .tl-form legend{background:var(--ink);color:#ecebe6;padding:4px 10px;font-size:12px;letter-spacing:.14em}
+.te-app .tl-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:6px}
+.te-app .tl-f{display:flex;flex-direction:column;gap:6px;font-size:12px;min-width:0}
+.te-app .tl-f-head{display:flex;justify-content:space-between;gap:8px}
+.te-app .tl-miss{color:#a3301a}
+.te-app .tl-ok{color:#2f7d4f}
+.te-app .tl-f input,.te-app .tl-f select{min-height:44px;border:2px solid var(--ink);border-radius:10px;padding:0 12px;font:inherit;font-size:14px;background:#fff;width:100%;min-width:0}
+.te-app .tl-f small{font-size:11px;color:#444}
+.te-app .tl-num{display:flex;align-items:center;gap:6px}
+.te-app .tl-num i{font-style:normal;font-size:12px;color:#444}
+.te-app .tl-check{display:flex;gap:10px;align-items:flex-start;font-size:12px;line-height:1.5;margin:8px 0}
+.te-app .tl-check input{width:20px;height:20px;margin:0;flex:none;accent-color:#c84a1e}
+.te-app .tl-meter{display:grid;grid-template-columns:auto auto minmax(80px,1fr);gap:12px;align-items:center;font-size:12px}
+.te-app .tl-meter b{font-weight:400;color:#b8441b;font-size:16px}
+.te-app .tl-ok-msg{font-size:12px;color:#2f7d4f;align-self:center}
+.te-app .tl-feeds{flex:1 1 260px;min-width:0;border-radius:18px;box-shadow:8px 8px 0 var(--ink);padding:16px}
+.te-app .tl-feeds p{margin:10px 0 0;padding-bottom:8px;border-bottom:1px solid #2c3a31}
+.te-app .tl-feeds b{font-size:13px;color:#3ddc84;display:block}
+.te-app .tl-feeds small{font-size:11px;color:#cfd3d0}
+.te-app .tl-account{margin-top:28px}
+.te-app .tl-account p{font-size:13px;margin:0 0 12px}
+.te-app .tl-account .btn{flex:none;display:inline-flex;align-items:center;text-decoration:none;padding:0 16px}
+.te-app .tl-danger{background:#fff;border:2px solid #a3301a;padding:14px;display:grid;gap:8px;max-width:460px;font-size:12px}
+.te-app .tl-danger p{margin:0;line-height:1.5}
+.te-app .tl-danger input{min-height:44px;border:2px solid var(--ink);border-radius:10px;padding:0 12px;font:inherit}
+.te-app .tl-links .btn[disabled]{opacity:.5;cursor:not-allowed}

@@ -8,6 +8,10 @@ import { AppHeader } from './Panels'
 import { Gate } from './Gate'
 import { ShareButton, query } from './share'
 import { useToolTracking } from './useToolTracking'
+import { PrefillNote, useProfilePrefill } from '@/components/taller/useProfilePrefill'
+import { fit } from '@/lib/taller/profile'
+import { SaveRun } from '@/components/taller/SaveRun'
+import { finite } from '@/lib/taller/tools'
 
 type K = { id: string; label: string; unit: '$' | '%' | ''; val: number; min: number; max: number; step: number; hint?: string }
 // Valores de ejemplo (meta, ticket y tasas iguales al Embudo inverso para que cuadren)
@@ -32,6 +36,7 @@ export function CapacityApp() {
   const [v, setV] = useState<V>(() => Object.fromEntries(KNOBS.map((k) => [k.id, k.val])))
   const [gate, setGate] = useState(false)
   useToolTracking('Capacidad comercial', v, gate)
+  const pre = useProfilePrefill('capacidad-comercial', (x) => setV((c) => ({ ...c, ...fit(KNOBS, x) })))
   useEffect(() => {
     const q = query()
     const next: V = {}
@@ -76,6 +81,7 @@ export function CapacityApp() {
 
   return (
     <>
+      <PrefillNote on={pre} />
       <AppHeader
         top="CAP"
         bottom="TEAM"
@@ -125,6 +131,14 @@ export function CapacityApp() {
               <div className="s-keys">
                 <button type="button" className="btn or" onClick={() => setGate(true)}>Plan de contratación por correo ▸</button>
                 <ShareButton tool="Capacidad comercial" params={() => v} />
+                <SaveRun
+                  run={() => ({
+                    slug: 'capacidad-comercial',
+                    inputs: v,
+                    metrics: { ae: o.ae, sdr: o.sdr, primer_cierre: o.firstClose, costo: finite(o.cost) },
+                    summary,
+                  })}
+                />
                 <Link className="btn" href={`/recursos/embudo-inverso?goal=${v.goal}&ticket=${v.ticket}&win=${v.win}&opp=${v.opp}`} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>◂ Ver el embudo</Link>
               </div>
             )}

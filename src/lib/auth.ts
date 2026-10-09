@@ -3,9 +3,11 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { nextCookies } from 'better-auth/next-js'
 import { magicLink } from 'better-auth/plugins/magic-link'
 import { headers } from 'next/headers'
+import { after } from 'next/server'
 
 import { getDb, schema } from '@/db'
 import { sendMagicLinkEmail } from './authEmail'
+import { hsDate, markContact } from './hubspotRecord'
 
 const SITE = (process.env.NEXT_PUBLIC_SERVER_URL || 'https://soyroman.com').replace(/\/$/, '')
 
@@ -27,6 +29,21 @@ function make() {
     session: { expiresIn: 60 * 60 * 24 * 30, updateAge: 60 * 60 * 24 },
     rateLimit: { enabled: true, storage: 'database', modelName: 'rateLimit' },
     socialProviders: gId && gSecret ? { google: { clientId: gId, clientSecret: gSecret, prompt: 'select_account' } } : {},
+    databaseHooks: {
+      user: {
+        create: {
+          // Alta en el taller → marca el contacto en HubSpot (después de responder; si falla no bloquea el login)
+          after: async (u) => {
+            const mark = () => markContact(u.email, { sr_taller_cuenta: 'true', sr_fecha_alta_taller: hsDate() })
+            try {
+              after(mark)
+            } catch {
+              void mark()
+            }
+          },
+        },
+      },
+    },
     plugins: [
       magicLink({ expiresIn: 600, sendMagicLink: async ({ email, url }) => sendMagicLinkEmail(email, url) }),
       nextCookies(),

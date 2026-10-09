@@ -10,6 +10,10 @@ import { Gate } from './Gate'
 import { CHANNEL_COSTS, SOURCES } from '@/data/benchmarks'
 import { ShareButton, readParamValues } from './share'
 import { useToolTracking } from './useToolTracking'
+import { PrefillNote, useProfilePrefill } from '@/components/taller/useProfilePrefill'
+import { fit } from '@/lib/taller/profile'
+import { SaveRun } from '@/components/taller/SaveRun'
+import { finite } from '@/lib/taller/tools'
 
 // Valores por defecto = los del Embudo inverso y el Planificador, para que las tres herramientas cuadren
 const PARAMS: Param[] = [
@@ -29,6 +33,7 @@ export function CplApp() {
   useEffect(() => setV((x) => ({ ...x, ...readParamValues(PARAMS) })), [])
   const [gate, setGate] = useState(false)
   useToolTracking('CPL máximo', v, gate)
+  const pre = useProfilePrefill('cpl-maximo', (x) => setV((c) => ({ ...c, ...fit(PARAMS, x) })))
 
   const o = useMemo(() => {
     const cacMax = Math.max(0, v.ticket * (v.margin / 100) * (v.share / 100) - v.other)
@@ -59,6 +64,7 @@ export function CplApp() {
 
   return (
     <>
+      <PrefillNote on={pre} />
       <AppHeader top="CPL" bottom="MAX" cable="DATOS DE EJEMPLO" message={gate ? 'Ingresa tu correo para descargar el plan' : verdict} />
       <div className="scene">
         <Device
@@ -103,6 +109,14 @@ export function CplApp() {
           <div style={{ display: 'flex', gap: 10, marginTop: 18, flexWrap: 'wrap' }}>
             <Link className="btn" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }} href="/recursos/embudo-inverso">◂ Mejorar la conversión</Link>
             <ShareButton tool="CPL máximo" params={() => v} />
+            <SaveRun
+              run={() => ({
+                slug: 'cpl-maximo',
+                inputs: v,
+                metrics: { cpl_max: finite(o.cplMax), cac_max: finite(o.cacMax), cpc_max: finite(o.cpcMax), cpl_actual: finite(v.cpl) },
+                summary,
+              })}
+            />
             <Link className="btn or" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }} href={`/recursos/presupuesto-marketing?ticket=${v.ticket}&conv=${v.conv}`}>Presupuesto ▸</Link>
           </div>
         </div>

@@ -7,6 +7,10 @@ import { Device, ListMode, defaults, fmt, type Param, type Values } from './Devi
 import { AppHeader, Library } from './Panels'
 import { ShareButton, readParamValues } from './share'
 import { useToolTracking } from './useToolTracking'
+import { PrefillNote, useProfilePrefill } from '@/components/taller/useProfilePrefill'
+import { fit } from '@/lib/taller/profile'
+import { SaveRun } from '@/components/taller/SaveRun'
+import { finite } from '@/lib/taller/tools'
 
 const PARAMS: Param[] = [
   { id: 'spend', key: 'A', label: 'Inversión en medios', unit: '$', min: 100, max: 5000000, step: 100, val: 20000, log: true, hint: 'USD' },
@@ -19,6 +23,7 @@ export function RoasApp() {
   const [v, setV] = useState<Values>(() => defaults(PARAMS))
   useEffect(() => setV((x) => ({ ...x, ...readParamValues(PARAMS) })), [])
   useToolTracking('ROAS · ROMI · ROI', v)
+  const pre = useProfilePrefill('roas-romi-roi', (x) => setV((c) => ({ ...c, ...fit(PARAMS, x) })))
   const o = useMemo(() => {
     const cost = v.spend + v.other
     return { cost, roas: v.rev / v.spend, romi: ((v.rev * v.margin) / 100 - cost) / cost * 100, roi: (v.rev - cost) / cost * 100 }
@@ -28,6 +33,7 @@ export function RoasApp() {
 
   return (
     <>
+      <PrefillNote on={pre} />
       <AppHeader
         top="ROAS"
         bottom="ROMI"
@@ -61,6 +67,16 @@ export function RoasApp() {
           />
           <ListMode params={PARAMS} values={v} onChange={setV} />
           <div style={{ display: 'flex', gap: 10, marginTop: 18 }}><ShareButton tool="ROAS · ROMI · ROI" params={() => v} /></div>
+          <div style={{ marginTop: 10 }}>
+            <SaveRun
+              run={() => ({
+                slug: 'roas-romi-roi',
+                inputs: v,
+                metrics: { roas: finite(o.roas), romi: finite(o.romi), roi: finite(o.roi) },
+                summary: `ROAS ${fmt(o.roas, 1)}x · ROMI ${fmt(o.romi)}% · ROI ${fmt(o.roi)}% · medios $${fmt(v.spend)} · otros $${fmt(v.other)} · ingresos $${fmt(v.rev)} · margen ${fmt(v.margin)}%`,
+              })}
+            />
+          </div>
         </div>
       </div>
     </>

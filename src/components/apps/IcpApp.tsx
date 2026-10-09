@@ -8,6 +8,7 @@ import { Osc, OscLabel } from './Osc'
 import { Scope } from './Scope'
 import { ShareButton, decodeState, encodeState, query } from './share'
 import { useToolTracking } from './useToolTracking'
+import { PrefillNote, useProfilePrefill } from '@/components/taller/useProfilePrefill'
 import { SaveRun } from '@/components/taller/SaveRun'
 
 const SIZES = ['1–10', '11–50', '51–200', '201–1,000', '1,000+']
@@ -65,6 +66,16 @@ export function IcpApp() {
     setS(STEPS.length - 1)
   }, [])
   useToolTracking('Generador de ICP', icp, gate)
+  const pre = useProfilePrefill('icp', (x) => {
+    const n = (v: unknown, min: number, max: number) => (typeof v === 'number' && Number.isFinite(v) ? Math.min(max, Math.max(min, v)) : undefined)
+    setIcp((c) => ({
+      ...c,
+      industria: typeof x.industria === 'string' ? x.industria.slice(0, 80) : c.industria,
+      tam: n(x.tam, 0, SIZES.length - 1) ?? c.tam,
+      ticket: n(x.ticket, 0, 1e9) ?? c.ticket,
+      ciclo: n(x.ciclo, 0, 60) ?? c.ciclo,
+    }))
+  })
   const set = <K extends keyof Icp>(k: K, v: Icp[K]) => setIcp((x) => ({ ...x, [k]: v }))
 
   const valueText = [
@@ -117,6 +128,7 @@ export function IcpApp() {
 
   return (
     <>
+      <PrefillNote on={pre} />
       <OscLabel title="Generador de ICP" sub="perfil de cliente ideal · 6 pasos" />
       <Osc
         label="Generador de perfil de cliente ideal"

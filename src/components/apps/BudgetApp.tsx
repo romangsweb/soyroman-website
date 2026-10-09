@@ -12,6 +12,10 @@ import { BUDGET_REF, SOURCES } from '@/data/benchmarks'
 import { CHANNELS, DEFAULTS, FIELDS, budget, type BudgetIn } from './budget'
 import { ShareButton } from './share'
 import { useToolTracking } from './useToolTracking'
+import { PrefillNote, useProfilePrefill } from '@/components/taller/useProfilePrefill'
+import { fit } from '@/lib/taller/profile'
+import { SaveRun } from '@/components/taller/SaveRun'
+import { finite } from '@/lib/taller/tools'
 
 const usd = (x: number) => `$${fmt(Math.round(x))}`
 const kUsd = (x: number) => (x >= 1e6 ? `$${fmt(x / 1e6, 2)}M` : x >= 1e4 ? `$${fmt(x / 1e3, 0)}k` : usd(x))
@@ -48,6 +52,7 @@ export function BudgetApp() {
   const inputs = useRef<Record<string, HTMLInputElement | null>>({})
 
   useToolTracking('Presupuesto', { v, mix }, gate)
+  const pre = useProfilePrefill('presupuesto-marketing', (x) => setV((c) => ({ ...c, ...fit(FIELDS, x) })))
   const o = useMemo(() => budget(v, mix), [v, mix])
   const set = (id: keyof BudgetIn, raw: string) => {
     const f = FIELDS.find((x) => x.id === id)!
@@ -87,6 +92,7 @@ export function BudgetApp() {
 
   return (
     <>
+      <PrefillNote on={pre} />
       <AppHeader
         top="BUDGET"
         bottom="MIX"
@@ -214,6 +220,14 @@ export function BudgetApp() {
             <div className="m-keys">
               <button type="button" className="btn or" onClick={() => setGate(true)}>Plan en PDF ▸</button>
               <ShareButton tool="Presupuesto" params={() => Object.fromEntries(FIELDS.map((f) => [f.id, (v as Record<string, number>)[f.id]]))} />
+              <SaveRun
+                run={() => ({
+                  slug: 'presupuesto-marketing',
+                  inputs: { ...v, mix },
+                  metrics: { total: finite(o.total), cac: finite(o.cac), romi: finite(o.romi * 100), adelanto: finite(o.cash) },
+                  summary,
+                })}
+              />
               <Link className="btn" href="/recursos/embudo-inverso">◂ Embudo inverso</Link>
             </div>
           )}

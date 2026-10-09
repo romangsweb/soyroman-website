@@ -52,7 +52,7 @@ export async function HeaderComponent() {
           <NavLinks items={items} />
           <div className="flex items-stretch ml-auto lg:ml-0">
             <NavKeys available={available} />
-            <MobileMenu items={[...items, { href: '/recursos', label: 'Recursos' }]} />
+            <MobileMenu items={[...items, { href: '/recursos', label: 'Recursos' }, { href: '/taller', label: 'Mi taller' }]} />
           </div>
         </div>
       </div>

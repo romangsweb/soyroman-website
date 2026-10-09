@@ -41,8 +41,11 @@ export default function PrivacidadPage() {
             entras con Google, el nombre y la foto de tu cuenta de Google), los resultados que decides guardar con los datos
             que capturaste en cada herramienta, y la fecha. Los uso solo para mostrarte tu historial. Esos datos se almacenan
             en Neon (base de datos) y los correos de acceso se envían con Resend; ambos pueden procesarlos fuera de México.
-            Mientras no tengas cuenta, lo que apartas para guardar queda solo en tu navegador. Puedes pedir que borre tu
-            cuenta y todo lo guardado en cualquier momento.
+            Mientras no tengas cuenta, lo que apartas para guardar queda solo en tu navegador. Si llenas tu perfil de
+            empresa, guardo esos datos para precargar las herramientas y anoto en HubSpot tu industria, tamaño de empresa y
+            dominio. Solo si lo autorizas en tu perfil, tus resultados se usan de forma anónima y agregada para calcular
+            medianas por industria y tamaño; nunca se muestran resultados individuales. Desde tu perfil puedes descargar
+            tus datos o borrar tu cuenta y todo lo guardado en cualquier momento.
           </p>
           <p>
             <strong>Derechos ARCO.</strong> Puedes acceder, rectificar, cancelar u oponerte al tratamiento de tus datos, así

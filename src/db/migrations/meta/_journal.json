@@ -8,6 +8,13 @@
       "when": 1791508963006,
       "tag": "0000_taller_inicial",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791511512804,
+      "tag": "0001_perfil_empresa",
+      "breakpoints": true
     }
   ]
 }

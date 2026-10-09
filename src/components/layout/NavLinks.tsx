@@ -45,12 +45,18 @@ export function NavKeys({ available }: { available: boolean }) {
   const path = usePathname() || '/'
   const rec = isActive(path, '/recursos')
   const con = isActive(path, '/contacto')
+  const tal = isActive(path, '/taller')
   return (
     <div className="flex items-stretch">
       <Link href="/recursos" aria-current={rec ? 'page' : undefined}
         className={`group ${cell} hidden lg:flex bg-[#e85a2a] text-white hover:bg-[#c94b20]`}>
         <Led on={rec} color="#ffffff" idle="rgba(255,255,255,.45)" />
         Recursos
+      </Link>
+      <Link href="/taller" aria-current={tal ? 'page' : undefined}
+        className={`group ${cell} hidden lg:flex hover:bg-[#f4f4f4] ${tal ? 'text-[#e85a2a]' : ''}`}>
+        <Led on={tal} />
+        Mi taller
       </Link>
       <Link href="/contacto" onClick={() => track('contact_click', { from: 'nav' })} aria-current={con ? 'page' : undefined}
         className={`group ${cell} bg-black text-white hover:bg-[#2a2d30]`}>

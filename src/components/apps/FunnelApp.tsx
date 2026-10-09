@@ -9,6 +9,8 @@ import { Gate } from './Gate'
 import { FUNNEL_RANGES, SOURCES } from '@/data/benchmarks'
 import { ShareButton, readParamValues } from './share'
 import { useToolTracking } from './useToolTracking'
+import { PrefillNote, useProfilePrefill } from '@/components/taller/useProfilePrefill'
+import { fit } from '@/lib/taller/profile'
 import { SaveRun } from '@/components/taller/SaveRun'
 import { finite } from '@/lib/taller/tools'
 import Link from 'next/link'
@@ -30,6 +32,7 @@ export function FunnelApp() {
   useEffect(() => setV((x) => ({ ...x, ...readParamValues(PARAMS) })), [])
   const [gate, setGate] = useState(false)
   useToolTracking('Embudo inverso', v, gate)
+  const pre = useProfilePrefill('embudo-inverso', (x) => setV((c) => ({ ...c, ...fit(PARAMS, x) })))
 
   const o = useMemo(() => {
     const won = v.goal / v.ticket / 12
@@ -59,6 +62,7 @@ export function FunnelApp() {
 
   return (
     <>
+      <PrefillNote on={pre} />
       <AppHeader
         top="LEAD"
         bottom="CALC"

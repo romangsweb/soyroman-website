@@ -90,3 +90,12 @@ export const toolRun = pgTable(
 )
 
 export type ToolRun = typeof toolRun.$inferSelect
+
+/** Perfil de empresa: precarga las herramientas. `data` sigue el tipo ProfileData de src/lib/taller/profile.ts. */
+export const companyProfile = pgTable('company_profile', {
+  userId: text('user_id').primaryKey().references(() => user.id, { onDelete: 'cascade' }),
+  data: jsonb('data').$type<Record<string, unknown>>().notNull().default({}),
+  consentBenchmarks: boolean('consent_benchmarks').notNull().default(false),
+  consentAlerts: boolean('consent_alerts').notNull().default(true),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})

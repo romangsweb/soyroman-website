@@ -11,6 +11,9 @@ import { COVERAGE_RULE, SOURCES } from '@/data/benchmarks'
 import { DEFAULTS, montecarlo, pipeline, type PipelineIn } from './pipeline'
 import { ShareButton, decodeState, encodeState, query } from './share'
 import { useToolTracking } from './useToolTracking'
+import { PrefillNote, useProfilePrefill } from '@/components/taller/useProfilePrefill'
+import { SaveRun } from '@/components/taller/SaveRun'
+import { finite } from '@/lib/taller/tools'
 
 const usd = (x: number) => `$${fmt(Math.round(x))}`
 const TOP: { id: 'goal' | 'won' | 'ticket' | 'l2o'; key: string; label: string; step: number }[] = [
@@ -32,6 +35,13 @@ export function PipelineApp() {
   }, [])
   const [gate, setGate] = useState(false)
   useToolTracking('Brecha de pipeline', v, gate)
+  const pre = useProfilePrefill('brecha-pipeline', (x) =>
+    setV((c) => ({
+      ...c,
+      ...(typeof x.goal === 'number' && x.goal > 0 ? { goal: x.goal } : {}),
+      ...(typeof x.ticket === 'number' && x.ticket >= 1 ? { ticket: x.ticket } : {}),
+    })),
+  )
   const o = useMemo(() => pipeline(v), [v])
   const mc = useMemo(() => montecarlo(v), [v])
 
@@ -60,6 +70,7 @@ export function PipelineApp() {
 
   return (
     <>
+      <PrefillNote on={pre} />
       <AppHeader
         top="PIPE"
         bottom="GAP"
@@ -181,6 +192,14 @@ export function PipelineApp() {
           <div className="q-keys">
             <button type="button" className="btn or" onClick={() => setGate(true)}>Plan para cerrar la brecha en PDF ▸</button>
             <ShareButton tool="Brecha de pipeline" params={() => ({ s: encodeState(v) })} />
+            <SaveRun
+              run={() => ({
+                slug: 'brecha-pipeline',
+                inputs: v,
+                metrics: { brecha: finite(o.gap), forecast: finite(o.forecast), cobertura: finite(o.coverage), prob: finite(mc.p * 100) },
+                summary,
+              })}
+            />
           </div>
         )}
       </div>
