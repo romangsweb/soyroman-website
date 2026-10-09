@@ -6,6 +6,7 @@ import * as migration_20261007_131028_expertise_skills from './20261007_131028_e
 import * as migration_20261007_141216_profile_availability from './20261007_141216_profile_availability';
 import * as migration_20261007_164653_ai_visits from './20261007_164653_ai_visits';
 import * as migration_20261007_205245_screen_fields from './20261007_205245_screen_fields';
+import * as migration_20261009_124545_media_object_key from './20261009_124545_media_object_key';
 
 export const migrations = [
   {
@@ -46,6 +47,11 @@ export const migrations = [
   {
     up: migration_20261007_205245_screen_fields.up,
     down: migration_20261007_205245_screen_fields.down,
-    name: '20261007_205245_screen_fields'
+    name: '20261007_205245_screen_fields',
+  },
+  {
+    up: migration_20261009_124545_media_object_key.up,
+    down: migration_20261009_124545_media_object_key.down,
+    name: '20261009_124545_media_object_key'
   },
 ];
