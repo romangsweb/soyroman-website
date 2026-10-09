@@ -8,6 +8,7 @@ import { Osc, OscLabel } from './Osc'
 import { Scope } from './Scope'
 import { ShareButton, decodeState, encodeState, query } from './share'
 import { useToolTracking } from './useToolTracking'
+import { SaveRun } from '@/components/taller/SaveRun'
 
 const SIZES = ['1–10', '11–50', '51–200', '201–1,000', '1,000+']
 const INDUSTRIES = ['Software y SaaS', 'Servicios profesionales', 'Manufactura', 'Salud', 'Educación', 'Finanzas', 'Logística', 'Otra']
@@ -190,7 +191,12 @@ export function IcpApp() {
             {card}
             <p className="lead">Implicaciones</p>
             <ul>{imp.map((x) => <li key={x}>{x}</li>)}</ul>
-            {s === STEPS.length - 1 && <ShareButton tool="Generador de ICP" params={() => ({ s: encodeState(icp) })} />}
+            {s === STEPS.length - 1 && (
+              <>
+                <ShareButton tool="Generador de ICP" params={() => ({ s: encodeState(icp) })} />
+                <SaveRun run={() => ({ slug: 'icp', inputs: icp, metrics: { ticket: icp.ticket, ciclo: icp.ciclo }, summary, label: icp.industria.slice(0, 80) || undefined })} />
+              </>
+            )}
           </>
         )}
       </div>

@@ -12,6 +12,8 @@ import { KnobList, ModeKeys, knobDefaults, readKnobs, type Knob, type KnobValues
 import { HORIZON, ltv, type LtvIn } from './ltv'
 import { ShareButton, query } from './share'
 import { useToolTracking } from './useToolTracking'
+import { SaveRun } from '@/components/taller/SaveRun'
+import { finite } from '@/lib/taller/tools'
 
 const CAC: Knob[] = [
   { id: 'mkt', label: 'Gasto de marketing en el periodo', unit: '$', val: 180000, min: 0, max: 20000000, step: 5000, hint: 'medios, herramientas, agencia y nómina de marketing' },
@@ -136,6 +138,14 @@ export function LtvApp() {
                 <button type="button" className="btn or" onClick={() => setGate(true)}>Diagnóstico en PDF ▸</button>
                 <ShareButton tool="LTV:CAC y payback" params={() => ({ ...v, modo: mode })} />
                 <Link className="btn" href="/recursos/roas-romi-roi" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>ROAS · ROMI · ROI ▸</Link>
+                <SaveRun
+                  run={() => ({
+                    slug: 'ltv-cac',
+                    inputs: { ...v, modo: mode },
+                    metrics: { ltv_cac: finite(o.ratio), cac: finite(o.cac), ltv: finite(o.ltv), payback: finite(pay) },
+                    summary: summary.join('\n'),
+                  })}
+                />
               </div>
             )}
           </div>

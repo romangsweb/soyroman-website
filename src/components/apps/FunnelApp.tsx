@@ -9,6 +9,8 @@ import { Gate } from './Gate'
 import { FUNNEL_RANGES, SOURCES } from '@/data/benchmarks'
 import { ShareButton, readParamValues } from './share'
 import { useToolTracking } from './useToolTracking'
+import { SaveRun } from '@/components/taller/SaveRun'
+import { finite } from '@/lib/taller/tools'
 import Link from 'next/link'
 
 const PARAMS: Param[] = [
@@ -105,6 +107,16 @@ export function FunnelApp() {
           />
           <ListMode params={PARAMS} values={v} onChange={setV} />
           <ShareButton tool="Embudo inverso" params={() => v} className="btn" />
+          <div style={{ marginTop: 10 }}>
+            <SaveRun
+              run={() => ({
+                slug: 'embudo-inverso',
+                inputs: v,
+                metrics: { leads_mes: finite(o.leads), mql_mes: finite(o.mql), sql_mes: finite(o.sql), negocios_mes: finite(o.won), meta_anual: finite(v.goal) },
+                summary,
+              })}
+            />
+          </div>
           <Link
             className="btn or"
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', marginTop: 18 }}

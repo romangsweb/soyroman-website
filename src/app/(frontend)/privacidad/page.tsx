@@ -37,6 +37,14 @@ export default function PrivacidadPage() {
             protección.
           </p>
           <p>
+            <strong>Cuenta de Mi taller.</strong> Si creas una cuenta para guardar tus resultados, guardo tu correo (y, si
+            entras con Google, el nombre y la foto de tu cuenta de Google), los resultados que decides guardar con los datos
+            que capturaste en cada herramienta, y la fecha. Los uso solo para mostrarte tu historial. Esos datos se almacenan
+            en Neon (base de datos) y los correos de acceso se envían con Resend; ambos pueden procesarlos fuera de México.
+            Mientras no tengas cuenta, lo que apartas para guardar queda solo en tu navegador. Puedes pedir que borre tu
+            cuenta y todo lo guardado en cualquier momento.
+          </p>
+          <p>
             <strong>Derechos ARCO.</strong> Puedes acceder, rectificar, cancelar u oponerte al tratamiento de tus datos, así
             como revocar tu consentimiento, escribiendo a contacto@soyroman.com con el asunto &quot;Derechos ARCO&quot;.
           </p>

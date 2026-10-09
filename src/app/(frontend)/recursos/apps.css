@@ -740,3 +740,53 @@
 .te-app .ti-call span{font-size:12px;line-height:1.55;color:#cfd}
 .te-app .ti-call-k{display:flex;gap:10px;flex-wrap:wrap}
 .te-app .ti-call-k .btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:0 18px;flex:none}
+
+/* Mi taller (tl-): guardar resultados, entrada y páginas del taller */
+.te-app .btn.dk{background:#111;color:#fff;box-shadow:0 4px 0 #c84a1e}
+.te-app .tl-save{display:grid;gap:10px;flex:1 1 100%}
+.te-app .tl-pitch{background:#fff;border:2px solid var(--ink);padding:14px;box-shadow:6px 6px 0 #c84a1e}
+.te-app .tl-pitch>p{font-size:12px;line-height:1.55;margin:0 0 10px}
+.te-app .tl-login{display:grid;gap:8px;max-width:440px}
+.te-app .tl-login b{font-weight:400;font-size:18px}
+.te-app .tl-login label{font-size:12px}
+.te-app .tl-login input{min-height:46px;border:2px solid var(--ink);border-radius:10px;padding:0 12px;font:inherit;font-size:14px;background:#fff}
+.te-app .tl-login p{font-size:12px;line-height:1.5;margin:0}
+.te-app .tl-err{color:#a3301a;font-size:12px;margin:0}
+.te-app .tl-fine{font-size:11px;line-height:1.5;color:#444;margin:8px 0 0}
+.te-app .tl-note{background:#fff;border:2px solid var(--ink);padding:10px 14px;font-size:12px;margin:0 0 18px}
+.te-app .tl-kicker{font-size:12px;letter-spacing:.14em;color:#333}
+.te-app .tl-kicker a{color:inherit}
+.te-app .tl-head{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin:0 0 22px}
+.te-app .tl-head h1{font-size:clamp(26px,3.4vw,34px);font-weight:400;line-height:1.1;margin:6px 0 0}
+.te-app .tl-head p{font-size:13px;margin:6px 0 0;color:#222}
+.te-app .tl-head .btn{flex:none;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:0 18px}
+.te-app .tl-h2{font-size:22px;font-weight:400;margin:28px 0 12px}
+.te-app .tl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.te-app .tl-card{display:flex;flex-direction:column;gap:10px;background:var(--shell);border:2px solid var(--ink);border-radius:14px;box-shadow:6px 6px 0 var(--ink);padding:12px;text-decoration:none;color:var(--ink)}
+.te-app .tl-card:hover{transform:translate(-1px,-1px);box-shadow:7px 7px 0 var(--ink)}
+.te-app .tl-card-top{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.14em;color:#444}
+.te-app .tl-card-name{font-size:14px}
+.te-app .tl-card-when{font-size:11px;color:#444}
+.te-app .tl-lcd{display:block;background:#0f1a14;border:2px solid var(--ink);border-radius:8px;padding:10px 12px;color:#cfd3d0}
+.te-app .tl-lcd>span{display:block;font-size:10px;letter-spacing:.12em;color:#8a9}
+.te-app .tl-lcd b{display:block;font-weight:400;font-size:24px;color:#3ddc84;line-height:1.15}
+.te-app .tl-delta{border-radius:14px;padding:14px 16px;margin:0 0 20px;box-shadow:6px 6px 0 var(--ink)}
+.te-app .tl-delta>div{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:10px}
+.te-app .tl-delta p{margin:0}
+.te-app .tl-delta small{display:block;font-size:10px;color:#8a9}
+.te-app .tl-delta b{font-size:18px}
+.te-app .tl-delta em{font-style:normal;font-size:11px;color:#ffb02e}
+.te-app .tl-table{overflow-x:auto;border:2px solid var(--ink);background:#fff;box-shadow:6px 6px 0 var(--ink)}
+.te-app .tl-table table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+.te-app .tl-table th{background:var(--ink);color:#ecebe6;font-weight:400;text-align:left;padding:9px 10px}
+.te-app .tl-table td{padding:9px 10px;border-top:1px solid #c9c7bf}
+.te-app .tl-table td small{color:#555}
+.te-app .tl-actions{display:flex;gap:12px;align-items:center;white-space:nowrap}
+.te-app .tl-actions a{font-size:12px}
+.te-app .tl-del{background:none;border:0;padding:0;font:inherit;font-size:12px;color:#a3301a;cursor:pointer;text-decoration:underline}
+.te-app .tl-empty{background:#fff;border:2px dashed var(--ink);padding:16px;font-size:13px}
+.te-app .tl-links{display:flex;flex-wrap:wrap;gap:10px}
+.te-app .tl-links .btn{flex:none;display:inline-flex;align-items:center;text-decoration:none;padding:0 16px}
+.te-app .tl-enter{max-width:640px}
+.te-app .tl-enter h1{font-size:clamp(26px,3.4vw,34px);font-weight:400;line-height:1.15;margin:8px 0 12px}
+.te-app .tl-enter ul{font-size:13px;line-height:1.7;margin:0 0 20px;padding-left:18px}
